@@ -1,0 +1,36 @@
+---
+
+#
+# NOTE: Right now installing OpenStack Essex Keystone
+# 
+- name: install required packages
+  apt: pkg=$item state=installed 
+  with_items:
+    - keystone
+    - python-keyring
+    - mysql-server
+    - python-mysqldb
+
+#
+# Keystone from Essex!
+# http://docs.openstack.org/essex/openstack-compute/install/apt/content/install-keystone.html
+
+- name: remove default keystone sqlite database file
+  file: path=/var/lib/keystone/keystone.db state=absent
+
+- name: change mysql's bind-address
+  lineinfile: dest=/etc/mysql/my.cnf regexp=^bind-address line='bind-address = 0.0.0.0'
+  notify:
+    - restart mysql
+
+- name: create keystone database
+  mysql_db: name=keystone state=present
+
+- name: create keystone mysql user
+  mysql_user: name=keystone password={{ keystone_mysql_password }} priv=keystone.*:ALL state=present
+
+# Create a tenant
+#- keystone_user: tenant=demo tenant_description="Default Tenant"
+
+# Create a user
+#- keystone_user: user=curtis tenant=demo password=passw0rd
