@@ -1,0 +1,40 @@
+---
+
+#
+# Install swift proxy
+# 
+
+- name: install required packages for swift proxy
+  apt: pkg=$item state=installed update_cache=yes cache_valid_time=3600
+  with_items:
+    - swift-proxy 
+    - memcached 
+    - python-keystoneclient 
+    - python-swiftclient 
+    - swift-plugin-s3
+
+- name: make sure memcached is running
+  service: name=memcached state=running
+
+# XXX Mode? XXX
+- name: ensure permissions on /var/cache/swift
+  file: path=/var/cache/swift state=directory group=swift owner=swift mode=0755
+
+
+- name: copy over proxy-server.conf
+  template: src=proxy-server.conf.j2 dest=/etc/swift/proxy-server.conf
+
+
+- name: check if /etc/swift/*.builder exist
+  command: find /etc/swift/object.builder
+  register: builders
+  ignore_errors: True
+
+# XXX how to see if this needs to be run? XXX
+- name: run swift-ring-builder for accounts, containers, and objects
+  command: swift-ring-builder $item create 18 3 1 chdir=/etc/swift 
+  with_items:
+    - account.builder
+    - container.builder
+    - object.builder
+  when: builders.rc > 0

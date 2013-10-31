@@ -1,4 +1,4 @@
 ---
 - include: authentication.yml
-#- include: proxy.yml
+- include: proxy.yml
 #- include: storage.yml

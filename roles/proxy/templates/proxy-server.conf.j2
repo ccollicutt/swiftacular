@@ -1,0 +1,46 @@
+[DEFAULT]
+bind_port = 8080
+workers = 32
+user = swift
+
+[pipeline:main]
+pipeline = catch_errors healthcheck cache ratelimit authtoken keystoneauth proxy-server
+
+[app:proxy-server]
+use = egg:swift#proxy
+allow_account_management = true
+account_autocreate = true
+
+[filter:keystoneauth]
+use = egg:swift#keystoneauth
+operator_roles = Member,admin, swiftoperator
+
+[filter:authtoken]
+paste.filter_factory = keystoneclient.middleware.auth_token:filter_factory
+signing_dir = /var/cache/swift
+auth_host = 192.168.100.50
+auth_port = 35357
+auth_protocol = http
+auth_uri = http://192.168.100.50:5000
+admin_tenant_name = services
+admin_user = swift
+admin_password = keystone_admin
+delay_auth_decision = 10
+
+[filter:cache]
+use = egg:swift#memcache
+memcache_servers = 192.168.100.50:11211,192.168.100.51:11211
+
+[filter:catch_errors]
+use = egg:swift#catch_errors
+
+[filter:healthcheck]
+use = egg:swift#healthcheck
+
+[filter:ratelimit]
+use = egg:swift#ratelimit
+clock_accuracy = 1000
+max_sleep_time_seconds = 60
+log_sleep_time_seconds = 0
+rate_buffer_seconds = 5
+account_ratelimit = 0

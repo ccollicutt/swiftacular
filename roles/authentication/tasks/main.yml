@@ -3,8 +3,11 @@
 #
 # NOTE: Right now installing OpenStack Essex Keystone
 # 
+
+# Example: https://github.com/lorin/openstack-ansible/blob/master/services/keystone/keystone.yaml
+
 - name: install required packages
-  apt: pkg=$item state=installed 
+  apt: pkg=$item state=installed update_cache=yes cache_valid_time=3600
   with_items:
     - keystone
     - python-keyring
@@ -39,6 +42,14 @@
   command: keystone-manage db_sync
   when: keystone.changed
 
+- name: ensure keystone is restarted
+  service: name=keystone state=restarted enabled=yes
+
+ # keystone seems to take a while...
+- name: wait for keystone to come back up
+  wait_for: host="192.168.100.50" port=35357
+
+
 # XXX NOT WORKING XXX
 #- name: keystone_manage db_sync
 #  keystone_manage: action=db_sync
@@ -56,20 +67,37 @@
 
 - name: create keystone identity point
   keystone_service: name=keystone type=identity description="Keystone Identity Service" publicurl=http://192.168.100.50:5000/v2.0 internalurl=http://192.168.100.50:5000/v2.0 adminurl=http://192.168.100.50:35357/v2.0 region="AB" token={{ keystone_admin_token }}
+  notify: restart keystone
+
 
 - name: create EC2 compatability keystone service
   keystone_service: name=ec2 type=ec2 description="EC2 Compatability Layer" publicurl=http://192.168.100.50:8773/services/Cloud internalurl=http://192.168.100.50:8773/services/Cloud adminurl=http://192.168.100.50:8773/services/Admin region="AB" token={{ keystone_admin_token }}
+  notify: restart keystone
+
 
 ### XXX Not sure about the URLS here XXX
 - name: create object storage keystone service
   keystone_service: name=swift type=object-store description="Object Storage Service" publicurl='http://127.0.0.1:8080/v1/AUTH_%(tenant_id)s' internalurl='http://127.0.0.1:8080/' adminurl='http://127.0.0.1:8080/v1/AUTH_%(tenant_id)s' region="AB" token={{ keystone_admin_token }}
+  notify: restart keystone
 
 #
 # End endpoints
 # 
 
 # Create a tenant
-- keystone_user: token={{ keystone_admin_token }} tenant=demo tenant_description="Default Tenant"
+- name: create a default keystone tenant
+  keystone_user: token={{ keystone_admin_token }} tenant=demo tenant_description="Default Tenant"
+  notify: restart keystone
 
 # Create a user
-- keystone_user: token={{ keystone_admin_token }} user=curtis tenant=demo password=passw0rd
+- name: create a default keystone user
+  keystone_user: token={{ keystone_admin_token }} user=curtis tenant=demo password=passw0rd
+  notify: restart keystone
+
+# XXX Shouldn't be doing this here XXX
+#- name: restart keystone
+#   service: name=keystone state=restarted
+
+- name: test keystone with user-list
+  #shell: export SERVICE_TOKEN={{ keystone_admin_token }}; export SERVICE_ENDPOINT=http://192.168.100.50:35357/v2.0; keystone user-list
+  shell: keystone --token {{ keystone_admin_token }} --endpoint http://192.168.100.50:35357/v2.0 user-list

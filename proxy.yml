@@ -1,0 +1,6 @@
+--- 
+- hosts: proxy
+  roles:
+      #- common
+      - swift_common
+      - proxy
