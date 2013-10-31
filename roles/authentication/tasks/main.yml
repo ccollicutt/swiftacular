@@ -18,6 +18,11 @@
 - name: remove default keystone sqlite database file
   file: path=/var/lib/keystone/keystone.db state=absent
 
+- name: copy over keystone.conf from template
+  template: src=keystone.conf.j2 dest=/etc/keystone/keystone.conf owner=root group=root mode=0644
+  notify:
+    - restart keystone
+
 - name: change mysql's bind-address
   lineinfile: dest=/etc/mysql/my.cnf regexp=^bind-address line='bind-address = 0.0.0.0'
   notify:
@@ -25,12 +30,25 @@
 
 - name: create keystone database
   mysql_db: name=keystone state=present
+  register: keystone
 
 - name: create keystone mysql user
   mysql_user: name=keystone password={{ keystone_mysql_password }} priv=keystone.*:ALL state=present
 
+- name: run keystone db_sync
+  command: keystone-manage db_sync
+  when: keystone.changed
+
+# XXX NOT WORKING XXX
+#- name: keystone_manage db_sync
+#  keystone_manage: action=db_sync
+#  when: keystone.changed
+
+- name: create keystone identity endpoint
+  keystone_service: token={{ keystone_admin_token }} name=keystone type=identity description="Keystone Identity Service" public_url="http://192.168.100.50:35357/v2.0/" region="Alberta"
+
 # Create a tenant
-#- keystone_user: tenant=demo tenant_description="Default Tenant"
+#- keystone_user: login_user=admin login_password={{ keystone_admin_token }} tenant=demo tenant_description="Default Tenant"
 
 # Create a user
-#- keystone_user: user=curtis tenant=demo password=passw0rd
+#- keystone_user: login_password={{ keystone_admin_token }} user=curtis tenant=demo password=passw0rd

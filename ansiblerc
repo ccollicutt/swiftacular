@@ -1,3 +1,4 @@
 alias ans='ansible -u vagrant -c ssh --private-key=~/.vagrant.d/insecure_private_key -s'
 alias pb='ansible-playbook -u vagrant -c ssh --private-key=~/.vagrant.d/insecure_private_key -s'
 export ANSIBLE_HOSTS=`pwd`/ansible_hosts
+export ANSIBLE_LIBRARY=`pwd`/openstack-ansible-modules:/usr/share/ansible
