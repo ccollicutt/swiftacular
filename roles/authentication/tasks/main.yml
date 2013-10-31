@@ -44,11 +44,32 @@
 #  keystone_manage: action=db_sync
 #  when: keystone.changed
 
-- name: create keystone identity endpoint
-  keystone_service: token={{ keystone_admin_token }} name=keystone type=identity description="Keystone Identity Service" public_url="http://192.168.100.50:35357/v2.0/" region="Alberta"
+
+#
+# Keystone endpoints
+# 
+
+# XXX FIX HARDCODED IP XXX
+#- name: create keystone identity endpoint
+#  keystone_service: token={{ keystone_admin_token }} name=keystone type=identity description="Keystone Identity Service" public_url="http://192.168.100.50:35357/v2.0/" region="AB"
+  # AB as in Alberta!
+
+- name: create keystone identity point
+  keystone_service: name=keystone type=identity description="Keystone Identity Service" publicurl=http://192.168.100.50:5000/v2.0 internalurl=http://192.168.100.50:5000/v2.0 adminurl=http://192.168.100.50:35357/v2.0 region="AB" token={{ keystone_admin_token }}
+
+- name: create EC2 compatability keystone service
+  keystone_service: name=ec2 type=ec2 description="EC2 Compatability Layer" publicurl=http://192.168.100.50:8773/services/Cloud internalurl=http://192.168.100.50:8773/services/Cloud adminurl=http://192.168.100.50:8773/services/Admin region="AB" token={{ keystone_admin_token }}
+
+### XXX Not sure about the URLS here XXX
+- name: create object storage keystone service
+  keystone_service: name=swift type=object-store description="Object Storage Service" publicurl='http://127.0.0.1:8080/v1/AUTH_%(tenant_id)s' internalurl='http://127.0.0.1:8080/' adminurl='http://127.0.0.1:8080/v1/AUTH_%(tenant_id)s' region="AB" token={{ keystone_admin_token }}
+
+#
+# End endpoints
+# 
 
 # Create a tenant
-#- keystone_user: login_user=admin login_password={{ keystone_admin_token }} tenant=demo tenant_description="Default Tenant"
+- keystone_user: token={{ keystone_admin_token }} tenant=demo tenant_description="Default Tenant"
 
 # Create a user
-#- keystone_user: login_password={{ keystone_admin_token }} user=curtis tenant=demo password=passw0rd
+- keystone_user: token={{ keystone_admin_token }} user=curtis tenant=demo password=passw0rd
