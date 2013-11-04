@@ -1,0 +1,15 @@
+[DEFAULT]
+bind_ip = {{ ansible_eth1.ipv4.address }}
+workers = 2
+
+[pipeline:main]
+pipeline = container-server
+
+[app:container-server]
+use = egg:swift#container
+
+[container-replicator]
+
+[container-updater]
+
+[container-auditor]

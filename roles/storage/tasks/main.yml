@@ -1,0 +1,84 @@
+---
+
+#
+# Install swift storage
+# 
+
+- name: install required packages for swift storage
+  apt: pkg=$item state=installed update_cache=yes cache_valid_time=3600
+  with_items:
+    - swift-account 
+    - swift-container 
+    - swift-object 
+    - xfsprogs 
+    - parted
+
+- name: make sure /srv/node exists
+  file: path=/srv/node state=directory
+
+- name: check if losetup loop0 is already up
+  command: losetup /dev/loop0
+  register: losetup
+  ignore_errors: True
+
+# XXX Must be a better way to iterate over these XXX
+- name: cleanup image mounts
+  shell: umount /srv/node/$item; losetup -d /dev/loop$item; rm -f /var/tmp/$item.img
+  with_sequence: count=3
+  when: losetup.rc > 0
+
+# XXX Should be a module XXX
+- name: create and mount image files for swift storage
+  shell: truncate --size 10G /var/tmp/$item.img; losetup /dev/loop$item /var/tmp/$item.img; mkfs.xfs -i size=1024 /dev/loop$item; mkdir /srv/node/$item; mount /dev/loop$item /srv/node/$item
+  with_sequence: count=3
+  when: losetup.rc > 0
+
+- name: copy over rsyncd.conf to swift storage
+  template: src=rsyncd.conf.j2 dest=/etc/rsyncd.conf
+
+- name: edit /etc/sysconfig/rsync
+  lineinfile: dest=/etc/default/rsync regexp=^RSYNC_ENABLE line="RSYNC_ENABLE=true"
+
+- name: make sure rsync is running
+  service: name=rsync state=started
+
+# XXX Mode? XXX
+- name: copy over *-server.conf files
+  template: src=$item-server.conf.j2 dest=/etc/swift/$item-server.conf owner=swift group=swift mode=0644
+  with_items:
+    - account
+    - container
+    - object
+
+#
+# Run swift_ring_builder_add on each proxy
+# 
+- name: build the ring by delegating to proxy
+  swift_ring_builder_add: disks=3 region=AB hostname={{ inventory_hostname }}
+  delegate_to: "{{ item }}"
+  with_items: groups.proxy
+
+- name: start object services
+  command: swift-init object-$item start
+  with_items:
+    - server
+    - replicator
+    - updater
+    - auditor
+
+- name: start container services
+  command: swift-init container-$item start
+  with_items:
+    - server
+    - replicator
+    - updater
+    - auditor
+
+# XXX No auditor? XXX
+- name: start account services
+  command: swift-init account-$item start
+  with_items:
+    - server
+    - replicator
+    - auditor
+
