@@ -1,5 +1,5 @@
 --- 
 - hosts: authentication 
   roles:
-      #- common
+      - common
       - authentication 

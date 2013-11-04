@@ -64,7 +64,7 @@ EXAMPLES='''
 
 '''
 
-def create_ring_devices (region, hostname, disks):
+def create_ring_devices (region, hostname, disks, zone):
 
     # XXX Should be a datatype of somekind 'type':'port' XXX
     for type in ['object', 'container', 'account']:
@@ -79,7 +79,8 @@ def create_ring_devices (region, hostname, disks):
             return 1, 'Incorrected builder type'
 
         # setup the builder
-        builder = RingBuilder.load('/etc/swift/' + str(type) + '.builder')
+        builder_file = '/etc/swift/' + str(type) + '.builder'
+        builder = RingBuilder.load(builder_file)
 
         for j in xrange(int(disks)):
 
@@ -91,17 +92,30 @@ def create_ring_devices (region, hostname, disks):
             device = j
             # just set weight to 100 for testing/now
             weight = 100
+            # not sure what meta is supposed to be
+            meta = ''
+            # in the swift-rinb-builder app it seems to set repolication_ip to 
+            # ip of the variable doesn't exist
+            replication_ip = ip_address
+            replication_port = port
 
             
-            dev = { 'region': region, 'zone': 'z' + str(j), 'ip': ip_address ,
-                'port': port, 'device': device, 'weight': weight }
-                #{ 'region': region, 'zone': 'z' + i, 'ip': ip_address ,
-                #  'port': port, 'device': device, 'meta': opts.meta,
-                #  'replication_ip': replication_ip,
-                #  'replication_port': replication_port, 'weight': opts.weight }
+            dev = { 'region': region, 'zone': 'z' + zone, 'ip': ip_address ,
+                    'port': port, 'device': device, 'meta': meta,
+                    'replication_ip': replication_ip,
+                    'replication_port': replication_port, 'weight': weight }
 
                 # XXX Should check to see if device exists already like in swift-ring-builder code XXX
+            
             dev_id = builder.add_dev(dev)
+
+            # what are we saving here?
+            builder.save(str(type))
+
+            #if not dev_id:
+            #    return 1, "creating dev failed"
+            return 0, 'Device with id %s was created' % dev_id
+
 
 
     return 0, 'Swift ring devices created'
@@ -113,13 +127,15 @@ def main():
 
     module = AnsibleModule(
         argument_spec=dict(
-        hostname=dict(required=False),        
+        hostname=dict(required=False),  
+        zone=dict(required=True),
         disks=dict(required=True),
         state=dict(required=False),
         region=dict(required=False),
         )
     )
 
+    zone = module.params['zone']
     hostname = module.params['hostname']
     state = module.params['state']
     disks = module.params['disks']
@@ -128,7 +144,7 @@ def main():
     if not region:
         region = None
 
-    (rc, result) = create_ring_devices(region, hostname, disks)
+    (rc, result) = create_ring_devices(region, hostname, disks, zone)
 
 
     if rc != 0:

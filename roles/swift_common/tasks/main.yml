@@ -4,8 +4,8 @@
 #  command: apt-get update 
 
 # XXX shoudl be using apt_key here I think instead of ubuntu-cloud-keyring XX
-- name: install requires packages to add havana repository
-  apt: name=$item state=installed
+- name: install required packages to add havana repository
+  apt: name=$item state=installed update_cache=yes cache_valid_time=3600
   with_items:
     - ubuntu-cloud-keyring
     - python-pycurl
@@ -33,7 +33,7 @@
     - python-memcache
 
 - name: ensure /etc/swift exists
-  file: path=/etc/swift owner=swift group=swift mode=0600 state=directory
+  file: path=/etc/swift owner=swift group=swift mode=0750 state=directory
 
 - name: copy over swift.conf file
   template: src=swift.conf.j2 dest=/etc/swift/swift.conf owner=swift group=swift mode=0600

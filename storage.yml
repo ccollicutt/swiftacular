@@ -1,6 +1,6 @@
 --- 
-- hosts: proxy
+- hosts: storage
   roles:
       - common
       - swift_common
-      - proxy
+      - storage 

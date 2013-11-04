@@ -16,6 +16,10 @@
 - name: make sure /srv/node exists
   file: path=/srv/node state=directory
 
+- name: make sure /var/swift/recon exists
+  file: path=/var/swift/recon state=directory owner=swift group=swift mode=0750
+
+
 - name: check if losetup loop0 is already up
   command: losetup /dev/loop0
   register: losetup
@@ -54,31 +58,57 @@
 # Run swift_ring_builder_add on each proxy
 # 
 - name: build the ring by delegating to proxy
-  swift_ring_builder_add: disks=3 region=AB hostname={{ inventory_hostname }}
+  swift_ring_builder_add: disks=3 region={{ region }} hostname={{ inventory_hostname }} zone={{ zone }}
   delegate_to: "{{ item }}"
   with_items: groups.proxy
 
-- name: start object services
-  command: swift-init object-$item start
-  with_items:
-    - server
-    - replicator
-    - updater
-    - auditor
+# XXX TODO - create fstab XXX
 
-- name: start container services
-  command: swift-init container-$item start
-  with_items:
-    - server
-    - replicator
-    - updater
-    - auditor
+#- name: start object services
+#  command: swift-init object-$item start
+#  with_items:
+#    - ''
+#    - -replicator
+#   - -updater
+#    - -auditor
 
-# XXX No auditor? XXX
-- name: start account services
-  command: swift-init account-$item start
-  with_items:
-    - server
-    - replicator
-    - auditor
+#- name: start container services
+#  command: swift-init container-$item start
+#  with_items:
+#    - ''
+#    - -replicator
+#    - -updater
+#    - -auditor
 
+# Note reaper not updater
+#- name: start account services
+#  command: swift-init account-$item start
+#  with_items:
+#    - ''
+#    - -replicator
+#    - -reaper
+#    - -auditor
+
+- name: restart swift-storage node services
+  service: name=swift-{{ item }} state=restarted
+  with_items:
+    - object 
+    - object-replicator
+    - object-updater 
+    - object
+    - container 
+    - container-replicator 
+    - container-updater
+    - container-auditor
+    - account
+    - account-replicator
+    - account-reaper
+    - account-auditor
+
+# XXX FIX ME XXX
+- name: restart syslog
+  service: name=rsyslog state=restarted
+
+# XXX FIX ME XXX
+- name: restart memcached
+  service: name=memcached state=restarted

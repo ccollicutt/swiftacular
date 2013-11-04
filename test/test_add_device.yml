@@ -1,0 +1,10 @@
+---
+
+- hosts: proxy
+
+  tasks:
+
+  - name: try adding a disk device to storage ring
+    swift_ring_builder_add: node=groups['storage'] disks=10
+    with_items:
+    	- groups['storage']
