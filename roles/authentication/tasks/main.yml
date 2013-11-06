@@ -42,12 +42,14 @@
   command: keystone-manage db_sync
   when: keystone.changed
 
-- name: ensure keystone is restarted
-  service: name=keystone state=restarted enabled=yes
+- name: restart keystone  
+  service: name=keystone state=restarted
+  when: keystone.changed
 
  # keystone seems to take a while...
 - name: wait for keystone to come back up
   wait_for: host="192.168.100.50" port=35357
+  when: keystone.changed
 
 
 # XXX NOT WORKING XXX
@@ -84,15 +86,38 @@
 # End endpoints
 # 
 
-# Create a tenant
-- name: create a default keystone tenant
+#
+# Create keystone tenants
+# 
+- name: create a service keystone tenant
+  keystone_user: token={{ keystone_admin_token }} tenant=service tenant_description="Service Tenant"
+  notify: restart keystone
+
+- name: create an admin keystone tenant
+  keystone_user: token={{ keystone_admin_token }} tenant=admin tenant_description="Admin Tenant"
+  notify: restart keystone
+
+- name: create a demo keystone tenant
   keystone_user: token={{ keystone_admin_token }} tenant=demo tenant_description="Default Tenant"
   notify: restart keystone
 
-# Create a user
+#
+# Create keystone users
+#
+- name: create an admin keystone user
+  keystone_user: token={{ keystone_admin_token }} user={{ keystone_admin_user }} tenant=demo password={{ keystone_admin_user_password }}
+  notify: restart keystone
+
 - name: create a default keystone user
   keystone_user: token={{ keystone_admin_token }} user=curtis tenant=demo password=passw0rd
   notify: restart keystone
+
+
+# 
+# Keystone create and apply roles
+#
+- name: create an admin role and add the admin to it
+  keystone_user: token={{ keystone_admin_token }} role={{ keystone_admin_role }} user={{ keystone_admin_role }} tenant={{ keystone_admin_tenant }}
 
 # XXX Shouldn't be doing this here XXX
 #- name: restart keystone
@@ -101,3 +126,4 @@
 - name: test keystone with user-list
   #shell: export SERVICE_TOKEN={{ keystone_admin_token }}; export SERVICE_ENDPOINT=http://192.168.100.50:35357/v2.0; keystone user-list
   shell: keystone --token {{ keystone_admin_token }} --endpoint http://192.168.100.50:35357/v2.0 user-list
+  when: keystone.changed
