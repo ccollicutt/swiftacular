@@ -1,3 +1,8 @@
+---
+
+- name: setup apt-cacher-ng proxy
+  template: src=01proxy.j2 dest=/etc/apt/apt.conf.d/01proxy
+
 # XXX shoudl be using apt_key here I think instead of ubuntu-cloud-keyring XX
 - name: install required packages to add havana repository
   apt: name=$item state=installed update_cache=yes cache_valid_time=3600
@@ -11,6 +16,8 @@
 
 - name: install havana apt repository
   apt_repository: repo='deb http://ubuntu-cloud.archive.canonical.com/ubuntu precise-updates/havana main' state=present
+  register: new_repo
 
 - name: update apt 
   command: apt-get update
+  when: new_repo.changed
