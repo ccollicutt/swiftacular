@@ -109,6 +109,9 @@ def create_ring_devices (region, hostname, disks, zone):
             
             dev_id = builder.add_dev(dev)
 
+            if not dev_id:
+                return 1, 'Device NOT built'
+
             # what are we saving here?
             builder.save(str(type))
 

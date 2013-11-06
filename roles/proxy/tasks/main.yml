@@ -21,8 +21,9 @@
 - name: ensure permissions on /var/cache/swift
   file: path=/var/cache/swift state=directory group=swift owner=swift mode=0755
 
-- name: create /home/swift/keystone-signing
-  file: path=/home/swift/keystone-signing owner=swift group=swift mode=0700
+# NOTE: Signing directory is set in configuration file to be /var/cache/swift
+#- name: create /home/swift/keystone-signing
+#  file: path=/home/swift/keystone-signing state=directory owner=swift group=swift mode=0700
 
 - name: copy over proxy-server.conf
   template: src=proxy-server.conf.j2 dest=/etc/swift/proxy-server.conf owner=swift group=swift mode=0640
@@ -41,17 +42,7 @@
     - object.builder
   when: builders.rc > 0
 
-# XXX zones! XXX
-#- name: add storage devices to ring  
-#  command: swift-ring-builder account.builder add z0-192.168.100.200:6002/$item 100
-#  with_sequence: count=3
+# Moved to storage, where this is "delegated_to"
+#- name: start proxy-server
+#  service: name=swift-proxy state=running
 
-#- name: add storage devices to ring  
-#  command: swift-ring-builder account.builder add z1-192.168.100.201:6002/$item 100
-#  with_sequence: count=3
-
-- name: start proxy-server
-  service: name=proxy-server state=running
-#- name: add storage devices to ring  
-#  command: swift-ring-builder account.builder add z2-192.168.100.202:6002/$item 100
-#  with_sequence: count=3

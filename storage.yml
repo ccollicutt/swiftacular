@@ -1,6 +1,6 @@
 --- 
 - hosts: storage
   roles:
-      - common
-      - swift_common
+     # - common
+     # - swift_common
       - storage 

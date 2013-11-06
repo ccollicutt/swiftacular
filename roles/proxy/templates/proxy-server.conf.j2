@@ -23,8 +23,8 @@ auth_port = 35357
 auth_protocol = http
 auth_uri = http://192.168.100.50:5000
 admin_tenant_name = services
-admin_user = swift
-admin_password = keystone_admin
+admin_user = {{ keystone_swift_user }}
+admin_password = {{ keystone_swift_user_password }}
 delay_auth_decision = 10
 
 [filter:cache]

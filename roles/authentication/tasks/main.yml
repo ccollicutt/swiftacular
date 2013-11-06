@@ -1,9 +1,5 @@
 ---
 
-#
-# NOTE: Right now installing OpenStack Essex Keystone
-# 
-
 # Example: https://github.com/lorin/openstack-ansible/blob/master/services/keystone/keystone.yaml
 
 - name: install required packages
@@ -13,10 +9,6 @@
     - python-keyring
     - mysql-server
     - python-mysqldb
-
-#
-# Keystone from Essex!
-# http://docs.openstack.org/essex/openstack-compute/install/apt/content/install-keystone.html
 
 - name: remove default keystone sqlite database file
   file: path=/var/lib/keystone/keystone.db state=absent
@@ -51,77 +43,55 @@
   wait_for: host="192.168.100.50" port=35357
   when: keystone.changed
 
-
-# XXX NOT WORKING XXX
+# NOTE: Doesn't work with Essex
 #- name: keystone_manage db_sync
 #  keystone_manage: action=db_sync
 #  when: keystone.changed
-
 
 #
 # Keystone endpoints
 # 
 
-# XXX FIX HARDCODED IP XXX
-#- name: create keystone identity endpoint
-#  keystone_service: token={{ keystone_admin_token }} name=keystone type=identity description="Keystone Identity Service" public_url="http://192.168.100.50:35357/v2.0/" region="AB"
-  # AB as in Alberta!
-
+# XXX FIX HARDCODED IPs XXX
 - name: create keystone identity point
   keystone_service: name=keystone type=identity description="Keystone Identity Service" publicurl=http://192.168.100.50:5000/v2.0 internalurl=http://192.168.100.50:5000/v2.0 adminurl=http://192.168.100.50:35357/v2.0 region="AB" token={{ keystone_admin_token }}
-  notify: restart keystone
-
 
 - name: create EC2 compatability keystone service
   keystone_service: name=ec2 type=ec2 description="EC2 Compatability Layer" publicurl=http://192.168.100.50:8773/services/Cloud internalurl=http://192.168.100.50:8773/services/Cloud adminurl=http://192.168.100.50:8773/services/Admin region="AB" token={{ keystone_admin_token }}
-  notify: restart keystone
-
 
 ### XXX Not sure about the URLS here XXX
 - name: create object storage keystone service
   keystone_service: name=swift type=object-store description="Object Storage Service" publicurl='http://127.0.0.1:8080/v1/AUTH_%(tenant_id)s' internalurl='http://127.0.0.1:8080/' adminurl='http://127.0.0.1:8080/v1/AUTH_%(tenant_id)s' region="AB" token={{ keystone_admin_token }}
-  notify: restart keystone
-
-#
-# End endpoints
-# 
 
 #
 # Create keystone tenants
 # 
-- name: create a service keystone tenant
+- name: create service keystone tenant
   keystone_user: token={{ keystone_admin_token }} tenant=service tenant_description="Service Tenant"
-  notify: restart keystone
 
-- name: create an admin keystone tenant
+- name: create admin keystone tenant
   keystone_user: token={{ keystone_admin_token }} tenant=admin tenant_description="Admin Tenant"
-  notify: restart keystone
 
-- name: create a demo keystone tenant
+- name: create demo keystone tenant
   keystone_user: token={{ keystone_admin_token }} tenant=demo tenant_description="Default Tenant"
-  notify: restart keystone
 
 #
 # Create keystone users
 #
-- name: create an admin keystone user
+- name: create admin keystone user
   keystone_user: token={{ keystone_admin_token }} user={{ keystone_admin_user }} tenant=demo password={{ keystone_admin_user_password }}
-  notify: restart keystone
 
-- name: create a default keystone user
+- name: create swift keystone user
+  keystone_user: token={{ keystone_admin_token }} user={{ keystone_swift_user }} tenant=service password={{ keystone_swift_user_password }}
+
+- name: create default keystone user
   keystone_user: token={{ keystone_admin_token }} user=curtis tenant=demo password=passw0rd
-  notify: restart keystone
-
 
 # 
 # Keystone create and apply roles
 #
 - name: create an admin role and add the admin to it
   keystone_user: token={{ keystone_admin_token }} role={{ keystone_admin_role }} user={{ keystone_admin_role }} tenant={{ keystone_admin_tenant }}
-
-# XXX Shouldn't be doing this here XXX
-#- name: restart keystone
-#   service: name=keystone state=restarted
 
 - name: test keystone with user-list
   #shell: export SERVICE_TOKEN={{ keystone_admin_token }}; export SERVICE_ENDPOINT=http://192.168.100.50:35357/v2.0; keystone user-list

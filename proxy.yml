@@ -1,6 +1,7 @@
 --- 
+
 - hosts: proxy
   roles:
-      - common
-      - swift_common
+    #  - common
+    # - swift_common
       - proxy

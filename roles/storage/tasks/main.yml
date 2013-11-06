@@ -19,7 +19,6 @@
 - name: make sure /var/swift/recon exists
   file: path=/var/swift/recon state=directory owner=swift group=swift mode=0750
 
-
 - name: check if losetup loop0 is already up
   command: losetup /dev/loop0
   register: losetup
@@ -57,37 +56,19 @@
 #
 # Run swift_ring_builder_add on each proxy
 # 
-- name: build the ring by delegating to proxy
+- name: build the ring by delegating to proxy nodes
   swift_ring_builder_add: disks=3 region={{ region }} hostname={{ inventory_hostname }} zone={{ zone }}
   delegate_to: "{{ item }}"
   with_items: groups.proxy
 
+# More delegating to proxy nodes...no this won't be confusing at all...but swift-proxy won't start
+# without the ring.gz files that are created by adding devices...
+- name: start swift-proxy on proxy nodes
+  service: name=swift-proxy state=running
+  delegate_to: "{{ item }}"
+  with_items: groups.proxy
+
 # XXX TODO - create fstab XXX
-
-#- name: start object services
-#  command: swift-init object-$item start
-#  with_items:
-#    - ''
-#    - -replicator
-#   - -updater
-#    - -auditor
-
-#- name: start container services
-#  command: swift-init container-$item start
-#  with_items:
-#    - ''
-#    - -replicator
-#    - -updater
-#    - -auditor
-
-# Note reaper not updater
-#- name: start account services
-#  command: swift-init account-$item start
-#  with_items:
-#    - ''
-#    - -replicator
-#    - -reaper
-#    - -auditor
 
 - name: restart swift-storage node services
   service: name=swift-{{ item }} state=restarted

@@ -1,4 +1,6 @@
 ---
+# having to do all to get all packages for the delegate_to used in storage
+- include: all.yml
 - include: authentication.yml
-- include: storage.yml
 - include: proxy.yml
+- include: storage.yml
