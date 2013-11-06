@@ -1,11 +1,13 @@
 [authentication]
 192.168.100.50
 
+[package_cache]
+192.168.100.20
+
 [proxy]
 192.168.100.100
 192.168.100.101
 
-# Storage nodes have entries in host_vars/*
 [storage]
 192.168.100.200
 192.168.100.201

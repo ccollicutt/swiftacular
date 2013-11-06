@@ -1,0 +1,16 @@
+---
+
+#
+# Setup a package caching server
+#
+
+- name: install required packages
+  apt: pkg=$item state=installed update_cache=yes cache_valid_time=3600
+  with_items:
+    - apt-cacher-ng
+
+# Fully quoted lineinefile due to yaml bug: http://www.ansibleworks.com/docs/modules.html#lineinfile
+- name: set bind address in apt-cacher-ng configuration file 
+  lineinfile: "dest=/etc/apt-cacher-ng/acng.conf regexp='^BindAddress' line='BindAddress: 0.0.0.0'"
+  notify:
+    - restart apt-cacher-ng

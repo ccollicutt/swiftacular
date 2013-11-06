@@ -1,0 +1,4 @@
+--- 
+- hosts: package_cache
+  roles:
+      - package_cache
