@@ -24,7 +24,7 @@
 - name: install required packages for swift_common
   apt: pkg=$item state=installed update_cache=yes #cache_valid_time=3600
   with_items:
-    - swift 
+    - swift
     - python-swiftclient
     - openssh-server 
     - rsync 

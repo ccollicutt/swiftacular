@@ -19,8 +19,8 @@
 - name: make sure /var/swift/recon exists
   file: path=/var/swift/recon state=directory owner=swift group=swift mode=0750
 
-- name: check if losetup loop0 is already up
-  command: losetup /dev/loop0
+- name: check if losetup loop1 is already up
+  command: losetup /dev/loop1
   register: losetup
   ignore_errors: True
 
@@ -42,8 +42,12 @@
 - name: edit /etc/sysconfig/rsync
   lineinfile: dest=/etc/default/rsync regexp=^RSYNC_ENABLE line="RSYNC_ENABLE=true"
 
+# XXX Should only restart if needed to XXX
 - name: make sure rsync is running
   service: name=rsync state=started
+
+- name: make sure xinetd is running
+  service: name=xinetd state=running
 
 # XXX Mode? XXX
 - name: copy over *-server.conf files
@@ -56,10 +60,37 @@
 #
 # Run swift_ring_builder_add on each proxy
 # 
-- name: build the ring by delegating to proxy nodes
-  swift_ring_builder_add: disks=3 region={{ region }} hostname={{ inventory_hostname }} zone={{ zone }}
-  delegate_to: "{{ item }}"
-  with_items: groups.proxy
+#- name: build the ring by delegating to proxy nodes
+#  swift_ring_builder_add: disks=3 region={{ region }} hostname={{ inventory_hostname }} zone={{ zone }}
+#  delegate_to: "{{ item }}"
+#  with_items: groups.proxy
+
+- name: build account ring
+  command: chdir=/etc/swift swift-ring-builder account.builder add r{{ region }}z{{ zone }}-{{ inventory_hostname }}:6002/{{ item }} 100
+  delegate_to: 192.168.100.100
+  with_sequence: count=3
+  when: losetup.rc > 0
+
+- name: build container ring
+  command: chdir=/etc/swift swift-ring-builder container.builder add r{{ region }}z{{ zone }}-{{ inventory_hostname }}:6001/{{ item }} 100
+  delegate_to: 192.168.100.100
+  with_sequence: count=3
+  when: losetup.rc > 0
+
+- name: build object ring
+  command: chdir=/etc/swift swift-ring-builder object.builder add r{{region}}z{{ zone }}-{{ inventory_hostname }}:6002/{{ item }} 100
+  delegate_to: 192.168.100.100
+  with_sequence: count=3
+  when: losetup.rc > 0
+
+- name: rebalance rings
+  command: chdir=/etc/swift swift-ring-builder {{item}}.builder rebalance
+  delegate_to: 192.168.100.100
+  when: losetup.rc > 0
+  with_items:
+    - account
+    - object
+    - container
 
 # More delegating to proxy nodes...no this won't be confusing at all...but swift-proxy won't start
 # without the ring.gz files that are created by adding devices...

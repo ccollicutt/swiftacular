@@ -79,7 +79,7 @@ def create_ring_devices (region, hostname, disks, zone):
             return 1, 'Incorrected builder type'
 
         # setup the builder
-        builder_file = '/etc/swift/' + str(type) + '.builder'
+        builder_file = '/etc/swift/' + type + '.builder'
         builder = RingBuilder.load(builder_file)
 
         for j in xrange(int(disks)):
@@ -100,7 +100,7 @@ def create_ring_devices (region, hostname, disks, zone):
             replication_port = port
 
             
-            dev = { 'region': region, 'zone': 'z' + zone, 'ip': ip_address ,
+            dev = { 'region': region, 'zone': zone, 'ip': ip_address ,
                     'port': port, 'device': device, 'meta': meta,
                     'replication_ip': replication_ip,
                     'replication_port': replication_port, 'weight': weight }
@@ -109,11 +109,11 @@ def create_ring_devices (region, hostname, disks, zone):
             
             dev_id = builder.add_dev(dev)
 
-            if not dev_id:
-                return 1, 'Device NOT built'
-
             # what are we saving here?
-            builder.save(str(type))
+            #ring_file = '/etc/swift/' + type + '.ring.gz'
+            #builder.save(ring_file)
+            builder.save(builder_file)
+
 
             #if not dev_id:
             #    return 1, "creating dev failed"

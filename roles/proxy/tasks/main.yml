@@ -42,7 +42,7 @@
     - object.builder
   when: builders.rc > 0
 
-# Moved to storage, where this is "delegated_to"
+# NOTE: Moved to storage, where this is "delegated_to"
 #- name: start proxy-server
 #  service: name=swift-proxy state=running
 
