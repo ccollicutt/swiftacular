@@ -1,26 +1,8 @@
 ---
 
-#- name: temp update cache
-#  command: apt-get update 
-
-# XXX shoudl be using apt_key here I think instead of ubuntu-cloud-keyring XX
-- name: install required packages to add havana repository
-  apt: name=$item state=installed update_cache=yes cache_valid_time=3600
-  with_items:
-    - ubuntu-cloud-keyring
-    - python-pycurl
-
-
-# XXX Not working; using ubuntu-cloud-keyring package instead
-#- name: install havana apt key
-#  apt_key: url=http://ubuntu-cloud.archive.canonical.com/ubuntu/dists/precise-updates/havana/Release.gpg 
-
-- name: install havana apt repository
-  apt_repository: repo='deb http://ubuntu-cloud.archive.canonical.com/ubuntu precise-updates/havana main' state=present
-
-#- name: run apt-key update, apt-get update
-#  shell: apt-key update; apt-get update
-
+# hmmm on http://docs.openstack.org/havana/install-guide/install/apt/content/general-installation-steps-swift.html 
+# installs: swift openssh-server rsync memcached python-netifaces  python-xattr python-memcache
+# think memcached would startup then...but is not needed on storage nodes afaik...
 - name: install required packages for swift_common
   apt: pkg=$item state=installed update_cache=yes #cache_valid_time=3600
   with_items:
@@ -28,10 +10,7 @@
     - python-swiftclient
     - openssh-server 
     - rsync 
-    - memcached 
-    - python-netifaces 
-    - python-xattr 
-    - python-memcache
+
 
 - name: ensure /etc/swift exists
   file: path=/etc/swift owner=swift group=swift mode=0750 state=directory

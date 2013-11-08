@@ -2,8 +2,10 @@
 # XXX Fix these certs XXX
 #cert_file = /etc/swift/cert.crt
 #key_file = /etc/swift/cert.key
+# This is 8888 in official havana doc
 bind_port = 8080
-workers = 32
+# is not in official havana example
+#workers = 32
 user = swift
 
 [pipeline:main]
@@ -24,11 +26,15 @@ signing_dir = /var/cache/swift
 auth_host = 192.168.100.50
 auth_port = 35357
 auth_protocol = http
-auth_uri = http://192.168.100.50:5000
+# is not in official havana example
+#auth_uri = http://192.168.100.50:5000
 admin_tenant_name = service
 admin_user = swift
 admin_password = {{ keystone_generic_service_password }}
-delay_auth_decision = 10
+#delay_auth_decision = 10
+# is set to tru in official havana documentation
+delay_auth_decision = true
+
 
 [filter:cache]
 use = egg:swift#memcache

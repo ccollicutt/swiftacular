@@ -38,8 +38,6 @@
     - ubuntu-cloud-keyring
     - python-pycurl
     - ntp
-- name: make sure ntpd is running
-  service: name=ntp state=running
 
 # XXX Not working; using ubuntu-cloud-keyring package instead
 #- name: install havana apt key

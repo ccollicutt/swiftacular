@@ -29,9 +29,3 @@
 - name: restart syslog
   service: name=rsyslog state=restarted
   when: new_rings.changed
-
-
-# XXX FIX ME XXX
-- name: restart memcached
-  service: name=memcached state=restarted
-  when: new_rings.changed
