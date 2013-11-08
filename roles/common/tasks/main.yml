@@ -1,5 +1,33 @@
 ---
 
+#
+# NTP
+#
+
+- name: set timezone
+  template: src=timezone.j2 dest=/etc/timezone owner=root group=root mode=0644
+  register: timezone
+
+- name: reconfigure tzdata
+  command: dpkg-reconfigure --frontend noninteractive tzdata
+  when: timezone.changed
+
+- name: stop ntpd
+  service: name=ntp state=stopped
+  when: timezone.changed
+
+- name: set time with ntpdate
+  command: "ntpdate -s ntp.ubuntu.com"
+  when: timezone.changed
+
+- name: start ntpd
+  service: name=ntp state=started
+  when: timezone.changed
+
+#
+# Packages
+#
+
 - name: setup apt-cacher-ng proxy
   template: src=01proxy.j2 dest=/etc/apt/apt.conf.d/01proxy
 
@@ -9,6 +37,9 @@
   with_items:
     - ubuntu-cloud-keyring
     - python-pycurl
+    - ntp
+- name: make sure ntpd is running
+  service: name=ntp state=running
 
 # XXX Not working; using ubuntu-cloud-keyring package instead
 #- name: install havana apt key
@@ -21,3 +52,4 @@
 - name: update apt 
   command: apt-get update
   when: new_repo.changed
+

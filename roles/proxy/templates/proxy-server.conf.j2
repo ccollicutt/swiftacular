@@ -13,7 +13,7 @@ account_autocreate = true
 
 [filter:keystoneauth]
 use = egg:swift#keystoneauth
-operator_roles = Member,admin, swiftoperator
+operator_roles = Member, admin, swiftoperator
 
 [filter:authtoken]
 paste.filter_factory = keystoneclient.middleware.auth_token:filter_factory
@@ -21,8 +21,7 @@ signing_dir = /var/cache/swift
 auth_host = 192.168.100.50
 auth_port = 35357
 auth_protocol = http
-# XXX Commenting out for now -- curtis XXX
-#auth_uri = http://192.168.100.50:5000
+auth_uri = http://192.168.100.50:5000
 admin_tenant_name = service
 admin_user = swift
 admin_password = {{ keystone_generic_service_password }}
@@ -30,7 +29,9 @@ delay_auth_decision = 10
 
 [filter:cache]
 use = egg:swift#memcache
-memcache_servers = 192.168.100.50:11211,192.168.100.51:11211
+#memcache_servers = 192.168.100.100:11211,192.168.100.101:11211
+memcache_servers = 192.168.100.100:11211
+
 
 [filter:catch_errors]
 use = egg:swift#catch_errors

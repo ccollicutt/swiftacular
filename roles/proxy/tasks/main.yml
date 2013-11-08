@@ -13,6 +13,20 @@
     - python-swiftclient 
     - swift-plugin-s3
 
+- name: create self-signed ssl key 
+  command: chdir=/etc/swift openssl req -new -x509 -nodes -out cert.crt -keyout cert.key
+
+# Create an adminrc file to easily source for testing
+- name: create an adminrc file to easily source for testin authentiction
+  template: src=adminrc.j2 dest=/root/adminrc
+
+- name: create a swiftrc file to easily source for testin authentiction
+  template: src=swiftrc.j2 dest=/root/swiftrc
+
+- name: tell memcached to listen on ip
+  lineinfile: dest=/etc/memcached.conf regexp="^-l" line='-l {{ inventory_hostname }}'
+  notify: restart memcached
+
 # XXX 
 - name: make sure memcached is running
   service: name=memcached state=running
@@ -20,10 +34,6 @@
 # XXX Mode? XXX
 - name: ensure permissions on /var/cache/swift
   file: path=/var/cache/swift state=directory group=swift owner=swift mode=0755
-
-# NOTE: Signing directory is set in configuration file to be /var/cache/swift
-#- name: create /home/swift/keystone-signing
-#  file: path=/home/swift/keystone-signing state=directory owner=swift group=swift mode=0700
 
 - name: copy over proxy-server.conf
   template: src=proxy-server.conf.j2 dest=/etc/swift/proxy-server.conf owner=swift group=swift mode=0640
