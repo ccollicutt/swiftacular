@@ -106,9 +106,6 @@
 - name: create a swiftoperator role and add the demo user to it
   keystone_user: token={{ keystone_admin_token }} role=swiftoperator user=curtis tenant=demo
 
-
-
-
 #
 # Run some tests
 # 

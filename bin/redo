@@ -1,0 +1,11 @@
+#!/bin/bash
+
+for s in keystone-01 proxy-01 storage-01 storage-02 storage-03 storage-04 storage-05; do
+    echo "Deleting swift-$s"
+    vagrant destroy -f swift-$s
+    sleep 1
+done
+
+sleep 2
+
+vagrant up

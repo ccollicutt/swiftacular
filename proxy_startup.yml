@@ -1,0 +1,4 @@
+--- 
+- hosts: proxy
+  roles:
+      - proxy_startup

@@ -13,8 +13,10 @@
     - python-swiftclient 
     - swift-plugin-s3
 
+# XXX Fix key info XXX
 - name: create self-signed ssl key 
-  command: chdir=/etc/swift openssl req -new -x509 -nodes -out cert.crt -keyout cert.key
+  #command: chdir=/etc/swift openssl req -new -x509 -nodes -out cert.crt -keyout cert.key
+  command: openssl req -new -nodes -x509 -subj "/C=CA/ST=Alberta/L=Edmonton/O=Swift/CN=Example.com" -days 3650 -keyout /etc/swift/cert.key -out /etc/swift/cert.crt -extensions v3_ca creates=/etc/swift/cert.crt
 
 # Create an adminrc file to easily source for testing
 - name: create an adminrc file to easily source for testin authentiction
@@ -51,8 +53,4 @@
     - container.builder
     - object.builder
   when: builders.rc > 0
-
-# NOTE: Moved to storage, where this is "delegated_to"
-#- name: start proxy-server
-#  service: name=swift-proxy state=running
 

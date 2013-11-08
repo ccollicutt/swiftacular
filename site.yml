@@ -5,3 +5,5 @@
 - include: authentication.yml
 - include: proxy.yml
 - include: storage.yml
+- include: proxy_startup.yml
+- include: storage_startup.yml
