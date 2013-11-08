@@ -1,0 +1,27 @@
+#
+# Finally startup the proxy
+# 
+
+- name: rebalance rings
+  command: creates=/etc/swift/{{ item }}.ring.gz chdir=/etc/swift swift-ring-builder {{ item }}.builder rebalance
+  register: rebalance
+  with_items:
+    - account
+    - object
+    - container
+
+# XXX This might fetch from all proxies...
+- name: Grab the resulting *.ring.gz files and put them on all proxy and storage nodes
+  fetch: dest=fetch/{{ item }}.ring.gz flat=yes src=/etc/swift/{{ item }}.ring.gz
+  when: rebalance.changed
+  with_items:
+    - account
+    - object
+    - container
+
+# XXX how to put the ring.gz files on the second proxy? XXX
+
+# More delegating to proxy nodes...no this won't be confusing at all...but swift-proxy won't start
+# without the ring.gz files that are created by adding devices...
+- name: start swift-proxy on proxy nodes
+  service: name=swift-proxy state=running

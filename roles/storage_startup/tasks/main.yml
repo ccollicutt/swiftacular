@@ -1,0 +1,37 @@
+---
+
+- name: put the *.ring.gz files on all storage servers
+  copy: src=fetch/{{ item }}.ring.gz dest=/etc/swift/{{item}}.ring.gz
+  register: new_rings
+  with_items:
+    - account
+    - object
+    - container
+
+- name: restart swift-storage node services
+  service: name=swift-{{ item }} state=restarted
+  when: new_rings.changed
+  with_items:
+    - object 
+    - object-replicator
+    - object-updater 
+    - object
+    - container 
+    - container-replicator 
+    - container-updater
+    - container-auditor
+    - account
+    - account-replicator
+    - account-reaper
+    - account-auditor
+
+# XXX FIX ME XXX
+- name: restart syslog
+  service: name=rsyslog state=restarted
+  when: new_rings.changed
+
+
+# XXX FIX ME XXX
+- name: restart memcached
+  service: name=memcached state=restarted
+  when: new_rings.changed
