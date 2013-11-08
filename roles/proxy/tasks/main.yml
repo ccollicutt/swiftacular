@@ -33,9 +33,9 @@
 - name: make sure memcached is running
   service: name=memcached state=running
 
-# XXX Mode? XXX
+# swift-proxy logs say mode should be 0700
 - name: ensure permissions on /var/cache/swift
-  file: path=/var/cache/swift state=directory group=swift owner=swift mode=0755
+  file: path=/var/cache/swift state=directory group=swift owner=swift mode=0700
 
 - name: copy over proxy-server.conf
   template: src=proxy-server.conf.j2 dest=/etc/swift/proxy-server.conf owner=swift group=swift mode=0640
@@ -47,10 +47,10 @@
 
 # XXX how to see if this needs to be run? XXX
 - name: run swift-ring-builder for accounts, containers, and objects
-  command: swift-ring-builder $item create 18 3 1 chdir=/etc/swift 
+  command: chdir=/etc/swift creates=/etc/swift/{{ item }}.ring.gz swift-ring-builder {{ item }}.builder create {{ partition_power }} 3 1   
   with_items:
-    - account.builder
-    - container.builder
-    - object.builder
+    - account
+    - container
+    - object
   when: builders.rc > 0
 

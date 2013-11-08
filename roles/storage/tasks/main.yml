@@ -33,7 +33,7 @@
 # XXX Should be a module XXX
 # XXX Should chwon swift:swift but prob yaml bug to use : XXX
 - name: create and mount image files for swift storage
-  shell: truncate --size 10G /var/tmp/{{ disk_prefix }}{{ item }}.img; losetup /dev/loop{{ item }} /var/tmp/{{ disk_prefix }}{{ item }}.img; mkfs.xfs -i size=1024 /dev/loop{{ item }}; mkdir /srv/node/{{ disk_prefix }}{{ item }}; mount -o noatime,nodiratime,nobarrier /dev/loop{{ item }} /srv/node/{{ disk_prefix }}{{ item }}; chown -R swift /srv/node/{{ disk_prefix }}{{ item }}
+  shell: truncate --size {{ loop_disk_size }}G /var/tmp/{{ disk_prefix }}{{ item }}.img; losetup /dev/loop{{ item }} /var/tmp/{{ disk_prefix }}{{ item }}.img; mkfs.xfs -i size=1024 /dev/loop{{ item }}; mkdir /srv/node/{{ disk_prefix }}{{ item }}; mount -o noatime,nodiratime,nobarrier /dev/loop{{ item }} /srv/node/{{ disk_prefix }}{{ item }}; chown -R swift /srv/node/{{ disk_prefix }}{{ item }}
   with_sequence: count=3
   when: "losetup.rc > 0"
 

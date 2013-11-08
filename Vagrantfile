@@ -2,6 +2,7 @@
 # vi: set ft=ruby :
 
 nodes = {
+    'swift-client' => [1, 10],
     'swift-package-cache' => [1, 20],
     'swift-keystone' => [1, 50],
     'swift-proxy'   => [1, 100],

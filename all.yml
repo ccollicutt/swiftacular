@@ -2,6 +2,7 @@
 - hosts: 
   - proxy
   - storage
+  - client
   roles:
       - common
       - swift_common
