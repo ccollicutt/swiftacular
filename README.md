@@ -1,5 +1,5 @@
 # OpenStack Swift and Ansible
 
-This playbook will deploy OpenStack Swift using Ansible.
+This playbook will deploy OpenStack Swift using Ansible and Vagrant and Virtualbox.
 
-NOTE: In this current playbook Authentication will be done by and OpenStack Essex keystone server.
+NOTE: Not done yet!
