@@ -1,9 +1,35 @@
 ---
-# having to do all to get all packages for the delegate_to used in storage
-- include: package_cache.yml
-- include: all.yml
-- include: authentication.yml
-- include: proxy.yml
-- include: storage.yml
-- include: proxy_startup.yml
-- include: storage_startup.yml
+
+- hosts: package_cache
+  roles:
+    - package_cache
+
+- hosts: all
+  roles:
+   - common
+
+- hosts:
+    - proxy
+    - storage
+  roles:
+    - swift_common
+
+- hosts: authentication
+  roles:
+   - authentication
+
+- hosts: proxy
+  roles:
+   - proxy
+
+- hosts: storage
+  roles:
+    - storage
+
+- hosts: proxy
+  roles:
+    - proxy_startup
+
+- hosts: storage
+  roles:
+    - storage_startup

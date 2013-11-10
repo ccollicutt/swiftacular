@@ -1,4 +1,0 @@
---- 
-- hosts: storage
-  roles:
-      - storage_startup
