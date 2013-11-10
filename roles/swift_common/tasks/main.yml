@@ -11,7 +11,6 @@
     - openssh-server 
     - rsync 
 
-
 - name: ensure /etc/swift exists
   file: path=/etc/swift owner=swift group=swift mode=0750 state=directory
 

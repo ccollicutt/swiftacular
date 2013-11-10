@@ -12,6 +12,9 @@
     - python-keystoneclient 
     - python-swiftclient 
     - swift-plugin-s3
+    - python-netifaces 
+    - python-xattr 
+    - python-memcache
 
 # XXX Fix key info XXX
 - name: create self-signed ssl key 

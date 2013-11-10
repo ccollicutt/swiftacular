@@ -79,7 +79,7 @@
   when: "losetup.rc > 0"
 
 - name: build object ring
-  command: chdir=/etc/swift swift-ring-builder object.builder add r{{ region }}z{{ zone }}-{{ inventory_hostname }}:6002/{{ disk_prefix }}{{ item }} 100
+  command: chdir=/etc/swift swift-ring-builder object.builder add r{{ region }}z{{ zone }}-{{ inventory_hostname }}:6000/{{ disk_prefix }}{{ item }} 100
   delegate_to: 192.168.100.100
   with_sequence: count=3
   when: "losetup.rc > 0"

@@ -1,13 +1,14 @@
 ---
 
 - name: put the *.ring.gz files on all storage servers
-  copy: src=fetch/{{ item }}.ring.gz dest=/etc/swift/{{item}}.ring.gz
+  copy: src=fetch/{{ item }}.ring.gz dest=/etc/swift/{{item}}.ring.gz owner=swift group=swift mode=0640
   register: new_rings
   with_items:
     - account
     - object
     - container
 
+# XXX Cloud use swit init all here too I think
 - name: restart swift-storage node services
   service: name=swift-{{ item }} state=restarted
   when: new_rings.changed
