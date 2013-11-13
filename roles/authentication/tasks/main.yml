@@ -13,8 +13,15 @@
 - name: remove default keystone sqlite database file
   file: path=/var/lib/keystone/keystone.db state=absent
 
+
 - name: copy over keystone.conf from template
   template: src=keystone.conf.j2 dest=/etc/keystone/keystone.conf owner=root group=root mode=0644
+  notify:
+    - restart keystone
+
+# Note this would only be used in test setups
+- name: setup keystone ssl
+  command: keystone-manage ssl_setup --keystone-user keystone --keystone-group keystone
   notify:
     - restart keystone
 
@@ -55,56 +62,56 @@
 # XXX FIX HARDCODED IPs XXX
 # XXX FIX region? XXX
 - name: create keystone identity point
-  keystone_service: name=keystone type=identity description="Keystone Identity Service" publicurl=http://192.168.100.50:5000/v2.0 internalurl=http://192.168.100.50:5000/v2.0 adminurl=http://192.168.100.50:35357/v2.0 region=RegionOne token={{ keystone_admin_token }}
+  keystone_service: name=keystone type=identity description="Keystone Identity Service" publicurl=https://192.168.100.50:5000/v2.0 internalurl=http://192.168.100.50:5000/v2.0 adminurl=http://192.168.100.50:35357/v2.0 region=RegionOne token={{ keystone_admin_token }} endpoint=https://127.0.0.1:35357/v2.0
 
 - name: create EC2 compatability keystone service
-  keystone_service: name=ec2 type=ec2 description="EC2 Compatability Layer" publicurl=http://192.168.100.50:8773/services/Cloud internalurl=http://192.168.100.50:8773/services/Cloud adminurl=http://192.168.100.50:8773/services/Admin region=RegionOne token={{ keystone_admin_token }}
+  keystone_service: name=ec2 type=ec2 description="EC2 Compatability Layer" publicurl=https://192.168.100.50:8773/services/Cloud internalurl=http://192.168.100.50:8773/services/Cloud adminurl=http://192.168.100.50:8773/services/Admin region=RegionOne token={{ keystone_admin_token }} endpoint=https://127.0.0.1:35357/v2.0
 
 ### XXX Not sure about the URLS here XXX
 - name: create object storage keystone service
-  keystone_service: name=swift type=object-store description="Object Storage Service" publicurl='http://192.168.100.100:8080/v1/AUTH_\$(tenant_id)s' internalurl='http://192.168.100.100:8080/v1/AUTH_\$(tenant_id)s' adminurl='http://192.168.100.100:8080/v1' region=RegionOne token={{ keystone_admin_token }}
+  keystone_service: name=swift type=object-store description="Object Storage Service" publicurl='https://192.168.100.100:8080/v1/AUTH_\$(tenant_id)s' internalurl='http://192.168.100.100:8080/v1/AUTH_\$(tenant_id)s' adminurl='http://192.168.100.100:8080/v1' region=RegionOne token={{ keystone_admin_token }} endpoint=https://127.0.0.1:35357/v2.0
 
 #
 # Create keystone tenants
 # 
 - name: create service keystone tenant
-  keystone_user: token={{ keystone_admin_token }} tenant=service tenant_description="Service Tenant"
+  keystone_user: token={{ keystone_admin_token }} tenant=service tenant_description="Service Tenant" endpoint="https://127.0.0.1:35357/v2.0"
 
 - name: create admin keystone tenant
-  keystone_user: token={{ keystone_admin_token }} tenant=admin tenant_description="Admin Tenant"
+  keystone_user: token={{ keystone_admin_token }} tenant=admin tenant_description="Admin Tenant" endpoint="https://127.0.0.1:35357/v2.0"
 
 - name: create demo keystone tenant
-  keystone_user: token={{ keystone_admin_token }} tenant=demo tenant_description="Default Tenant"
+  keystone_user: token={{ keystone_admin_token }} tenant=demo tenant_description="Default Tenant" endpoint="https://127.0.0.1:35357/v2.0"
 
 #
 # Create keystone users
 #
 - name: create admin keystone user
-  keystone_user: token={{ keystone_admin_token }} user={{ keystone_admin_user }} tenant=demo password={{ keystone_admin_user_password }}
+  keystone_user: token={{ keystone_admin_token }} user={{ keystone_admin_user }} tenant=demo password={{ keystone_admin_user_password }} endpoint="https://127.0.0.1:35357/v2.0"
 
 - name: create swift service keystone user
-  keystone_user: token={{ keystone_admin_token }} user=swift tenant=service password={{ keystone_generic_service_password }}
+  keystone_user: token={{ keystone_admin_token }} user=swift tenant=service password={{ keystone_generic_service_password }} endpoint="https://127.0.0.1:35357/v2.0"
 
 - name: create ec2 service keystone user
-  keystone_user: token={{ keystone_admin_token }} user=ec2 tenant=service password={{ keystone_generic_service_password }}
+  keystone_user: token={{ keystone_admin_token }} user=ec2 tenant=service password={{ keystone_generic_service_password }} endpoint="https://127.0.0.1:35357/v2.0"
 
 - name: create default keystone user
-  keystone_user: token={{ keystone_admin_token }} user=curtis tenant=demo password=passw0rd
+  keystone_user: token={{ keystone_admin_token }} user=curtis tenant=demo password=passw0rd endpoint="https://127.0.0.1:35357/v2.0"
 
 # 
 # Keystone create and apply roles
 #
 - name: create an admin role and add the admin to it
-  keystone_user: token={{ keystone_admin_token }} role={{ keystone_admin_role }} user={{ keystone_admin_user }} tenant={{ keystone_admin_tenant }}
+  keystone_user: token={{ keystone_admin_token }} role={{ keystone_admin_role }} user={{ keystone_admin_user }} tenant={{ keystone_admin_tenant }} endpoint="https://127.0.0.1:35357/v2.0"
 
 - name: create an admin role and add the admin to it
-  keystone_user: token={{ keystone_admin_token }} role={{ keystone_admin_role }} user=swift tenant=service
+  keystone_user: token={{ keystone_admin_token }} role={{ keystone_admin_role }} user=swift tenant=service endpoint="https://127.0.0.1:35357/v2.0"
 
 - name: create an admin role and add the admin to it
-  keystone_user: token={{ keystone_admin_token }} role={{ keystone_admin_role }} user=ec2 tenant=service
+  keystone_user: token={{ keystone_admin_token }} role={{ keystone_admin_role }} user=ec2 tenant=service endpoint="https://127.0.0.1:35357/v2.0"
 
 - name: create a swiftoperator role and add the demo user to it
-  keystone_user: token={{ keystone_admin_token }} role=swiftoperator user=curtis tenant=demo
+  keystone_user: token={{ keystone_admin_token }} role=swiftoperator user=curtis tenant=demo endpoint="https://127.0.0.1:35357/v2.0"
 
 #
 # Run some tests
@@ -112,5 +119,5 @@
 
 - name: test keystone with user-list
   #shell: export SERVICE_TOKEN={{ keystone_admin_token }}; export SERVICE_ENDPOINT=http://192.168.100.50:35357/v2.0; keystone user-list
-  shell: keystone --token {{ keystone_admin_token }} --endpoint http://192.168.100.50:35357/v2.0 user-list
+  shell: keystone --insecure --token {{ keystone_admin_token }} --endpoint https://192.168.100.50:35357/v2.0 user-list
   when: keystone.changed

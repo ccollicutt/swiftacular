@@ -47,12 +47,9 @@
 - name: make sure rsync is running
   service: name=rsync state=started
 
-#- name: make sure xinetd is running
-#  service: name=xinetd state=running
-
 # XXX Mode? XXX
 - name: copy over *-server.conf files
-  template: src={{ item }}-server.conf.j2 dest=/etc/swift/$item-server.conf owner=swift group=swift mode=0644
+  template: src={{ item }}-server.conf.j2 dest=/etc/swift/{{ item }}-server.conf owner=swift group=swift mode=0644
   with_items:
     - account
     - container

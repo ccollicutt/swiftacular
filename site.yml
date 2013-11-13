@@ -22,7 +22,9 @@
   roles:
    - proxy
 
+# Using serial because of delegate_to in the playbook
 - hosts: storage
+  #serial: 1
   roles:
     - storage
 
