@@ -1,16 +1,22 @@
 ---
 
+#
+# First setup a package_cache, especially when using
+# your laptop and Vagrant
+#
+
 - hosts: package_cache
   roles:
-    - package_cache
+  - package_cache
 
-- hosts: all
+- hosts: 
+  - all
   roles:
-   - common
+  - common
 
 - hosts:
-    - proxy
-    - storage
+  - proxy
+  - storage
   roles:
     - swift_common
 
@@ -18,19 +24,25 @@
   roles:
    - authentication
 
-- hosts: proxy
+- hosts: 
+  - proxy
   roles:
-   - proxy
+  - proxy
 
-# Using serial because of delegate_to in the playbook
+#
+# I would have expected serial to work here, and
+# to be the right way to do it but at the time I
+# tried recieved "too many files open" errors.
+#
+
 - hosts: storage
   #serial: 1
   roles:
-    - storage
+  - storage
 
 #
 # These are not so much roles as starting services
-# though also includes distributing the ring files
+# though also includes distributing the ring files.
 # 
 
 - hosts: proxy
