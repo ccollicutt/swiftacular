@@ -15,6 +15,11 @@
   - common
 
 - hosts:
+  - lbssl
+  roles:
+  - lbssl
+
+- hosts:
   - proxy
   - storage
   roles:

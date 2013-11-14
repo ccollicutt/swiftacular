@@ -1,0 +1,40 @@
+---
+
+# 
+# Install and configure pound to be ssl termination for swift proxy
+# 
+
+- name: install required packages for lbssl
+  apt: pkg=$item state=installed update_cache=yes cache_valid_time=3600
+  with_items:
+    - pound
+    - openssl
+
+# XXX FIX ME! XXX
+- name: create self-signed SSL cert for pound
+  command: openssl req -new -nodes -x509 -subj "/C=US/ST=Oregon/L=Portland/O=IT/CN=${ansible_fqdn}" -days 3650 -keyout /etc/pound/server.key -out /etc/pound/server.crt -extensions v3_ca creates=/etc/pound/server.crt
+  register: new_cert
+  notify: restart pound
+
+- name: verify cert file
+  command: openssl x509 -in /etc/pound/server.crt -text
+  when: new_cert.changed
+
+- name: create a pem file
+  command: openssl x509 -in /etc/pound/server.crt -out /etc/pound/server.pem 
+  when: new_cert.changed
+
+- name: add server.key to server.pem file
+  shell: openssl rsa -in /etc/pound/server.key >> /etc/pound/server.pem
+  when: new_cert.changed
+
+- name: set startup to true in /etc/default/pound
+  lineinfile: dest=/etc/default/pound regexp=^startup=0 line="startup=1"
+
+- name: ensure pound is running
+  service: name=pound state=running
+
+- name: copy over pound.cfg
+  template: src=pound.cfg.j2 dest=/etc/pound/pound.cfg owner=root group=root mode=0644
+  notify: restart pound
+
