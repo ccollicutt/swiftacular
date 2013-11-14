@@ -13,7 +13,6 @@
 - name: remove default keystone sqlite database file
   file: path=/var/lib/keystone/keystone.db state=absent
 
-
 - name: copy over keystone.conf from template
   template: src=keystone.conf.j2 dest=/etc/keystone/keystone.conf owner=root group=root mode=0644
   notify:
@@ -21,7 +20,7 @@
 
 # Note this would only be used in test setups
 - name: setup keystone ssl
-  command: keystone-manage ssl_setup --keystone-user keystone --keystone-group keystone
+  command: creates=/etc/keystone/ssl/certs/keystone.pem keystone-manage ssl_setup --keystone-user keystone --keystone-group keystone
   notify:
     - restart keystone
 
@@ -61,15 +60,15 @@
 
 # XXX FIX HARDCODED IPs XXX
 # XXX FIX region? XXX
-- name: create keystone identity point
-  keystone_service: name=keystone type=identity description="Keystone Identity Service" publicurl=https://192.168.100.50:5000/v2.0 internalurl=http://192.168.100.50:5000/v2.0 adminurl=http://192.168.100.50:35357/v2.0 region=RegionOne token={{ keystone_admin_token }} endpoint=https://127.0.0.1:35357/v2.0
+- name: Create keystone identity point
+  keystone_service: name=keystone type=identity description="Keystone Identity Service" publicurl="https://192.168.100.50:5000/v2.0" internalurl="http://192.168.100.50:5000/v2.0" adminurl="http://192.168.100.50:35357/v2.0" region=RegionOne token={{ keystone_admin_token }} endpoint="https://127.0.0.1:35357/v2.0"
 
-- name: create EC2 compatability keystone service
-  keystone_service: name=ec2 type=ec2 description="EC2 Compatability Layer" publicurl=https://192.168.100.50:8773/services/Cloud internalurl=http://192.168.100.50:8773/services/Cloud adminurl=http://192.168.100.50:8773/services/Admin region=RegionOne token={{ keystone_admin_token }} endpoint=https://127.0.0.1:35357/v2.0
+- name: Create EC2 compatability keystone service
+  keystone_service: name=ec2 type=ec2 description="EC2 Compatability Layer" publicurl=https://192.168.100.50:8773/services/Cloud internalurl=http://192.168.100.50:8773/services/Cloud adminurl=http://192.168.100.50:8773/services/Admin region=RegionOne token={{ keystone_admin_token }} endpoint="https://127.0.0.1:35357/v2.0"
 
 ### XXX Not sure about the URLS here XXX
-- name: create object storage keystone service
-  keystone_service: name=swift type=object-store description="Object Storage Service" publicurl='https://192.168.100.100:8080/v1/AUTH_\$(tenant_id)s' internalurl='http://192.168.100.100:8080/v1/AUTH_\$(tenant_id)s' adminurl='http://192.168.100.100:8080/v1' region=RegionOne token={{ keystone_admin_token }} endpoint=https://127.0.0.1:35357/v2.0
+- name: Create object storage keystone service
+  keystone_service: name=swift type=object-store description="Object Storage Service" publicurl='https://192.168.100.100:8080/v1/AUTH_\$(tenant_id)s' internalurl='http://192.168.100.100:8080/v1/AUTH_\$(tenant_id)s' adminurl='http://192.168.100.100:8080/v1' region=RegionOne token={{ keystone_admin_token }} endpoint="https://127.0.0.1:35357/v2.0"
 
 #
 # Create keystone tenants

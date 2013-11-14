@@ -5,6 +5,7 @@ nodes = {
     'swift-client' => [1, 10],
     'swift-package-cache' => [1, 20],
     'swift-keystone' => [1, 50],
+    'swift-ssl' => [1, 30],
     'swift-proxy'   => [1, 100],
     'swift-storage' => [5, 200],
 }

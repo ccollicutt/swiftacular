@@ -28,10 +28,16 @@
   roles:
     - storage
 
+#
+# These are not so much roles as starting services
+# though also includes distributing the ring files
+# 
+
 - hosts: proxy
-  roles:
-    - proxy_startup
+  tasks:
+  - include: start_proxy.yml
 
 - hosts: storage
-  roles:
-    - storage_startup
+  tasks:
+  - include: start_storage.yml
+  

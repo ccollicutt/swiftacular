@@ -1,18 +1,31 @@
 ---
 
 #
+# Test connectivity
+#
+- name: Test internet connectivity for each host
+  command: ping -c 1 -w 1 google.com
+
+#
 # NTP
 #
 
-- name: set timezone
+- name: install ntp package
+  apt: pkg=ntp state=installed
+
+- name: set timezone to {{timezone_area}}/{timezone_city}
   template: src=timezone.j2 dest=/etc/timezone owner=root group=root mode=0644
   register: timezone
 
-- name: reconfigure tzdata
-  command: dpkg-reconfigure --frontend noninteractive tzdata
+- name: setup timezone link
+  shell: ln -sf /usr/share/zoneinfo/{{timezone_area}}/{{timezone_city}} /etc/localtime
   when: timezone.changed
 
-- name: stop ntpd
+#- name: reconfigure tzdata
+#  command: dpkg-reconfigure --frontend noninteractive tzdata
+#  when: timezone.changed
+
+- name: stop ntpd to run ntpdate
   service: name=ntp state=stopped
   when: timezone.changed
 
@@ -21,11 +34,11 @@
   when: timezone.changed
 
 - name: start ntpd
-  service: name=ntp state=started
+  service: name=ntp state=running enabled=yes
   when: timezone.changed
 
 #
-# Packages
+# Package cache
 #
 
 - name: setup apt-cacher-ng proxy
@@ -37,7 +50,6 @@
   with_items:
     - ubuntu-cloud-keyring
     - python-pycurl
-    - ntp
 
 # XXX Not working; using ubuntu-cloud-keyring package instead
 #- name: install havana apt key

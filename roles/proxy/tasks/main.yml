@@ -16,10 +16,10 @@
     - python-xattr 
     - python-memcache
 
-# XXX Fix key info XXX
-- name: create self-signed ssl key 
+# Should terminate SSL before hitting proxy
+#- name: create self-signed ssl key 
   #command: chdir=/etc/swift openssl req -new -x509 -nodes -out cert.crt -keyout cert.key
-  command: openssl req -new -nodes -x509 -subj "/C=CA/ST=Alberta/L=Edmonton/O=Swift/CN=Example.com" -days 3650 -keyout /etc/swift/cert.key -out /etc/swift/cert.crt -extensions v3_ca creates=/etc/swift/cert.crt
+#  command: openssl req -new -nodes -x509 -subj "/C=CA/ST=Alberta/L=Edmonton/O=Swift/CN=Example.com" -days 3650 -keyout /etc/swift/cert.key -out /etc/swift/cert.crt -extensions v3_ca creates=/etc/swift/cert.crt
 
 # Create an adminrc file to easily source for testing
 - name: create an adminrc file to easily source for testin authentiction
@@ -43,17 +43,12 @@
 - name: copy over proxy-server.conf
   template: src=proxy-server.conf.j2 dest=/etc/swift/proxy-server.conf owner=swift group=swift mode=0640
 
-- name: check if /etc/swift/*.builder files already exist
-  command: find /etc/swift/object.builder
-  register: builders
-  ignore_errors: True
-
 # XXX how to see if this needs to be run? XXX
+# XXX Does this actaully create the ring files? XXX
 - name: run swift-ring-builder for accounts, containers, and objects
-  command: chdir=/etc/swift creates=/etc/swift/{{ item }}.ring.gz swift-ring-builder {{ item }}.builder create {{ partition_power }} 3 1   
+  command: chdir=/etc/swift creates=/etc/swift/{{ item }}.ring.gz swift-ring-builder {{ item }}.builder create {{ partition_power }} {{ replicas }} {{ min_part_hours }}  
   with_items:
     - account
     - container
     - object
-  when: builders.rc > 0
 
