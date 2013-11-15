@@ -1,0 +1,9 @@
+Running a command across all servers:
+
+ans -m shell -a "ifconfig | grep 'inet addr'" all
+ans -a "ping -c 1 -w 1 news.google.com" all
+ans -m shell -a "ping -c 1 -w 1 10.0.10.1 > /dev/null" all
+
+limit to running on lbssl and package_cache:
+
+pb site.yml --limit lbssl,package_cache,common
