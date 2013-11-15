@@ -22,6 +22,9 @@
 - hosts:
   - proxy
   - storage
+  # While I don't have a client, use the package_cache
+  # server as as client
+  - package_cache
   roles:
     - swift_common
 
