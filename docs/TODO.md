@@ -1,4 +1,7 @@
 # TODO
+* increase rsync connnections
+* 
+* EC2 compatability verify, ssl, etc
 * is it possible to do this with docker?
 * putting ring files up shouldn't be done if they are already there?
 * fix harcoded IPs

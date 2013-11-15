@@ -60,4 +60,9 @@
 - hosts: storage
   tasks:
   - include: start_storage.yml
-  
+
+#
+# Probably best to run these on their own?
+#
+
+- include: tests/tests.yml

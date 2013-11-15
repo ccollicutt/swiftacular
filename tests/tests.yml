@@ -6,4 +6,8 @@
 
 - hosts: package_cache
   tasks:
-    - include: swiftclient.yml
+  - include: swiftclient.yml
+
+#- hosts: proxy
+#  tasks:
+#  - include: swift-ring-builder.yml
