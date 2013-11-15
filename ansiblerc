@@ -1,5 +1,18 @@
+#
+# Just make it easier to call ansible and ansible-playbook using ssh
+#
+
 alias ans='ansible -u vagrant -c ssh --private-key=~/.vagrant.d/insecure_private_key -s'
 alias pb='ansible-playbook -u vagrant -c ssh --private-key=~/.vagrant.d/insecure_private_key -s'
-export ANSIBLE_HOSTS=`pwd`/ansible_hosts
-#export ANSIBLE_LIBRARY=`pwd`/openstack-ansible-modules:`pwd`/swift-ansible-modules:/usr/share/ansible
-export ANSIBLE_LIBRARY=`pwd`/library
+
+#
+# Setup the inventory for ansible
+#
+
+export ANSIBLE_HOSTS=`pwd`/hosts
+
+#
+# Setup local library as well as offical ansible modules
+#
+
+export ANSIBLE_LIBRARY=`pwd`/library:/usr/share/ansible
