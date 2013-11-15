@@ -7,6 +7,9 @@
 - name: check if curtisrc exists
   stat: path=/home/vagrant/curtisrc
 
+- name: run swift stat using curtisrc file
+  shell: chdir=/home/vagrant executable="/bin/bash" source ./curtisrc; swift --insecure stat
+
 - name: run swift list using curtisrc file
   shell: chdir=/home/vagrant executable="/bin/bash" source ./curtisrc; swift --insecure list
 
@@ -30,9 +33,14 @@
   command: chdir=/home/vagrant md5sum swift.txt 
   register: md5sum_download
 
-- name: check if md5sums match
+# XXX not quite right but works for now XXX
+- name: check if md5sums match (if this task is skipped it's a good thing)
   command: /bin/false
   when: "md5sum_download.stdout != md5sum_upload.stdout"
+
+# NOTE: This will delete all containers, files!
+- name: delete all from swifty container
+  shell: chdir=/home/vagrant executable="/bin/bash" source ./curtisrc; swift --insecure delete --all
 
 - name: remove swift.txt
   command: chdir=/home/vagrant rm -f ./swift.txt
