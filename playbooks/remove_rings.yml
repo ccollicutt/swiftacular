@@ -48,7 +48,7 @@
   tasks:
 
   - name: remove ring files
-    command: rm -rf /etc/swift/{{item}}.ring.gz
+    command: rm -f /etc/swift/{{item}}.ring.gz
     with_items:
     - account
     - container
