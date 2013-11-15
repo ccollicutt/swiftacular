@@ -16,3 +16,22 @@
 
 - name: copy over swift.conf file
   template: src=swift.conf.j2 dest=/etc/swift/swift.conf owner=swift group=swift mode=0600
+
+# XXX FIX ME XXX
+- name: copy over curtisrc file
+  copy: src=curtisrc dest=/home/vagrant/curtisrc
+
+- name: copy over adminrc file
+  template: src=adminrc.j2 dest=/home/vagrant/adminrc
+
+- name: create a file to upload
+  shell: chdir=/home/vagrant "echo $RANDOM > swift.txt"
+
+- name: upload a file into swift
+  shell: chdir=/home/vagrant ". curtisrc; swift upload swifty swift.txt"
+
+- name: remove swift.txt
+  command: chdir=/home/vagrant "rm -f swift.txt"
+
+- name: download file again
+  shell: chdir=/home/vagrant ". curtisrc; swift download swifty swift.txt"
