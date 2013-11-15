@@ -1,6 +1,0 @@
-[submodule "openstack-ansible-modules"]
-	path = openstack-ansible-modules
-	url = https://github.com/lorin/openstack-ansible-modules
-[submodule "puppet-cubbystack"]
-	path = puppet-cubbystack
-	url = https://github.com/jtopjian/puppet-cubbystack
