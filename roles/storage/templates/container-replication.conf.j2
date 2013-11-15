@@ -1,6 +1,6 @@
 [DEFAULT]
 devices = /srv/node
-bind_ip = {{ ansible_eth3.ipv4.address }}
+bind_ip = {{ ansible_eth4.ipv4.address }}
 workers = 2
 
 [pipeline:main]
@@ -8,6 +8,7 @@ pipeline = container-server
 
 [app:container-server]
 use = egg:swift#container
+replication_server = True
 
 [container-replicator]
 

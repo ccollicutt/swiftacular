@@ -1,0 +1,18 @@
+[DEFAULT]
+devices = /srv/node
+bind_ip = {{ ansible_eth4.ipv4.address }}
+workers = 2
+
+[pipeline:main]
+pipeline = account-server
+
+[app:account-server]
+use = egg:swift#account
+replication_server = True
+
+
+[account-replicator]
+
+[account-auditor]
+
+[account-reaper]

@@ -57,8 +57,24 @@
   service: name=rsync state=started
 
 # XXX Mode? XXX
+- name: ensure *-server directories exist in /etc/swift
+  file: path=/etc/swift/{{ item }}-server state=directory owner=swift group=swift mode=0755
+  with_items:
+    - account
+    - container
+    - object
+
+# XXX Mode? XXX
 - name: copy over *-server.conf files
-  template: src={{ item }}-server.conf.j2 dest=/etc/swift/{{ item }}-server.conf owner=swift group=swift mode=0644
+  template: src={{ item }}-server.conf.j2 dest=/etc/swift/{{ item }}-server/{{ item }}-server.conf owner=swift group=swift mode=0644
+  with_items:
+    - account
+    - container
+    - object
+
+# XXX Mode? XXX
+- name: copy over *-replication.conf files
+  template: src={{ item }}-replication.conf.j2 dest=/etc/swift/{{ item }}-server/{{ item }}-replication.conf owner=swift group=swift mode=0644
   with_items:
     - account
     - container

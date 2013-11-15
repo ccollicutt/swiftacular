@@ -9,22 +9,26 @@
     - container
 
 # XXX Cloud use swit init all here too I think
+#- name: restart swift-storage node services
+  #service: name=swift-{{ item }} state=restarted
+#  when: new_rings.changed
+#  with_items:
+#    - object 
+#    - object-replicator
+#   - object-updater 
+#    - object
+#    - container 
+#    - container-replicator 
+#    - container-updater
+#    - container-auditor
+#    - account
+#    - account-replicator
+#    - account-reaper
+#    - account-auditor
+
 - name: restart swift-storage node services
-  service: name=swift-{{ item }} state=restarted
+  command: swift-init all start
   when: new_rings.changed
-  with_items:
-    - object 
-    - object-replicator
-    - object-updater 
-    - object
-    - container 
-    - container-replicator 
-    - container-updater
-    - container-auditor
-    - account
-    - account-replicator
-    - account-reaper
-    - account-auditor
 
 # XXX FIX ME XXX
 - name: restart syslog
