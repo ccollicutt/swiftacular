@@ -1,0 +1,9 @@
+---
+
+#
+# Run some tests to verify installation
+# 
+
+- hosts: package_cache
+  tasks:
+    - include: swiftclient.yml
