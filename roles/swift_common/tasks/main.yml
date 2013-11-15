@@ -24,14 +24,3 @@
 - name: copy over adminrc file
   template: src=adminrc.j2 dest=/home/vagrant/adminrc
 
-- name: create a file to upload
-  shell: chdir=/home/vagrant "echo $RANDOM > swift.txt"
-
-- name: upload a file into swift
-  shell: chdir=/home/vagrant ". curtisrc; swift upload swifty swift.txt"
-
-- name: remove swift.txt
-  command: chdir=/home/vagrant "rm -f swift.txt"
-
-- name: download file again
-  shell: chdir=/home/vagrant ". curtisrc; swift download swifty swift.txt"

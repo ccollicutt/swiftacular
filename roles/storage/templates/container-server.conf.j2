@@ -1,6 +1,6 @@
 [DEFAULT]
 devices = /srv/node
-bind_ip = {{ ansible_eth1.ipv4.address }}
+bind_ip = {{ ansible_eth3.ipv4.address }}
 workers = 2
 
 [pipeline:main]

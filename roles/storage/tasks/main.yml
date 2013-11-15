@@ -24,7 +24,6 @@
   register: losetup
   ignore_errors: True
 
-# XXX Must be a better way to iterate over these XXX
 - name: cleanup image mounts
   shell: umount /srv/node/{{ disk_prefix }}{{ item }}; losetup -d /dev/loop{{ item }}; rm -f /var/tmp/{{ disk_prefix }}{{ item }}.img
   with_sequence: count=3
@@ -49,6 +48,10 @@
 - name: edit /etc/sysconfig/rsync
   lineinfile: dest=/etc/default/rsync regexp=^RSYNC_ENABLE line="RSYNC_ENABLE=true"
 
+# XXX Not sure if the {{ ansible_eth3.ipv4.address }} is going to be enough with a replication network? XXX
+- name: edit /etc/sysconfig/rsync
+  lineinfile: dest=/etc/default/rsync regexp=^RSYNC_OPTS line="RSYNC_OPTS='--address {{ ansible_eth3.ipv4.address }}'"
+
 # XXX Should only restart if needed to XXX
 - name: make sure rsync is running
   service: name=rsync state=started
@@ -61,28 +64,20 @@
     - container
     - object
 
-#
-# Run swift_ring_builder_add on each proxy
-# 
-#- name: build the ring by delegating to proxy nodes
-#  swift_ring_builder_add: disks=3 region={{ region }} hostname={{ inventory_hostname }} zone={{ zone }}
-#  delegate_to: "{{ item }}"
-#  with_items: groups.proxy
-
 - name: build account ring
-  command: chdir=/etc/swift swift-ring-builder account.builder add r{{ region }}z{{ zone }}-{{ inventory_hostname }}:6002/{{ disk_prefix }}{{ item }} 100
+  command: chdir=/etc/swift swift-ring-builder account.builder add r{{ region }}z{{ zone }}-{{ ansible_eth3.ipv4.address }}:6002R{{ ansible_eth4.ipv4.address }}:6001/{{ disk_prefix }}{{ item }} 100
   delegate_to: 192.168.100.100
   with_sequence: count=3
   when: "losetup.rc > 0"
 
 - name: build container ring
-  command: chdir=/etc/swift swift-ring-builder container.builder add r{{ region }}z{{ zone }}-{{ inventory_hostname }}:6001/{{ disk_prefix }}{{ item }} 100
+  command: chdir=/etc/swift swift-ring-builder container.builder add r{{ region }}z{{ zone }}-{{ ansible_eth3.ipv4.address }}:6001R{{ ansible_eth4.ipv4.address }}:6001/{{ disk_prefix }}{{ item }} 100
   delegate_to: 192.168.100.100
   with_sequence: count=3
   when: "losetup.rc > 0"
 
 - name: build object ring
-  command: chdir=/etc/swift swift-ring-builder object.builder add r{{ region }}z{{ zone }}-{{ inventory_hostname }}:6000/{{ disk_prefix }}{{ item }} 100
+  command: chdir=/etc/swift swift-ring-builder object.builder add r{{ region }}z{{ zone }}-{{ ansible_eth3.ipv4.address }}:6000R{{ ansible_eth4.ipv4.address }}:6001/{{ disk_prefix }}{{ item }} 100
   delegate_to: 192.168.100.100
   with_sequence: count=3
   when: "losetup.rc > 0"

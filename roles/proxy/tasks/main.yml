@@ -40,8 +40,8 @@
 - name: ensure permissions on /var/cache/swift
   file: path=/var/cache/swift state=directory group=swift owner=swift mode=0700
 
-#- name: copy over proxy-server.conf
-#  template: src=proxy-server.conf.j2 dest=/etc/swift/proxy-server.conf owner=swift group=swift mode=0640
+- name: copy over proxy-server.conf
+  template: src=proxy-server.conf.j2 dest=/etc/swift/proxy-server.conf owner=swift group=swift mode=0640
 #  notify: restart proxy-server
 
 # XXX how to see if this needs to be run? XXX
