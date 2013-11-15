@@ -1,7 +1,15 @@
 # TODO
+* is it possible to do this with docker?
+* putting ring files up shouldn't be done if they are already there?
 * fix harcoded IPs
 ** eg. in proxy-server.conf.j2...
 * have vagrant create the ansible_hosts file?
-* ownership of files?
-* eth devices outside of vagrant?
 * use "creates_file" in playbook to check if command has run?
+* ssl enable swift (means loadbalancer/ssl endpoint?)
+* ansible will look in ./library I think, so should set that up instead of using path perhaps?
+* iptables templates for each server
+* ssl termination for swift-proxy
+* lots of interesting security stuff to do with pound...
+
+
+* DONE: ssl enable keystone

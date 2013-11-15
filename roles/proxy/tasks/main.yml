@@ -42,6 +42,7 @@
 
 - name: copy over proxy-server.conf
   template: src=proxy-server.conf.j2 dest=/etc/swift/proxy-server.conf owner=swift group=swift mode=0640
+  notify: restart proxy-server
 
 # XXX how to see if this needs to be run? XXX
 # XXX Does this actaully create the ring files? XXX

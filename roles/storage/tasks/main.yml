@@ -37,6 +37,12 @@
   with_sequence: count=3
   when: "losetup.rc > 0"
 
+#- name: mount drives
+#  mount: src=/dev/loop{{ item }} name=/srv/node/{{ disk_prefix }}{{ item}}
+
+#- name: ensure privileges on /srv/node
+#  file: 
+
 - name: copy over rsyncd.conf to swift storage
   template: src=rsyncd.conf.j2 dest=/etc/rsyncd.conf
 

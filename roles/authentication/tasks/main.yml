@@ -68,7 +68,9 @@
 
 ### XXX Not sure about the URLS here XXX
 - name: Create object storage keystone service
-  keystone_service: name=swift type=object-store description="Object Storage Service" publicurl='https://192.168.100.100:8080/v1/AUTH_\$(tenant_id)s' internalurl='http://192.168.100.100:8080/v1/AUTH_\$(tenant_id)s' adminurl='http://192.168.100.100:8080/v1' region=RegionOne token={{ keystone_admin_token }} endpoint="https://127.0.0.1:35357/v2.0"
+  keystone_service: name=swift type=object-store description="Object Storage Service" publicurl='https://192.168.100.30/v1/AUTH_\$(tenant_id)s' internalurl='http://192.168.100.30/v1/AUTH_\$(tenant_id)s' adminurl='http://192.168.100.30/v1' region=RegionOne token={{ keystone_admin_token }} endpoint="https://127.0.0.1:35357/v2.0"
+
+# keystone_service: name=swift type=object-store description="Object Storage Service" publicurl='https://192.168.100.30/v1/AUTH_\$(tenant_id)s' internalurl='http://192.168.100.30:8080/v1/AUTH_\$(tenant_id)s' adminurl='http://192.168.100.30:8080/v1' region=RegionOne token={{ keystone_admin_token }} endpoint="https://127.0.0.1:35357/v2.0"
 
 #
 # Create keystone tenants

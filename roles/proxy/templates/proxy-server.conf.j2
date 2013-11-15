@@ -25,7 +25,8 @@ paste.filter_factory = keystoneclient.middleware.auth_token:filter_factory
 signing_dir = /var/cache/swift
 auth_host = 192.168.100.50
 auth_port = 35357
-auth_protocol = http
+#auth_protocol = http
+auth_protocol = https
 # is not in official havana example
 #auth_uri = http://192.168.100.50:5000
 admin_tenant_name = service
