@@ -61,14 +61,14 @@
 # XXX FIX HARDCODED IPs XXX
 # XXX FIX region? XXX
 - name: Create keystone identity point
-  keystone_service: name=keystone type=identity description="Keystone Identity Service" publicurl="https://192.168.100.50:5000/v2.0" internalurl="http://192.168.100.50:5000/v2.0" adminurl="http://192.168.100.50:35357/v2.0" region=RegionOne token={{ keystone_admin_token }} endpoint="https://127.0.0.1:35357/v2.0"
+  keystone_service: name=keystone type=identity description="Keystone Identity Service" publicurl="https://192.168.100.50:5000/v2.0" internalurl="https://192.168.100.50:5000/v2.0" adminurl="https://192.168.100.50:35357/v2.0" region=RegionOne token={{ keystone_admin_token }} endpoint="https://127.0.0.1:35357/v2.0"
 
 - name: Create EC2 compatability keystone service
   keystone_service: name=ec2 type=ec2 description="EC2 Compatability Layer" publicurl=https://192.168.100.50:8773/services/Cloud internalurl=http://192.168.100.50:8773/services/Cloud adminurl=http://192.168.100.50:8773/services/Admin region=RegionOne token={{ keystone_admin_token }} endpoint="https://127.0.0.1:35357/v2.0"
 
 ### XXX Not sure about the URLS here XXX
 - name: Create object storage keystone service
-  keystone_service: name=swift type=object-store description="Object Storage Service" publicurl='https://192.168.100.30/v1/AUTH_\$(tenant_id)s' internalurl='http://192.168.100.30/v1/AUTH_\$(tenant_id)s' adminurl='http://192.168.100.30/v1' region=RegionOne token={{ keystone_admin_token }} endpoint="https://127.0.0.1:35357/v2.0"
+  keystone_service: name=swift type=object-store description="Object Storage Service" publicurl='https://192.168.100.30/v1/AUTH_\$(tenant_id)s' internalurl='https://192.168.100.30/v1/AUTH_\$(tenant_id)s' adminurl='https://192.168.100.30/v1' region=RegionOne token={{ keystone_admin_token }} endpoint="https://127.0.0.1:35357/v2.0"
 
 # keystone_service: name=swift type=object-store description="Object Storage Service" publicurl='https://192.168.100.30/v1/AUTH_\$(tenant_id)s' internalurl='http://192.168.100.30:8080/v1/AUTH_\$(tenant_id)s' adminurl='http://192.168.100.30:8080/v1' region=RegionOne token={{ keystone_admin_token }} endpoint="https://127.0.0.1:35357/v2.0"
 

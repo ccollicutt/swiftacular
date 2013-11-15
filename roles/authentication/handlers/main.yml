@@ -5,6 +5,3 @@
 
 - name: restart keystone
   service: name=keystone state=restarted
-
-- name: copy over proxy-server.conf
-  template: src=proxy-server.conf.j2 dest=/etc/swift/proxy-server.conf

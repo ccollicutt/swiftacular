@@ -3,5 +3,6 @@
 - name: restart memcached
   service: name=memcached state=restarted
 
+# Probably can't restart the proxy on first install
 - name: restart proxy-server
   service: name=swift-proxy state=restarted
