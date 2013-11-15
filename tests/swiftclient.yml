@@ -8,14 +8,14 @@
   stat: path=/home/vagrant/curtisrc
 
 - name: run swift list using curtisrc file
-  shell: ". /home/vagrant/curtisrc; swift --insecure list"
+  shell: chdir=/home/vagrant executable="/bin/bash" source ./curtisrc; swift --insecure list
 
 - name: create a file to upload
   shell: chdir=/home/vagrant executable="/bin/bash" echo $RANDOM > swift.txt
 
-- name: get md5sum of file
-  command: chdir=/home/vagrant md5sum swift.txt
-  register: md5sum_upload;
+- name: get md5sum of uploaded file
+  command: chdir=/home/vagrant md5sum swift.txt 
+  register: md5sum_upload
 
 - name: upload a file into swift
   shell: chdir=/home/vagrant executable="/bin/bash" source ./curtisrc; swift --insecure upload swifty swift.txt
@@ -25,3 +25,14 @@
 
 - name: download file again
   shell: chdir=/home/vagrant executable="/bin/bash" source ./curtisrc; swift --insecure download swifty swift.txt
+
+- name: get md5sum of downloaded file
+  command: chdir=/home/vagrant md5sum swift.txt 
+  register: md5sum_download
+
+- name: check if md5sums match
+  command: /bin/false
+  when: "md5sum_download.stdout != md5sum_upload.stdout"
+
+- name: remove swift.txt
+  command: chdir=/home/vagrant rm -f ./swift.txt
