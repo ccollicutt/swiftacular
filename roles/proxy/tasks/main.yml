@@ -16,23 +16,16 @@
     - python-xattr 
     - python-memcache
 
-# Should terminate SSL before hitting proxy
-#- name: create self-signed ssl key 
-  #command: chdir=/etc/swift openssl req -new -x509 -nodes -out cert.crt -keyout cert.key
-#  command: openssl req -new -nodes -x509 -subj "/C=CA/ST=Alberta/L=Edmonton/O=Swift/CN=Example.com" -days 3650 -keyout /etc/swift/cert.key -out /etc/swift/cert.crt -extensions v3_ca creates=/etc/swift/cert.crt
-
-# Create an adminrc file to easily source for testing
-- name: create an adminrc file to easily source for testin authentiction
+- name: create an adminrc file to easily source for testing authentiction
   template: src=adminrc.j2 dest=/root/adminrc
 
-- name: create a swiftrc file to easily source for testin authentiction
+- name: create a swiftrc file to easily source for testing authentiction
   template: src=swiftrc.j2 dest=/root/swiftrc
 
 - name: tell memcached to listen on ip
   lineinfile: dest=/etc/memcached.conf regexp="^-l" line='-l {{ inventory_hostname }}'
   notify: restart memcached
 
-# XXX 
 - name: make sure memcached is running
   service: name=memcached state=running
 
@@ -44,8 +37,7 @@
   template: src=proxy-server.conf.j2 dest=/etc/swift/proxy-server.conf owner=swift group=swift mode=0640
 #  notify: restart proxy-server
 
-# XXX how to see if this needs to be run? XXX
-# XXX Does this actaully create the ring files? XXX
+# XXX Should be in start_proxy.yml? XXX
 - name: run swift-ring-builder for accounts, containers, and objects
   command: chdir=/etc/swift creates=/etc/swift/{{ item }}.ring.gz swift-ring-builder {{ item }}.builder create {{ partition_power }} {{ replicas }} {{ min_part_hours }}  
   with_items:

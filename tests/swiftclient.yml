@@ -21,8 +21,7 @@
   register: md5sum_upload
 
 - name: upload a file into swift
-  shell: chdir=/home/vagrant executable="/bin/bash" source ./curtisrc; swift --insecure upload swifty swift.txt
-
+  shell: chdir=/home/vagrant executable="/bin/bash" source ./curtisrc; swift --insecure upload swifty swift.txt”
 - name: remove swift.txt
   command: chdir=/home/vagrant rm -f ./swift.txt
 
@@ -33,10 +32,8 @@
   command: chdir=/home/vagrant md5sum swift.txt 
   register: md5sum_download
 
-# XXX not quite right but works for now XXX
-- name: check if md5sums match (if this task is skipped it's a good thing)
-  command: /bin/false
-  when: "md5sum_download.stdout != md5sum_upload.stdout"
+- fail: msg="md5sum for downloaded swift.txt file does not match uploaded md5sum"
+  when: md5sum_download.stdout != md5sum_upload.stdout
 
 # NOTE: This will delete all containers, files!
 - name: delete all from swifty container

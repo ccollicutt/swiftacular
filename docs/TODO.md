@@ -1,9 +1,10 @@
 # TODO
-* add object expirer?
+* write/read affinity for swift
+* add object expirer? "no object-expirer running"
 * increase rsync connnections
 * are all services actually running on the storage nodes? ie. does swift-init all start actually complete? ansible seems to think so.
 * EC2 compatability verify, ssl, etc
-* is it possible to do this with docker?
+* is it possible to do this with docker or lxc?
 * putting ring files up shouldn't be done if they are already there?
 * fix harcoded IPs
 ** eg. in proxy-server.conf.j2...

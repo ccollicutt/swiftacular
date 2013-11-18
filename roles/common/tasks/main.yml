@@ -3,6 +3,7 @@
 #
 # Test connectivity
 #
+
 - name: Test internet connectivity for each host
   command: ping -c 1 -w 1 google.com
 
@@ -44,7 +45,7 @@
 - name: setup apt-cacher-ng proxy
   template: src=01proxy.j2 dest=/etc/apt/apt.conf.d/01proxy
 
-# XXX shoudl be using apt_key here I think instead of ubuntu-cloud-keyring XX
+# XXX should be using apt_key here I think instead of ubuntu-cloud-keyring XXX
 - name: install required packages to add havana repository
   apt: name=$item state=installed update_cache=yes #cache_valid_time=3600
   with_items:

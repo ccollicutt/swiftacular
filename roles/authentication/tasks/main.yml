@@ -2,7 +2,7 @@
 
 # Example: https://github.com/lorin/openstack-ansible/blob/master/services/keystone/keystone.yaml
 
-- name: install required packages
+- name: install required keystone packages
   apt: pkg=$item state=installed update_cache=yes cache_valid_time=3600
   with_items:
     - keystone
@@ -19,11 +19,12 @@
     - restart keystone
 
 # Note this would only be used in test setups
-- name: setup keystone ssl
+- name: use keystone ssl_setup to create ssl configuration files and keys
   command: creates=/etc/keystone/ssl/certs/keystone.pem keystone-manage ssl_setup --keystone-user keystone --keystone-group keystone
   notify:
     - restart keystone
 
+#XXX Should still be localhost no? XXX
 - name: change mysql's bind-address
   lineinfile: dest=/etc/mysql/my.cnf regexp=^bind-address line='bind-address = 0.0.0.0'
   notify:
@@ -36,23 +37,22 @@
 - name: create keystone mysql user
   mysql_user: name=keystone password={{ keystone_mysql_password }} priv=keystone.*:ALL state=present
 
-- name: run keystone db_sync
-  command: keystone-manage db_sync
+#- name: run keystone db_sync
+#  command: keystone-manage db_sync
+#  when: keystone.changed
+
+# NOTE: Doesn't work with Essex
+- name: keystone_manage db_sync
+  keystone_manage: action=db_sync
   when: keystone.changed
 
 - name: restart keystone  
   service: name=keystone state=restarted
   when: keystone.changed
 
- # keystone seems to take a while...
 - name: wait for keystone to come back up
   wait_for: host="192.168.100.50" port=35357
   when: keystone.changed
-
-# NOTE: Doesn't work with Essex
-#- name: keystone_manage db_sync
-#  keystone_manage: action=db_sync
-#  when: keystone.changed
 
 #
 # Keystone endpoints
@@ -66,7 +66,6 @@
 - name: Create EC2 compatability keystone service
   keystone_service: name=ec2 type=ec2 description="EC2 Compatability Layer" publicurl=https://192.168.100.50:8773/services/Cloud internalurl=http://192.168.100.50:8773/services/Cloud adminurl=http://192.168.100.50:8773/services/Admin region=RegionOne token={{ keystone_admin_token }} endpoint="https://127.0.0.1:35357/v2.0"
 
-### XXX Not sure about the URLS here XXX
 - name: Create object storage keystone service
   keystone_service: name=swift type=object-store description="Object Storage Service" publicurl='https://192.168.100.30/v1/AUTH_\$(tenant_id)s' internalurl='https://192.168.100.30/v1/AUTH_\$(tenant_id)s' adminurl='https://192.168.100.30/v1' region=RegionOne token={{ keystone_admin_token }} endpoint="https://127.0.0.1:35357/v2.0"
 
@@ -87,6 +86,7 @@
 #
 # Create keystone users
 #
+
 - name: create admin keystone user
   keystone_user: token={{ keystone_admin_token }} user={{ keystone_admin_user }} tenant=demo password={{ keystone_admin_user_password }} endpoint="https://127.0.0.1:35357/v2.0"
 
@@ -102,6 +102,7 @@
 # 
 # Keystone create and apply roles
 #
+
 - name: create an admin role and add the admin to it
   keystone_user: token={{ keystone_admin_token }} role={{ keystone_admin_role }} user={{ keystone_admin_user }} tenant={{ keystone_admin_tenant }} endpoint="https://127.0.0.1:35357/v2.0"
 
@@ -116,7 +117,7 @@
 
 #
 # Run some tests
-# 
+# XXX Move to tests? XXX
 
 - name: test keystone with user-list
   #shell: export SERVICE_TOKEN={{ keystone_admin_token }}; export SERVICE_ENDPOINT=http://192.168.100.50:35357/v2.0; keystone user-list
