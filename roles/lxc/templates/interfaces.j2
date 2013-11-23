@@ -1,0 +1,21 @@
+auto eth0 eth1 eth2 eth3
+
+iface eth0 inet static
+address 10.0.3.{{ item.ip }}
+netmask 255.255.255.0
+gateway 192.168.100.1
+
+iface eth1 inet static
+address 10.0.10.{{ item.ip }}
+netmask 255.255.255.0
+gateway 10.0.10.1
+
+iface eth2 inet static
+address 10.0.20.{{ item.ip }}
+netmask 255.255.255.0
+gateway 10.0.20.1
+
+iface eth3 inet static
+address 10.0.30.{{ item.ip }}
+netmask 255.255.255.0
+gateway 10.0.30.1

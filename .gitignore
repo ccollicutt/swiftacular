@@ -3,3 +3,6 @@ credentials
 group_vars/all
 *.swp
 .DS_store
+tmp
+fetch
+library/test-modules

@@ -15,6 +15,11 @@
   - common
 
 - hosts:
+  - lxc
+  roles:
+  - lxc
+
+- hosts:
   - lbssl
   roles:
   - lbssl

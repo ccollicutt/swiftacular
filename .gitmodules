@@ -1,3 +1,4 @@
 [submodule "library/openstack-ansible-modules"]
 	path = library/openstack-ansible-modules
 	url = https://github.com/lorin/openstack-ansible-modules.git
+    ignore = dirty

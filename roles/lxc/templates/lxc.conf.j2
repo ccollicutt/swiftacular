@@ -1,0 +1,29 @@
+lxc.utsname = {CONTAINER_NAME}
+
+#lxc.network.mtu = 1500
+lxc.network.type = veth
+lxc.network.name = eth0
+lxc.network.link = lxcbr0
+#lxc.network.ipv4 = 10.0.3.0/24
+lxc.network.flags = up
+
+# Loadbalancing and SSL
+lxc.network.type = veth
+lxc.network.link = lxcbr0
+#lxc.network.ipv4 = 10.0.10.0/24
+lxc.network.name = eth1
+lxc.network.flags = up
+
+# Internal swift
+lxc.network.type = veth
+lxc.network.link = lxcbr0
+#lxc.network.ipv4 = 10.0.20.0/24
+lxc.network.name = eth2
+lxc.network.flags = up
+
+# Replication swift
+lxc.network.type = veth
+lxc.network.link = lxcbr0
+#lxc.network.ipv4 = 10.0.30.0/24
+lxc.network.name = eth3
+lxc.network.flags = up
