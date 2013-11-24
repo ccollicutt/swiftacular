@@ -82,19 +82,19 @@
 
 - name: build account ring
   command: chdir=/etc/swift swift-ring-builder account.builder add r{{ region }}z{{ zone }}-{{ ansible_eth3.ipv4.address }}:6002R{{ ansible_eth4.ipv4.address }}:6002/{{ disk_prefix }}{{ item }} 100
-  delegate_to: {{ swift_proxy_server }}
+  delegate_to: "{{ swift_proxy_server }}"
   with_sequence: count=3
   when: "losetup.rc > 0"
 
 - name: build container ring
   command: chdir=/etc/swift swift-ring-builder container.builder add r{{ region }}z{{ zone }}-{{ ansible_eth3.ipv4.address }}:6001R{{ ansible_eth4.ipv4.address }}:6001/{{ disk_prefix }}{{ item }} 100
-  delegate_to: {{ swift_proxy_server }}
+  delegate_to: "{{ swift_proxy_server }}"
   with_sequence: count=3
   when: "losetup.rc > 0"
 
 - name: build object ring
   command: chdir=/etc/swift swift-ring-builder object.builder add r{{ region }}z{{ zone }}-{{ ansible_eth3.ipv4.address }}:6000R{{ ansible_eth4.ipv4.address }}:6000/{{ disk_prefix }}{{ item }} 100
-  delegate_to: {{ swift_proxy_server }}
+  delegate_to: "{{ swift_proxy_server }}"
   with_sequence: count=3
   when: "losetup.rc > 0"
 

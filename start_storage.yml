@@ -10,8 +10,20 @@
     - container
 
 - name: restart swift-storage node services
+  command: swift-init all stop
+  when: new_rings.changed
+  ignore_errors: True
+
+- name: restart swift-storage node services
   command: swift-init all start
   when: new_rings.changed
+
+- name: make sure default configuration files are *not* there
+  file: state=absent path=/etc/swift/{{ item }}-server.conf
+  with_items:
+    - account
+    - object
+    - container
 
 # XXX FIX ME XXX
 - name: restart syslog

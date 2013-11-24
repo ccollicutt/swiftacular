@@ -8,7 +8,8 @@
     - object
     - container
 
-# XXX This might fetch from all proxies... XXX
+# This will fetch from all proxies, if there are more than one and put the
+# rings files in the same spot, which is Ok but not perfect
 - name: Grab resulting *.ring.gz files and put them on all proxy and storage nodes
   fetch: dest=fetch/{{ item }}.ring.gz flat=yes src=/etc/swift/{{ item }}.ring.gz
   when: rebalance.changed
@@ -17,7 +18,12 @@
     - object
     - container
 
-# XXX how to put the ring.gz files on the second proxy? XXX
+- name: make sure default configuration files are *not* there
+  file: state=absent path=/etc/swift/{{ item }}-server.conf
+  with_items:
+    - account
+    - object
+    - container
 
 - name: start swift-proxy on proxy nodes
   service: name=swift-proxy state=running

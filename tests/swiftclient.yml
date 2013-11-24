@@ -21,7 +21,7 @@
   register: md5sum_upload
 
 - name: upload a file into swift
-  shell: chdir=/home/vagrant executable="/bin/bash" source ./curtisrc; swift --insecure upload swifty swift.txt”
+  shell: chdir=/home/vagrant executable="/bin/bash" source ./curtisrc; swift --insecure upload swifty swift.txt
 - name: remove swift.txt
   command: chdir=/home/vagrant rm -f ./swift.txt
 
