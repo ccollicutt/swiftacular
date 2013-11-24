@@ -1,3 +1,12 @@
+```
+  _________       .__  _____  __                      .__                
+ /   _____/_  _  _|__|/ ____\/  |______    ____  __ __|  | _____ _______ 
+ \_____  \\ \/ \/ /  \   __\\   __\__  \ _/ ___\|  |  \  | \__  \\_  __ \
+ /        \\     /|  ||  |   |  |  / __ \\  \___|  |  /  |__/ __ \|  | \/
+/_______  / \/\_/ |__||__|   |__| (____  /\___  >____/|____(____  /__|   
+        \/                             \/     \/                \/       
+```
+
 # OpenStack Swift Havana and Ansible
 
 This repository will create a small virtualized OpenStack Swift cluster based on the Havana release. It will create seven virtual machines (vms):
