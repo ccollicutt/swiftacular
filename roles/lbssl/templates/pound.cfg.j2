@@ -42,7 +42,7 @@ ListenHTTPS
     xHTTP       1
     Service
         BackEnd
-            Address 192.168.100.100
+            Address {{ swift_proxy_server }}
             Port    8080
         End
     End

@@ -37,21 +37,21 @@
 - name: create keystone mysql user
   mysql_user: name=keystone password={{ keystone_mysql_password }} priv=keystone.*:ALL state=present
 
-#- name: run keystone db_sync
-#  command: keystone-manage db_sync
-#  when: keystone.changed
-
-# NOTE: Doesn't work with Essex
-- name: keystone_manage db_sync
-  keystone_manage: action=db_sync
+- name: run keystone db_sync
+  command: keystone-manage db_sync
   when: keystone.changed
+
+# NOTE: Doesn't work with OpenStack Essex
+#- name: keystone_manage db_sync
+#  keystone_manage: action=db_sync
+#  when: keystone.changed
 
 - name: restart keystone  
   service: name=keystone state=restarted
   when: keystone.changed
 
 - name: wait for keystone to come back up
-  wait_for: host="192.168.100.50" port=35357
+  wait_for: host="{{ keystone_server }}" port=35357
   when: keystone.changed
 
 #
@@ -61,15 +61,15 @@
 # XXX FIX HARDCODED IPs XXX
 # XXX FIX region? XXX
 - name: Create keystone identity point
-  keystone_service: name=keystone type=identity description="Keystone Identity Service" publicurl="https://192.168.100.50:5000/v2.0" internalurl="https://192.168.100.50:5000/v2.0" adminurl="https://192.168.100.50:35357/v2.0" region=RegionOne token={{ keystone_admin_token }} endpoint="https://127.0.0.1:35357/v2.0"
+  keystone_service: name=keystone type=identity description="Keystone Identity Service" publicurl="https://{{ keystone_server }}:5000/v2.0" internalurl="https://{{ keystone_server }}:5000/v2.0" adminurl="https://{{ keystone_server }}:35357/v2.0" region=RegionOne token={{ keystone_admin_token }} endpoint="https://127.0.0.1:35357/v2.0"
 
 - name: Create EC2 compatability keystone service
-  keystone_service: name=ec2 type=ec2 description="EC2 Compatability Layer" publicurl=https://192.168.100.50:8773/services/Cloud internalurl=http://192.168.100.50:8773/services/Cloud adminurl=http://192.168.100.50:8773/services/Admin region=RegionOne token={{ keystone_admin_token }} endpoint="https://127.0.0.1:35357/v2.0"
+  keystone_service: name=ec2 type=ec2 description="EC2 Compatability Layer" publicurl=https://{{ keystone_server }}:8773/services/Cloud internalurl=http://{{ keystone_server }}:8773/services/Cloud adminurl=http://{{ keystone_server }}:8773/services/Admin region=RegionOne token={{ keystone_admin_token }} endpoint="https://127.0.0.1:35357/v2.0"
 
 - name: Create object storage keystone service
-  keystone_service: name=swift type=object-store description="Object Storage Service" publicurl='https://192.168.100.30/v1/AUTH_\$(tenant_id)s' internalurl='https://192.168.100.30/v1/AUTH_\$(tenant_id)s' adminurl='https://192.168.100.30/v1' region=RegionOne token={{ keystone_admin_token }} endpoint="https://127.0.0.1:35357/v2.0"
+  keystone_service: name=swift type=object-store description="Object Storage Service" publicurl='https://{{ swift_proxy_ssl_proxy_server }}/v1/AUTH_\$(tenant_id)s' internalurl='https://{{ swift_proxy_ssl_proxy_server }}/v1/AUTH_\$(tenant_id)s' adminurl='https://{{ swift_proxy_ssl_proxy_server }}/v1' region=RegionOne token={{ keystone_admin_token }} endpoint="https://127.0.0.1:35357/v2.0"
 
-# keystone_service: name=swift type=object-store description="Object Storage Service" publicurl='https://192.168.100.30/v1/AUTH_\$(tenant_id)s' internalurl='https://192.168.100.30/v1/AUTH_\$(tenant_id)s' adminurl='https://192.168.100.30/v1' region=RegionOne token={{ keystone_admin_token }} endpoint="https://127.0.0.1:35357/v2.0"
+# keystone_service: name=swift type=object-store description="Object Storage Service" publicurl='https://{{ swift_proxy_ssl_proxy_server }}/v1/AUTH_\$(tenant_id)s' internalurl='https://{{ swift_proxy_ssl_proxy_server }}/v1/AUTH_\$(tenant_id)s' adminurl='https://{{ swift_proxy_ssl_proxy_server }}/v1' region=RegionOne token={{ keystone_admin_token }} endpoint="https://127.0.0.1:35357/v2.0"
 
 #
 # Create keystone tenants
@@ -120,6 +120,6 @@
 # XXX Move to tests? XXX
 
 - name: test keystone with user-list
-  #shell: export SERVICE_TOKEN={{ keystone_admin_token }}; export SERVICE_ENDPOINT=http://192.168.100.50:35357/v2.0; keystone user-list
-  shell: keystone --insecure --token {{ keystone_admin_token }} --endpoint https://192.168.100.50:35357/v2.0 user-list
+  #shell: export SERVICE_TOKEN={{ keystone_admin_token }}; export SERVICE_ENDPOINT=http://{{ keystone_server }}:35357/v2.0; keystone user-list
+  shell: keystone --insecure --token {{ keystone_admin_token }} --endpoint https://{{ keystone_server }}:35357/v2.0 user-list
   when: keystone.changed

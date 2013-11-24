@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for s in keystone-01 proxy-01 storage-01 storage-02 storage-03 storage-04 lbssl-01; do
+for s in keystone-01 proxy-01 storage-01 storage-02 storage-03 lbssl-01; do
     echo "Deleting swift-$s"
     vagrant destroy -f swift-$s
     sleep 1
@@ -9,16 +9,3 @@ done
 sleep 2
 
 vagrant up
-
-sleep 10
-
-exit 1
-
-source ansiblerc
-
-if ! ans -a "ping -c 1 news.google.com"; then
-	echo "Pings failed..."
-	exit 1
-fi
-
-pb site.yml

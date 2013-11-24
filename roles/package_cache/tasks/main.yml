@@ -14,3 +14,6 @@
   lineinfile: "dest=/etc/apt-cacher-ng/acng.conf regexp='^# BindAddress' insertafter=yes line='BindAddress: 0.0.0.0' state=present"
   notify:
     - restart apt-cacher-ng
+
+- name: ensure apt-cacher-ng is running
+  service: name=apt-cacher-ng state=running
