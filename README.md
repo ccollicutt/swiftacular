@@ -14,7 +14,7 @@ This repository will create a small virtualized OpenStack Swift cluster based on
 $ git clone git@github.com:curtisgithub/swiftacular.git
 $ cd swiftacular
 $ git checkout va-rc-1
-$ vagrant up
+$ vagrant up # and go for coffee; bulding vms is the new compiling
 # Source aliases, etc
 $ . ansiblerc
 # Test connectivity to virtual machiens
@@ -44,7 +44,20 @@ Each vm will have four networks (techinically five including the Vagrant network
 * 10.0.20.0/24 - The local Swift internal network
 * 10.0.30.0/24 - The replication network which is a feature of OpenStack Swift starting with the Havana release
 
-# Starting over
+# A note about self-signed certificates
+
+Because this playbook sets up self-signed SSL certificates, the swift CLI needs to have the "--insecure" option set to not complain about them.
+
+```bash
+vagrant@swift-package-cache-01:~$ echo "Swift is cool" > test.txt
+vagrant@swift-package-cache-01:~$ swift --insecure upload test_container test.txt 
+test.txt
+vagrant@swift-package-cache-01:~$ swift --insecure list
+test_container
+vagrant@swift-package-cache-01:~$ swift --insecure list test_container
+test.txt
+```
+# Redoing the installation and starting over quickly
 
 If you want to redo the installation there are a few ways. 
 
@@ -56,7 +69,7 @@ $ vagrant up
 $ pb site.yml
 ```
 
-There is a script rebuild everything but the package cache:
+There is a script to destroy and rebuild everything but the package cache:
 
 ```bash
 $ ./bin/redo
@@ -64,15 +77,26 @@ $ vagrant up
 $ pb site.yml
 ```
 
-To remove just the rings and disks without destroying any virtual machines:
+To remove and redo only the rings and fake/sparse disks without destroying any virtual machines:
 
 ```bash
 $ pb playbooks/remove_rings.yml
 $ pb site.yml
 ```
 
+# Development environment
+
+* OSX 10.8.2
+* Virtualbox 4.2.6
+* Vagrant 1.3.5
+* OpenStack Havana from the Ubuntu Cloud Archive
+* Ubuntu 12.04 for the vms
+
+
 # NOTES
 
 * I know that Vagrant can automatically start Ansible playbooks on the creation of a vm, but I prefer to run the playbook manually
-* Tested on OSX 10.8.2, Virtualbox 4.2.6, 
+
+* LXC is likely a better fit than Virtualbox given all the vms are the same OS
+* Starting the vms is a bit slow I believe because of the extra networks
 

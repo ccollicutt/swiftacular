@@ -7,3 +7,7 @@ ans -m shell -a "ping -c 1 -w 1 10.0.10.1 > /dev/null" all
 limit to running on lbssl and package_cache:
 
 pb site.yml --limit lbssl,package_cache,common
+
+list objects on storage servers:
+
+ans -m shell -a "ls /srv/node/*/objects" storage
