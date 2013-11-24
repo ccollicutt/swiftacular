@@ -1,3 +1,4 @@
+---
 
 - name: rebalance rings
   command: creates=/etc/swift/{{ item }}.ring.gz chdir=/etc/swift swift-ring-builder {{ item }}.builder rebalance
@@ -8,7 +9,7 @@
     - container
 
 # XXX This might fetch from all proxies... XXX
-- name: Grab the resulting *.ring.gz files and put them on all proxy and storage nodes
+- name: Grab resulting *.ring.gz files and put them on all proxy and storage nodes
   fetch: dest=fetch/{{ item }}.ring.gz flat=yes src=/etc/swift/{{ item }}.ring.gz
   when: rebalance.changed
   with_items:
