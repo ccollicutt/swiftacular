@@ -4,7 +4,7 @@ This repository will create a small virtualized OpenStack Swift cluster based on
 
 * An apt-cacher-ng server so that you don't have to download packages from the Internet over and over again, only once
 * A Keystone server for authentication
-* A SSL termination server that will be used to proxy connections to the Swift proxy server
+* A SSL termination server that will be used to proxy connections to the Swift Proxy server
 * A Swift proxy server
 * Three Swift storage nodes
 
@@ -19,20 +19,21 @@ $ vagrant up
 $ . ansiblerc
 # Test connectivity to virtual machiens
 $ ans -m ping all
-# Run the playbook
+# Run the playbook to deploy Swift!
 $ pb site.yml
 ```
-
-## Requirements
-
-* Vagrant and Virtualbox
-* Enough resources on your computer to run seven vms
-
 ## Features
 
 * Run OpenStack Swift on your local computer, but with multiple servers
 * Replication network is used, which means this could be a basis for a geo-replication system
 * SSL - Keystone is configured to use SSL and the Swift Proxy is itself proxied by an SSL server
+* Sparse files to back Swift disks
+* A few short tests to upload files into Swift
+
+## Requirements
+
+* Vagrant and Virtualbox
+* Enough resources on your computer to run seven vms
 
 ## Networking
 
