@@ -2,11 +2,11 @@
 
 This repository will create a small virtualized OpenStack Swift cluster based on the Havana release. It will create seven virtual machines (vms):
 
-* An apt-cacher-ng server so that you don't have to download the packages over and over again, only once
-* A keystone server for authentication
+* An apt-cacher-ng server so that you don't have to download packages from the Internet over and over again, only once
+* A Keystone server for authentication
 * A SSL termination server that will be used to proxy connections to the Swift proxy server
 * A Swift proxy server
-& Three storage nodes
+* Three Swift storage nodes
 
 ## tl;dr
 
@@ -15,6 +15,7 @@ $ git clone git@github.com:curtisgithub/swiftacular.git
 $ cd swiftacular
 $ git checkout va-rc-1
 $ vagrant up
+# Source aliases, etc
 $ . ansiblerc
 # Test connectivity to virtual machiens
 $ ans -m ping all
@@ -24,7 +25,7 @@ $ pb site.yml
 
 ## Requirements
 
-* Vagrant and virtualbox
+* Vagrant and Virtualbox
 * Enough resources on your computer to run seven vms
 
 ## Features
@@ -35,7 +36,7 @@ $ pb site.yml
 
 ## Networking
 
-Each vm will have four networks (techinically five including the Vagrant network:
+Each vm will have four networks (techinically five including the Vagrant network):
 
 * 192.168.100.0/24 - The "public" network that users would connect to
 * 10.0.10.0/24 - This is the network between the SSL terminator and the Swift Proxy
@@ -54,7 +55,7 @@ $ vagrant up
 $ pb site.yml
 ```
 
-To restart evertyhing but the package cache:
+There is a script rebuild everything but the package cache:
 
 ```bash
 $ ./bin/redo
@@ -62,7 +63,7 @@ $ vagrant up
 $ pb site.yml
 ```
 
-To remove just the rings and disks, there is a playbook to do that:
+To remove just the rings and disks without destroying any virtual machines:
 
 ```bash
 $ pb playbooks/remove_rings.yml
@@ -72,4 +73,5 @@ $ pb site.yml
 # NOTES
 
 * I know that Vagrant can automatically start Ansible playbooks on the creation of a vm, but I prefer to run the playbook manually
+* Tested on OSX 10.8.2, Virtualbox 4.2.6, 
 
