@@ -1,10 +1,9 @@
 # TODO
-* use disks variable
 * Add gauntlt checks
+* create example all.example
 * Use gather facts for info from other groups instead of delegate_to?
-* Fix tasks that always return changed
+* Fix tasks that always return changed, ie. pound startup config
 * Will rings be built 3 times in storage main.yml when they only need to be built once?
-* Create fstab file to mount disks on a reboot
 * Configure region to be a variable
 * See what's happening here: https://github.com/lorin/openstack-ansible/tree/master/services/swift
 * Add an ansible config file instead of the ansiblerc?
