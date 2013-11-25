@@ -95,6 +95,8 @@ $ pb site.yml
 
 ## Development environment
 
+This playbook was developed in the following environment:
+
 * OSX 10.8.2
 * Virtualbox 4.2.6
 * Vagrant 1.3.5
@@ -103,7 +105,7 @@ $ pb site.yml
 
 ## swift-ansible-modules
 
-There is an swift-ansible-modules directory in the library directory that contains a couple of modules taken from the offical Ansible modules as well as the [openstack-ansible-modules](https://github.com/lorin/openstack-ansible) and for now both have been modified to allow the "insecure" option, which means self-signed certificates. I hope to get those changes into their respective modules soon.
+There is an swift-ansible-modules directory in the library directory that contains a couple of modules taken from the offical Ansible modules as well as the [openstack-ansible-modules](https://github.com/lorin/openstack-ansible) and for now both have been modified to allow the "insecure" option, which means self-signed certificates. I hope to get those changes into their respective repositories soon.
 
 ## NOTES
 
