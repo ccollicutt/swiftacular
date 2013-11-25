@@ -101,11 +101,9 @@ $ pb site.yml
 * OpenStack Havana from the Ubuntu Cloud Archive
 * Ubuntu 12.04 for the vms
 
-
 # NOTES
 
 * I know that Vagrant can automatically start Ansible playbooks on the creation of a vm, but I prefer to run the playbook manually
-
 * LXC is likely a better fit than Virtualbox given all the vms are the same OS
 * Starting the vms is a bit slow I believe because of the extra networks
 

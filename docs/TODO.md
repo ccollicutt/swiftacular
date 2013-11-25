@@ -1,4 +1,7 @@
 # TODO
+* See what's happening here: https://github.com/lorin/openstack-ansible/tree/master/services/swift
+* Add an ansible config file instead of the ansiblerc?
+* Submit insecure option back to upsteam for ansible swift modules
 * lbssl should connect to lbssl network, ie. swift proxy should not be listening on 192...
 * write/read affinity for swift
 * add object expirer? "no object-expirer running"

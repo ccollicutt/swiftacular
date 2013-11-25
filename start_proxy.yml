@@ -18,12 +18,5 @@
     - object
     - container
 
-- name: make sure default configuration files are *not* there
-  file: state=absent path=/etc/swift/{{ item }}-server.conf
-  with_items:
-    - account
-    - object
-    - container
-
 - name: start swift-proxy on proxy nodes
   service: name=swift-proxy state=running
