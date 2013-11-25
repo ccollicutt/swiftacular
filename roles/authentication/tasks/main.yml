@@ -1,7 +1,5 @@
 ---
 
-# Example: https://github.com/lorin/openstack-ansible/blob/master/services/keystone/keystone.yaml
-
 - name: install required keystone packages
   apt: pkg=$item state=installed update_cache=yes cache_valid_time=3600
   with_items:
@@ -18,9 +16,9 @@
   notify:
     - restart keystone
 
-# Note this would only be used in test setups
 - name: use keystone ssl_setup to create ssl configuration files and keys
-  command: creates=/etc/keystone/ssl/certs/keystone.pem keystone-manage ssl_setup --keystone-user keystone --keystone-group keystone
+  command: keystone-manage ssl_setup --keystone-user keystone --keystone-group keystone
+           creates=/etc/keystone/ssl/certs/keystone.pem 
   notify:
     - restart keystone
 
@@ -58,8 +56,6 @@
 # Keystone endpoints
 # 
 
-# XXX FIX HARDCODED IPs XXX
-# XXX FIX region? XXX
 - name: create keystone identity point
   keystone_service: insecure=yes name=keystone type=identity description="Keystone Identity Service" publicurl="https://{{ keystone_server }}:5000/v2.0" internalurl="https://{{ keystone_server }}:5000/v2.0" adminurl="https://{{ keystone_server }}:35357/v2.0" region=RegionOne token={{ keystone_admin_token }} endpoint="https://127.0.0.1:35357/v2.0"
 
@@ -74,6 +70,7 @@
 #
 # Create keystone tenants
 # 
+
 - name: create service keystone tenant
   keystone_user: token={{ keystone_admin_token }} tenant=service tenant_description="Service Tenant" endpoint="https://127.0.0.1:35357/v2.0"
 
@@ -116,10 +113,9 @@
   keystone_user: token={{ keystone_admin_token }} role=swiftoperator user=curtis tenant=demo endpoint="https://127.0.0.1:35357/v2.0"
 
 #
-# Run some tests
-# XXX Move to tests? XXX
+# Run a basic test to see if keystone is running
+# 
 
 - name: test keystone with user-list
-  #shell: export SERVICE_TOKEN={{ keystone_admin_token }}; export SERVICE_ENDPOINT=http://{{ keystone_server }}:35357/v2.0; keystone user-list
   shell: keystone --insecure --token {{ keystone_admin_token }} --endpoint https://{{ keystone_server }}:35357/v2.0 user-list
   when: keystone.changed

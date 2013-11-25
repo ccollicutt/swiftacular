@@ -16,12 +16,6 @@
     - python-xattr 
     - python-memcache
 
-- name: create an adminrc file to easily source for testing authentiction
-  template: src=adminrc.j2 dest=/root/adminrc
-
-- name: create a swiftrc file to easily source for testing authentiction
-  template: src=swiftrc.j2 dest=/root/swiftrc
-
 - name: tell memcached to listen on ip
   lineinfile: dest=/etc/memcached.conf regexp="^-l" line='-l {{ inventory_hostname }}'
   notify: restart memcached
@@ -29,17 +23,17 @@
 - name: make sure memcached is running
   service: name=memcached state=running
 
-# swift-proxy logs say mode should be 0700
 - name: ensure permissions on /var/cache/swift
   file: path=/var/cache/swift state=directory group=swift owner=swift mode=0700
 
+# Note: Can't start the proxy yet
 - name: copy over proxy-server.conf
   template: src=proxy-server.conf.j2 dest=/etc/swift/proxy-server.conf owner=swift group=swift mode=0640
-#  notify: restart proxy-server
 
-# XXX Should be in start_proxy.yml? XXX
 - name: run swift-ring-builder for accounts, containers, and objects
-  command: chdir=/etc/swift creates=/etc/swift/{{ item }}.ring.gz swift-ring-builder {{ item }}.builder create {{ partition_power }} {{ replicas }} {{ min_part_hours }}  
+  command: swift-ring-builder {{ item }}.builder create {{ partition_power }} {{ replicas }} {{ min_part_hours }}  
+           chdir=/etc/swift 
+           creates=/etc/swift/{{ item }}.ring.gz 
   with_items:
     - account
     - container

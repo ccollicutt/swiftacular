@@ -29,7 +29,7 @@
   when: new_cert.changed
 
 - name: set startup to true in /etc/default/pound
-  lineinfile: dest=/etc/default/pound regexp=^startup=0 line="startup=1"
+  lineinfile: dest=/etc/default/pound regexp=^startup=0 line="startup=1" state=present
 
 - name: ensure pound is running
   service: name=pound state=running

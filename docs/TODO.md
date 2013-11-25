@@ -1,8 +1,17 @@
 # TODO
+* use disks variable
+* Add gauntlt checks
+* Use gather facts for info from other groups instead of delegate_to?
+* Fix tasks that always return changed
+* Will rings be built 3 times in storage main.yml when they only need to be built once?
+* Create fstab file to mount disks on a reboot
+* Configure region to be a variable
 * See what's happening here: https://github.com/lorin/openstack-ansible/tree/master/services/swift
 * Add an ansible config file instead of the ansiblerc?
 * Submit insecure option back to upsteam for ansible swift modules
+** Done for keystone_service
 * lbssl should connect to lbssl network, ie. swift proxy should not be listening on 192...
+* memcached on proxy should listen on internal network not public
 * write/read affinity for swift
 * add object expirer? "no object-expirer running"
 * increase rsync connnections
@@ -12,3 +21,4 @@
 * use "creates_file" in playbook to check if command has run?
 * iptables templates for each server
 * make generic test user configurable
+* write a sparse_file module

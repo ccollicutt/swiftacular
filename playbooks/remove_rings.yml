@@ -6,6 +6,7 @@
 
   - name: stop all swift-storage node services
     command: swift-init all stop
+    ignore_errors: True
 
   - name: cleanup image mounts
     shell: umount /srv/node/{{ disk_prefix }}{{ item }}; losetup -d /dev/loop{{ item }}; rm -f /var/tmp/{{ disk_prefix }}{{ item }}.img

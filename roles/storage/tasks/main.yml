@@ -24,23 +24,77 @@
   register: losetup
   ignore_errors: True
 
-- name: cleanup image mounts
-  shell: umount /srv/node/{{ disk_prefix }}{{ item }}; losetup -d /dev/loop{{ item }}; rm -f /var/tmp/{{ disk_prefix }}{{ item }}.img
-  with_sequence: count=3
+#
+# Remove disks
+# 
+
+- name: umount swift disks 
+  mount: name=/srv/node/{{ disk_prefix }}{{ item }} state=unmounted src=/dev/loop{{ item }} fstype=xfs
+  with_sequence: count={{ disks }}
   when: "losetup.rc > 0"
 
-# XXX Should be a module XXX
-# XXX Should chwon swift:swift but prob yaml bug to use : XXX
-- name: create and mount image files for swift storage
-  shell: truncate --size {{ loop_disk_size }}G /var/tmp/{{ disk_prefix }}{{ item }}.img; losetup /dev/loop{{ item }} /var/tmp/{{ disk_prefix }}{{ item }}.img; mkfs.xfs -i size=1024 /dev/loop{{ item }}; mkdir /srv/node/{{ disk_prefix }}{{ item }}; mount -o noatime,nodiratime,nobarrier /dev/loop{{ item }} /srv/node/{{ disk_prefix }}{{ item }}; chown -R swift /srv/node/{{ disk_prefix }}{{ item }}
-  with_sequence: count=3
+- name: remove /srv/node/* disk device directories
+  file: state=absent path=/srv/node/{{ disk_prefix }}{{ item }} 
+  with_sequence: count={{ disks }}
   when: "losetup.rc > 0"
 
-#- name: mount drives
-#  mount: src=/dev/loop{{ item }} name=/srv/node/{{ disk_prefix }}{{ item}}
+#- name: remove loop devices 
+#  command: losetup -d /dev/loop{{ item }}
+#  with_sequence: count={{ disks }}
+#  when: "losetup.rc > 0"
 
-#- name: ensure privileges on /srv/node
-#  file: 
+- name: remove sparse images
+  file: state=absent path=/var/tmp/{{ disk_prefix }}{{ item }}.img
+  with_sequence: count={{ disks }}
+  when: "losetup.rc > 0"
+
+#
+# Create disks
+# 
+
+- name: create sparse images
+  command: truncate --size {{ loop_disk_size }}G /var/tmp/{{ disk_prefix }}{{ item }}.img
+  with_sequence: count={{ disks }}
+  when: "losetup.rc > 0"
+
+- name: setup loop devices
+  command: losetup /dev/loop{{ item }} /var/tmp/{{ disk_prefix }}{{ item }}.img
+  with_sequence: count={{ disks }}
+  when: "losetup.rc > 0"
+
+- name: create file system on loop devices
+  shell: mkfs.xfs -i size=1024 /dev/loop{{ item }}; mkdir /srv/node/{{ disk_prefix }}{{ item }};
+  with_sequence: count={{ disks }}
+  when: "losetup.rc > 0"
+
+- name: make /srv/node disk device directories
+  file:  state=directory path=/srv/node/{{ disk_prefix }}{{ item }} owner=swift group=swift mode=0770
+  with_sequence: count={{ disks }}
+  when: "losetup.rc > 0"
+
+#
+# XFS doesn't seem to support uid and gid on mount
+# 
+#- name: get swift gid
+#  command: id -g swift
+#  register: swift_gid
+
+#- name: get swift uid
+#  command: id -u swift
+#  register: swift_uid
+
+- name: mount swift disks 
+  mount: name=/srv/node/{{ disk_prefix }}{{ item }} state=mounted src=/dev/loop{{ item }} opts="noatime,nodiratime,nobarrier" fstype=xfs
+  with_sequence: count={{ disks }}
+  when: "losetup.rc > 0"
+
+- name: set permissions on /srv/node/* after being mounted
+  file: state=directory path=/srv/node/{{ disk_prefix }}{{ item }} owner=swift group=swift mode=0770
+  with_sequence: count={{ disks }}
+  when: "losetup.rc > 0"
+
+#- name: set permissions on /srv/node/*
+#chown -R swift /srv/node/{{ disk_prefix }}{{ item }}
 
 - name: copy over rsyncd.conf to swift storage
   template: src=rsyncd.conf.j2 dest=/etc/rsyncd.conf
@@ -48,7 +102,6 @@
 - name: edit /etc/sysconfig/rsync
   lineinfile: dest=/etc/default/rsync regexp=^RSYNC_ENABLE line="RSYNC_ENABLE=true"
 
-# XXX Not sure if the {{ ansible_eth3.ipv4.address }} is going to be enough with a replication network? XXX
 - name: edit /etc/sysconfig/rsync
   lineinfile: dest=/etc/default/rsync regexp=^RSYNC_OPTS line="RSYNC_OPTS='--address {{ ansible_eth3.ipv4.address }}'"
 
@@ -81,21 +134,24 @@
     - object
 
 - name: build account ring
-  command: chdir=/etc/swift swift-ring-builder account.builder add r{{ region }}z{{ zone }}-{{ ansible_eth3.ipv4.address }}:6002R{{ ansible_eth4.ipv4.address }}:6002/{{ disk_prefix }}{{ item }} 100
+  command: swift-ring-builder account.builder add r{{ region }}z{{ zone }}-{{ ansible_eth3.ipv4.address }}:6002R{{ ansible_eth4.ipv4.address }}:6002/{{ disk_prefix }}{{ item }} 100 
+           chdir=/etc/swift 
   delegate_to: "{{ swift_proxy_server }}"
-  with_sequence: count=3
+  with_sequence: count={{ disks }}
   when: "losetup.rc > 0"
 
 - name: build container ring
-  command: chdir=/etc/swift swift-ring-builder container.builder add r{{ region }}z{{ zone }}-{{ ansible_eth3.ipv4.address }}:6001R{{ ansible_eth4.ipv4.address }}:6001/{{ disk_prefix }}{{ item }} 100
+  command: swift-ring-builder container.builder add r{{ region }}z{{ zone }}-{{ ansible_eth3.ipv4.address }}:6001R{{ ansible_eth4.ipv4.address }}:6001/{{ disk_prefix }}{{ item }} 100
+           chdir=/etc/swift 
   delegate_to: "{{ swift_proxy_server }}"
-  with_sequence: count=3
+  with_sequence: count={{ disks }}
   when: "losetup.rc > 0"
 
 - name: build object ring
-  command: chdir=/etc/swift swift-ring-builder object.builder add r{{ region }}z{{ zone }}-{{ ansible_eth3.ipv4.address }}:6000R{{ ansible_eth4.ipv4.address }}:6000/{{ disk_prefix }}{{ item }} 100
+  command: swift-ring-builder object.builder add r{{ region }}z{{ zone }}-{{ ansible_eth3.ipv4.address }}:6000R{{ ansible_eth4.ipv4.address }}:6000/{{ disk_prefix }}{{ item }} 100
+           chdir=/etc/swift 
   delegate_to: "{{ swift_proxy_server }}"
-  with_sequence: count=3
+  with_sequence: count={{ disks }}
   when: "losetup.rc > 0"
 
 # XXX TODO - create fstab XXX

@@ -7,7 +7,7 @@
 - name: install ntp package
   apt: pkg=ntp state=installed
 
-- name: set timezone to {{timezone_area}}/{timezone_city}
+- name: set timezone to timezone_area/timezone_city
   template: src=timezone.j2 dest=/etc/timezone owner=root group=root mode=0644
   register: timezone
 

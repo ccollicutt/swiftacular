@@ -23,7 +23,7 @@ Vagrant.configure("2") do |config|
             config.vm.define "#{hostname}" do |box|
                 puts "working on #{hostname} with ip of 192.168.100.#{ip_start+i}"
             
-                box.vm.hostname = "#{hostname}.cybera.ca"
+                box.vm.hostname = "#{hostname}.example.com"
 
                 #
                 # Networks

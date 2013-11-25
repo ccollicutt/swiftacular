@@ -9,13 +9,7 @@
 
 # OpenStack Swift Havana and Ansible
 
-This repository will create a small virtualized OpenStack Swift cluster based on the Havana release. It will create seven virtual machines (vms):
-
-* An apt-cacher-ng server so that you don't have to download packages from the Internet over and over again, only once
-* A Keystone server for authentication
-* A SSL termination server that will be used to proxy connections to the Swift Proxy server
-* A Swift proxy server
-* Three Swift storage nodes
+This repository will create a virtualized OpenStack Swift cluster using Vagrant, VirtualBox, Ansible, and the OpenStack Havana release. 
 
 ## tl;dr
 
@@ -31,11 +25,12 @@ $ ans -m ping all
 # Run the playbook to deploy Swift!
 $ pb site.yml
 ```
+
 ## Features
 
-* Run OpenStack Swift on your local computer, but with multiple servers
+* Run OpenStack Swift in vms on your local computer, but with multiple servers
 * Replication network is used, which means this could be a basis for a geo-replication system
-* SSL - Keystone is configured to use SSL and the Swift Proxy is itself proxied by an SSL server
+* SSL - Keystone is configured to use SSL and the Swift Proxy is proxied by an SSL server
 * Sparse files to back Swift disks
 * A few short tests to upload files into Swift
 
@@ -44,14 +39,25 @@ $ pb site.yml
 * Vagrant and Virtualbox
 * Enough resources on your computer to run seven vms
 
-## Networking
+## Virtual machines created
 
-Each vm will have four networks (techinically five including the Vagrant network):
+Seven Vagrant-based virtual machines (vms) are used for this playbook:
 
-* 192.168.100.0/24 - The "public" network that users would connect to
-* 10.0.10.0/24 - This is the network between the SSL terminator and the Swift Proxy
-* 10.0.20.0/24 - The local Swift internal network
-* 10.0.30.0/24 - The replication network which is a feature of OpenStack Swift starting with the Havana release
+* package_cache - One apt-cacher-ng server so that you don't have to download packages from the Internet over and over again, only once
+* authentication - One Keystone server for authentication
+* lbssl - One SSL termination server that will be used to proxy connections to the Swift Proxy server
+* swift-proxy - One Swift proxy server
+* swift-storage - Three Swift storage nodes
+
+## Networks used
+
+Each vm will have four networks (techinically five including the Vagrant network). In a real production system every server would not need to be attached to every network, and in fact you would want to avoid that. In this case, they are all attached to every network.
+
+* eth0 - Vagrant
+* eth1 - 192.168.100.0/24 - The "public" network that users would connect to
+* eth2 - 10.0.10.0/24 - This is the network between the SSL terminator and the Swift Proxy
+* eth3 - 10.0.20.0/24 - The local Swift internal network
+* eth4 - 10.0.30.0/24 - The replication network which is a feature of OpenStack Swift starting with the Havana release
 
 ## A note about self-signed certificates
 
