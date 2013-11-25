@@ -53,7 +53,7 @@ Each vm will have four networks (techinically five including the Vagrant network
 * 10.0.20.0/24 - The local Swift internal network
 * 10.0.30.0/24 - The replication network which is a feature of OpenStack Swift starting with the Havana release
 
-# A note about self-signed certificates
+## A note about self-signed certificates
 
 Because this playbook sets up self-signed SSL certificates, the swift CLI needs to have the "--insecure" option set to not complain about them.
 
@@ -66,7 +66,7 @@ test_container
 vagrant@swift-package-cache-01:~$ swift --insecure list test_container
 test.txt
 ```
-# Redoing the installation and starting over quickly
+## Redoing the installation and starting over quickly
 
 If you want to redo the installation there are a few ways. 
 
@@ -93,7 +93,7 @@ $ pb playbooks/remove_rings.yml
 $ pb site.yml
 ```
 
-# Development environment
+## Development environment
 
 * OSX 10.8.2
 * Virtualbox 4.2.6
@@ -101,7 +101,11 @@ $ pb site.yml
 * OpenStack Havana from the Ubuntu Cloud Archive
 * Ubuntu 12.04 for the vms
 
-# NOTES
+## swift-ansible-modules
+
+There is an swift-ansible-modules directory in the library directory that contains a couple of modules taken from the offical Ansible modules as well as the [openstack-ansible-modules](https://github.com/lorin/openstack-ansible) and for now both have been modified to allow the "insecure" option, which means self-signed certificates. I hope to get those changes into their respective modules soon.
+
+## NOTES
 
 * I know that Vagrant can automatically start Ansible playbooks on the creation of a vm, but I prefer to run the playbook manually
 * LXC is likely a better fit than Virtualbox given all the vms are the same OS
