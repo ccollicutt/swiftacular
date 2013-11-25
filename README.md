@@ -88,7 +88,7 @@ There is a script to destroy and rebuild everything but the package cache:
 
 ```bash
 $ ./bin/redo
-$ vagrant up
+$ ans -m ping all # just to check if networking is up
 $ pb site.yml
 ```
 
@@ -96,6 +96,13 @@ To remove and redo only the rings and fake/sparse disks without destroying any v
 
 ```bash
 $ pb playbooks/remove_rings.yml
+$ pb site.yml
+```
+
+To remove the keystone database and redo the endpoints, users, regions, etc:
+
+```bash
+$ pb ./playbook/remove_keystone.yml
 $ pb site.yml
 ```
 
