@@ -64,14 +64,44 @@ Each vm will have four networks (techinically five including the Vagrant network
 Because this playbook sets up self-signed SSL certificates, the swift CLI needs to have the "--insecure" option set to not complain about them.
 
 ```bash
-vagrant@swift-package-cache-01:~$ echo "Swift is cool" > test.txt
-vagrant@swift-package-cache-01:~$ swift --insecure upload test_container test.txt 
+$ echo "Swift is cool" > test.txt
+$ swift --insecure upload test_container test.txt 
 test.txt
-vagrant@swift-package-cache-01:~$ swift --insecure list
+$ swift --insecure list
 test_container
-vagrant@swift-package-cache-01:~$ swift --insecure list test_container
+$ swift --insecure list test_container
 test.txt
 ```
+
+## Using the swift command line client
+
+You can install the swift client anywhere that you have access to the SSL termination point and Keystone. So you could put it on your local laptop as well, probably with:
+
+```bash
+$ pip install swift
+```
+
+However, I usually login to the package_cache server and use swift from there.
+
+```bash
+$ vagrant ssh swift-package-cache-01
+working on swift-package-cache-01 with ip of 192.168.100.20
+Welcome to Ubuntu 12.04 LTS (GNU/Linux 3.2.0-23-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com/
+Welcome to your Vagrant-built virtual machine.
+Last login: Mon Nov 25 10:57:32 2013 from 192.168.100.1
+vagrant@swift-package-cache-01:~$ . curtisrc 
+vagrant@swift-package-cache-01:~$ swift --insecure list
+vagrant@swift-package-cache-01:~$ echo "swift is cool" > swift.xt
+vagrant@swift-package-cache-01:~$ swift --insecure upload swifty swift.xt 
+swift.xt
+vagrant@swift-package-cache-01:~$ swift --insecure list
+swifty
+vagrant@swift-package-cache-01:~$ swift --insecure list swifty
+swift.xt
+```
+
 ## Redoing the installation and starting over quickly
 
 If you want to redo the installation there are a few ways. 

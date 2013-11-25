@@ -4,9 +4,13 @@
 # Run some tests to verify installation
 # 
 
-- hosts: package_cache
+- hosts: swiftclient
   tasks:
   - include: swiftclient.yml
+
+- hosts: gauntlt
+  tasks:
+  - include: gauntlt.yml
 
 #- hosts: proxy
 #  tasks:

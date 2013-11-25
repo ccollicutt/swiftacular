@@ -1,0 +1,34 @@
+---
+
+#
+# Run security tests using gauntlt
+#
+
+- name: ensure packages gauntlt requires are installed
+  apt: name={{ item }} state=installed
+  with_items:
+    - nmap
+    - rubygems
+    - libxml2
+    #- libxslt-dev
+    - libxslt1-dev
+    - libxml2-dev
+
+- name: ensure gauntlt is installed
+  gem: name={{ item }} state=present
+  with_items:
+  - gauntlt
+  - json
+
+- name: create a /root/attack directory
+  file: state=directory path=/root/gauntlt
+
+- name: copy over gauntlt attack files
+  copy: src=../attacks/ssl_proxy.attack dest=/root/gauntlt
+
+- name: run gauntlt
+  command: gauntlt 
+           chdir=/root
+
+- name: remove attack files now that we are done
+  command: rm -rf /root/guantlt

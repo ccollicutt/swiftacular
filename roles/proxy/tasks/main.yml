@@ -17,7 +17,7 @@
     - python-memcache
 
 - name: tell memcached to listen on ip
-  lineinfile: dest=/etc/memcached.conf regexp="^-l" line='-l {{ inventory_hostname }}'
+  lineinfile: dest=/etc/memcached.conf regexp="^-l" line='-l {{ ansible_eth3.ipv4.address }}'
   notify: restart memcached
 
 - name: make sure memcached is running

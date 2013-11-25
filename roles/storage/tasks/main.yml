@@ -109,7 +109,6 @@
 - name: make sure rsync is running
   service: name=rsync state=started
 
-# XXX Mode? XXX
 - name: ensure *-server directories exist in /etc/swift
   file: path=/etc/swift/{{ item }}-server state=directory owner=swift group=swift mode=0755
   with_items:
@@ -117,7 +116,6 @@
     - container
     - object
 
-# XXX Mode? XXX
 - name: copy over *-server.conf files
   template: src={{ item }}-server.conf.j2 dest=/etc/swift/{{ item }}-server/{{ item }}-server.conf owner=swift group=swift mode=0644
   with_items:
@@ -125,13 +123,16 @@
     - container
     - object
 
-# XXX Mode? XXX
 - name: copy over *-replication.conf files
   template: src={{ item }}-replication.conf.j2 dest=/etc/swift/{{ item }}-server/{{ item }}-replication.conf owner=swift group=swift mode=0644
   with_items:
     - account
     - container
     - object
+
+# Not working -- where should the object expirer run?
+#- name: copy over object-expirer.conf file
+#  template: src=object-expirer.conf.j2 dest=/etc/swift/object-server/object-expirer.conf owner=swift group=swift mode=0644
 
 - name: build account ring
   command: swift-ring-builder account.builder add r{{ region }}z{{ zone }}-{{ ansible_eth3.ipv4.address }}:6002R{{ ansible_eth4.ipv4.address }}:6002/{{ disk_prefix }}{{ item }} 100 
@@ -153,7 +154,3 @@
   delegate_to: "{{ swift_proxy_server }}"
   with_sequence: count={{ disks }}
   when: "losetup.rc > 0"
-
-# XXX TODO - create fstab XXX
-
-
