@@ -31,4 +31,4 @@
            chdir=/root
 
 - name: remove attack files now that we are done
-  command: rm -rf /root/guantlt
+  command: rm -rf /root/gauntlt
