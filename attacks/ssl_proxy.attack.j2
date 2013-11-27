@@ -1,13 +1,13 @@
 @slow
 
-Feature: nmap attacks for scanme.nmap.org and to use this for your tests, change the value in the profile
+Feature: nmap attacks swift installation
   Background:
     Given "nmap" is installed
     And the following profile:
       | name           | value        |
       | hostname       | {{ swift_proxy_ssl_proxy_server }}  |
 
-  Scenario: Verify server is open on expected set of ports using the nmap fast flag
+  Scenario: Verify the SSL termination server is open on expected set of ports using the nmap fast flag
     When I launch an "nmap" attack with:
       """
       nmap -F <hostname>
