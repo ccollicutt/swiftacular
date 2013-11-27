@@ -10,7 +10,6 @@
     - nmap
     - rubygems
     - libxml2
-    #- libxslt-dev
     - libxslt1-dev
     - libxml2-dev
 
@@ -24,7 +23,7 @@
   file: state=directory path=/root/gauntlt
 
 - name: copy over gauntlt attack files
-  copy: src=../attacks/ssl_proxy.attack dest=/root/gauntlt
+  template: src=../attacks/ssl_proxy.attack.j2 dest=/root/gauntlt/ssl_proxy.attack
 
 - name: run gauntlt
   command: gauntlt 
