@@ -1,0 +1,4 @@
+---
+
+- name: copy over testrc file
+  template: src=testrc.j2 dest=/home/vagrant/testrc

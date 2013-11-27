@@ -9,7 +9,7 @@
 
 # OpenStack Swift Havana and Ansible
 
-This repository will create a virtualized OpenStack Swift cluster using Vagrant, VirtualBox, Ansible, and the OpenStack Havana release. 
+This repository will create a virtualized OpenStack Swift cluster using Vagrant, VirtualBox, Ansible, and the OpenStack Havana release for Ubuntu 12.04.
 
 ## tl;dr
 
@@ -142,6 +142,7 @@ $ pb site.yml
 This playbook was developed in the following environment:
 
 * OSX 10.8.2
+* Ansible 1.4
 * Virtualbox 4.2.6
 * Vagrant 1.3.5
 * OpenStack Havana from the Ubuntu Cloud Archive

@@ -1,7 +1,7 @@
 ---
 
 - name: install required keystone packages
-  apt: pkg=$item state=installed update_cache=yes cache_valid_time=3600
+  apt: pkg={{ item }} state=installed update_cache=yes cache_valid_time=3600
   with_items:
     - keystone
     - python-keyring
@@ -22,12 +22,6 @@
   notify:
     - restart keystone
 
-#XXX Should still be localhost no? XXX
-- name: change mysql's bind-address
-  lineinfile: dest=/etc/mysql/my.cnf regexp=^bind-address line='bind-address = 0.0.0.0'
-  notify:
-    - restart mysql
-
 - name: create keystone database
   mysql_db: name=keystone state=present
   register: keystone
@@ -38,11 +32,6 @@
 - name: run keystone db_sync
   command: keystone-manage db_sync
   when: keystone.changed
-
-# NOTE: Doesn't work with OpenStack Essex
-#- name: keystone_manage db_sync
-#  keystone_manage: action=db_sync
-#  when: keystone.changed
 
 - name: restart keystone  
   service: name=keystone state=restarted
@@ -93,8 +82,8 @@
 - name: create ec2 service keystone user
   keystone_user: token={{ keystone_admin_token }} user=ec2 tenant=service password={{ keystone_generic_service_password }} endpoint="https://127.0.0.1:35357/v2.0"
 
-- name: create default keystone user
-  keystone_user: token={{ keystone_admin_token }} user=curtis tenant=demo password=passw0rd endpoint="https://127.0.0.1:35357/v2.0"
+- name: create test keystone user
+  keystone_user: token={{ keystone_admin_token }} user={{ keystone_test_user }} tenant=demo password={{ keystone_test_user_password }} endpoint="https://127.0.0.1:35357/v2.0"
 
 # 
 # Keystone create and apply roles
@@ -110,7 +99,7 @@
   keystone_user: token={{ keystone_admin_token }} role={{ keystone_admin_role }} user=ec2 tenant=service endpoint="https://127.0.0.1:35357/v2.0"
 
 - name: create a swiftoperator role and add the demo user to it
-  keystone_user: token={{ keystone_admin_token }} role=swiftoperator user=curtis tenant=demo endpoint="https://127.0.0.1:35357/v2.0"
+  keystone_user: token={{ keystone_admin_token }} role=swiftoperator user={{ keystone_test_user }} tenant=demo endpoint="https://127.0.0.1:35357/v2.0"
 
 #
 # Run a basic test to see if keystone is running

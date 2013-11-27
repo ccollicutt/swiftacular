@@ -30,5 +30,5 @@
   command: gauntlt 
            chdir=/root
 
-- name: remove attack files now that we are done
+- name: cleanup attack files 
   command: rm -rf /root/gauntlt

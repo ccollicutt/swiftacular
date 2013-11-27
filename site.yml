@@ -26,6 +26,10 @@
   roles:
     - swift_common
 
+- hosts: swiftclient
+  roles:
+    - swiftclient
+
 - hosts: authentication
   roles:
    - authentication
