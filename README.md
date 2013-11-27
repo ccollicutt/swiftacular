@@ -32,7 +32,8 @@ $ pb site.yml
 * Replication network is used, which means this could be a basis for a geo-replication system
 * SSL - Keystone is configured to use SSL and the Swift Proxy is proxied by an SSL server
 * Sparse files to back Swift disks
-* A few short tests to upload files into Swift
+* Tests for uploading files into Swift
+* Use of [gauntlt](http://gauntlt.org/) attacks to verify installation
 
 ## Requirements
 
