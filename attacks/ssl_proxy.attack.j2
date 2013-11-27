@@ -5,7 +5,7 @@ Feature: nmap attacks for scanme.nmap.org and to use this for your tests, change
     Given "nmap" is installed
     And the following profile:
       | name           | value        |
-      | hostname       | 192.168.100.30  |
+      | hostname       | {{ swift_proxy_ssl_proxy_server }}  |
 
   Scenario: Verify server is open on expected set of ports using the nmap fast flag
     When I launch an "nmap" attack with:
