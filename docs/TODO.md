@@ -1,7 +1,9 @@
 # TODO
 * Is swiftoperator the right role for users?
+* setup tags?
 * Demo tenant is not right?
 * work on notifications to restart services?
+* check ssl
 * make generic test user configurable
 * shouldn't restart services on runs after the first one unless required
 * create example all.example

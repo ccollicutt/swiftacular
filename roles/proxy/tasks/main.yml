@@ -4,10 +4,13 @@
 # Install swift proxy
 # 
 
+# NOTE: Am installing swift-object on the proxy server in order to run object-expirere from the proxy server
+#       which may not be the best place to run it from.
 - name: install required packages for swift proxy
   apt: pkg={{ item }} state=installed update_cache=yes cache_valid_time=3600
   with_items:
     - swift-proxy 
+    - swift-object
     - memcached 
     - python-keystoneclient 
     - python-swiftclient 
@@ -16,7 +19,7 @@
     - python-xattr 
     - python-memcache
 
-- name: tell memcached to listen on ip
+- name: tell memcached what IP to listen on
   lineinfile: dest=/etc/memcached.conf regexp="^-l" line='-l {{ ansible_eth3.ipv4.address }}'
   notify: restart memcached
 
@@ -29,6 +32,13 @@
 # Note: Can't start the proxy yet
 - name: copy over proxy-server.conf
   template: src=proxy-server.conf.j2 dest=/etc/swift/proxy-server.conf owner=swift group=swift mode=0640
+
+- name: copy over object-expirer.conf
+  template: src=object-expirer.conf.j2 dest=/etc/swift/object-expirer.conf owner=swift group=swift mode=0640
+
+#
+# Build rings
+# 
 
 - name: run swift-ring-builder for accounts, containers, and objects
   command: swift-ring-builder {{ item }}.builder create {{ partition_power }} {{ replicas }} {{ min_part_hours }}  

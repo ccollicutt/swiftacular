@@ -1,7 +1,7 @@
 ---
 
 #
-# Setup a package caching server
+# Setup a package caching server using apt-cacher-ng
 #
 
 - name: install required package_cache packages

@@ -23,6 +23,8 @@
   shell: mount | grep "loop1 "
   register: losetup
   ignore_errors: True
+  tags:
+    - remount_loop_devices
 
 #
 # Remove disks
@@ -61,6 +63,8 @@
   command: losetup /dev/loop{{ item }} /var/tmp/{{ disk_prefix }}{{ item }}.img
   with_sequence: count={{ disks }}
   when: "losetup.rc > 0"
+  tags:
+    - remount_loop_devices
 
 - name: create file system on loop devices
   shell: mkfs.xfs -i size=1024 /dev/loop{{ item }}; mkdir /srv/node/{{ disk_prefix }}{{ item }};
@@ -72,29 +76,24 @@
   with_sequence: count={{ disks }}
   when: "losetup.rc > 0"
 
-#
-# XFS doesn't seem to support uid and gid on mount
-# 
-#- name: get swift gid
-#  command: id -g swift
-#  register: swift_gid
-
-#- name: get swift uid
-#  command: id -u swift
-#  register: swift_uid
-
+# NOTE: Would likely not want the nobootwait in production, but in virtualbox the loop devices won't be setup yet so it won't be able to reboot without that setting, assuming the mount points are setup in /etc/fstab
 - name: mount swift disks 
-  mount: name=/srv/node/{{ disk_prefix }}{{ item }} state=mounted src=/dev/loop{{ item }} opts="noatime,nodiratime,nobarrier" fstype=xfs
+  mount: name=/srv/node/{{ disk_prefix }}{{ item }} state=mounted src=/dev/loop{{ item }} opts="noatime,nodiratime,nobarrier,nobootwait" fstype=xfs
   with_sequence: count={{ disks }}
   when: "losetup.rc > 0"
+  tags:
+    - remount_loop_devices
 
 - name: set permissions on /srv/node/* after being mounted
   file: state=directory path=/srv/node/{{ disk_prefix }}{{ item }} owner=swift group=swift mode=0770
   with_sequence: count={{ disks }}
   when: "losetup.rc > 0"
+  tags:
+    - remount_loop_devices
 
-#- name: set permissions on /srv/node/*
-#chown -R swift /srv/node/{{ disk_prefix }}{{ item }}
+#
+# Configure rsync
+# 
 
 - name: copy over rsyncd.conf to swift storage
   template: src=rsyncd.conf.j2 dest=/etc/rsyncd.conf
@@ -105,9 +104,12 @@
 - name: edit /etc/sysconfig/rsync
   lineinfile: dest=/etc/default/rsync regexp=^RSYNC_OPTS line="RSYNC_OPTS='--address {{ ansible_eth3.ipv4.address }}'"
 
-# XXX Should only restart if needed to XXX
 - name: make sure rsync is running
   service: name=rsync state=started
+
+#
+# Configure swift storage processes
+# 
 
 - name: ensure *-server directories exist in /etc/swift
   file: path=/etc/swift/{{ item }}-server state=directory owner=swift group=swift mode=0755
@@ -130,9 +132,9 @@
     - container
     - object
 
-# Not working -- where should the object expirer run?
-#- name: copy over object-expirer.conf file
-#  template: src=object-expirer.conf.j2 dest=/etc/swift/object-server/object-expirer.conf owner=swift group=swift mode=0644
+#
+# Create rings - NOTE: Is being delegated to the swfit proxy(s)
+#
 
 - name: build account ring
   command: swift-ring-builder account.builder add r{{ region }}z{{ zone }}-{{ ansible_eth3.ipv4.address }}:6002R{{ ansible_eth4.ipv4.address }}:6002/{{ disk_prefix }}{{ item }} 100 

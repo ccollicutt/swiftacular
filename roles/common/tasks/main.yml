@@ -1,7 +1,7 @@
 ---
 
 #
-# portmapper
+# Stop portmapper
 # 
 
 
@@ -48,7 +48,7 @@
   with_items:
     - ubuntu-cloud-keyring
     - python-pycurl
-  #when: new_apt_cacher.changed
+  when: new_apt_cacher.changed
 
 #
 # Havana repository

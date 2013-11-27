@@ -14,8 +14,7 @@
     - object
     - container
 
-# This will fetch from all proxies, if there are more than one and put the
-# rings files in the same spot, which is Ok but not perfect
+# This will fetch from all proxies, if there are more than one and put the rings files in the same spot, which is Ok but not perfect
 - name: grab resulting *.ring.gz files and put them on all proxy and storage nodes
   fetch: dest=fetch/{{ item }}.ring.gz flat=yes src=/etc/swift/{{ item }}.ring.gz
   when: rebalance.changed
@@ -26,3 +25,6 @@
 
 - name: start swift-proxy on proxy nodes
   service: name=swift-proxy state=running
+
+- name: start object-expirer on proxy nodes
+  command: swift-init object-expirer start
