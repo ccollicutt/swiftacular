@@ -11,6 +11,8 @@
 
 This repository will create a virtualized OpenStack Swift cluster using Vagrant, VirtualBox, Ansible, and the OpenStack Havana release for Ubuntu 12.04.
 
+### Table of Contents
+
 1. [Too long; didn't read](#tldr)
 2. [Features](#features)
 3. [Requirements](#requirements)
