@@ -8,10 +8,10 @@
   stat: path=/home/vagrant/testrc
 
 - name: run swift stat using testrc file
-  shell: chdir=/home/vagrant executable="/bin/bash" source ./testrc; swift --insecure stat
+  shell: chdir=/home/vagrant executable="/bin/bash" source ./testrc; swift  stat
 
 - name: run swift list using testrc file
-  shell: chdir=/home/vagrant executable="/bin/bash" source ./testrc; swift --insecure list
+  shell: chdir=/home/vagrant executable="/bin/bash" source ./testrc; swift  list
 
 - name: create a file to upload
   shell: chdir=/home/vagrant executable="/bin/bash" echo $RANDOM > swift.txt
@@ -21,12 +21,12 @@
   register: md5sum_upload
 
 - name: upload a file into swift
-  shell: chdir=/home/vagrant executable="/bin/bash" source ./testrc; swift --insecure upload swifty swift.txt
+  shell: chdir=/home/vagrant executable="/bin/bash" source ./testrc; swift upload swifty swift.txt
 - name: remove swift.txt
   command: chdir=/home/vagrant rm -f ./swift.txt
 
 - name: download file again
-  shell: chdir=/home/vagrant executable="/bin/bash" source ./testrc; swift --insecure download swifty swift.txt
+  shell: chdir=/home/vagrant executable="/bin/bash" source ./testrc; swift download swifty swift.txt
 
 - name: get md5sum of downloaded file
   command: chdir=/home/vagrant md5sum swift.txt 
@@ -37,7 +37,7 @@
 
 # NOTE: This will delete all containers, files!
 - name: delete all from swifty container
-  shell: chdir=/home/vagrant executable="/bin/bash" source ./testrc; swift --insecure delete --all
+  shell: chdir=/home/vagrant executable="/bin/bash" source ./testrc; swift delete --all
 
 - name: remove swift.txt
   command: chdir=/home/vagrant rm -f ./swift.txt
