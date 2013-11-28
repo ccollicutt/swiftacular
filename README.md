@@ -62,17 +62,7 @@ Each vm will have four networks (techinically five including the Vagrant network
 
 ## A note about self-signed certificates
 
-Because this playbook sets up self-signed SSL certificates, the swift CLI needs to have the "--insecure" option set to not complain about them.
-
-```bash
-$ echo "Swift is cool" > test.txt
-$ swift --insecure upload test_container test.txt 
-test.txt
-$ swift --insecure list
-test_container
-$ swift --insecure list test_container
-test.txt
-```
+Because this playbook sets up self-signed SSL certificates, the swift CLI needs to have the "" option set to not complain about them. Also the swift client will have that option set if the environment variable export SWIFTCLIENT_INSECURE is set to "true."
 
 ## Using the swift command line client
 
@@ -93,13 +83,13 @@ Welcome to Ubuntu 12.04 LTS (GNU/Linux 3.2.0-23-generic x86_64)
 Welcome to your Vagrant-built virtual machine.
 Last login: Mon Nov 25 10:57:32 2013 from 192.168.100.1
 vagrant@swift-package-cache-01:~$ . curtisrc 
-vagrant@swift-package-cache-01:~$ swift --insecure list
+vagrant@swift-package-cache-01:~$ swift  list
 vagrant@swift-package-cache-01:~$ echo "swift is cool" > swift.xt
-vagrant@swift-package-cache-01:~$ swift --insecure upload swifty swift.xt 
+vagrant@swift-package-cache-01:~$ swift upload swifty swift.xt 
 swift.xt
-vagrant@swift-package-cache-01:~$ swift --insecure list
+vagrant@swift-package-cache-01:~$ swift list
 swifty
-vagrant@swift-package-cache-01:~$ swift --insecure list swifty
+vagrant@swift-package-cache-01:~$ swift list swifty
 swift.xt
 ```
 
