@@ -73,7 +73,7 @@ Each vm will have four networks (techinically five including the Vagrant network
 
 ## Self-signed certificates
 
-Because this playbook sets up self-signed SSL certificates, the swift CLI needs to have the "" option set to not complain about them. Also the swift client will have that option set if the environment variable export SWIFTCLIENT_INSECURE is set to "true."
+Because this playbook configures self-signed SSL certificates and by default the swift client will complain about that fact, either the <code>--insecure</code> option needs to be used or alternatively the <code>SWIFTCLIENT_INSECURE</code> environment variable can be set to true.
 
 ## Using the swift command line client
 
