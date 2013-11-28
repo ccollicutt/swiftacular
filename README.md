@@ -53,7 +53,7 @@ $ pb site.yml
 
 ## Virtual machines created
 
-Seven Vagrant-based virtual machines (vms) are used for this playbook:
+Seven Vagrant-based virtual machines are used for this playbook:
 
 * __package_cache__ - One apt-cacher-ng server so that you don't have to download packages from the Internet over and over again, only once
 * __authentication__ - One Keystone server for authentication
@@ -65,7 +65,7 @@ Seven Vagrant-based virtual machines (vms) are used for this playbook:
 
 Each vm will have four networks (techinically five including the Vagrant network). In a real production system every server would not need to be attached to every network, and in fact you would want to avoid that. In this case, they are all attached to every network.
 
-* __eth0__ - Vagrant
+* __eth0__ - Used by Vagrant
 * __eth1__ - 192.168.100.0/24 - The "public" network that users would connect to
 * __eth2__ - 10.0.10.0/24 - This is the network between the SSL terminator and the Swift Proxy
 * __eth3__ - 10.0.20.0/24 - The local Swift internal network
@@ -95,13 +95,13 @@ Welcome to your Vagrant-built virtual machine.
 Last login: Mon Nov 25 10:57:32 2013 from 192.168.100.1
 vagrant@swift-package-cache-01:~$ . curtisrc 
 vagrant@swift-package-cache-01:~$ swift  list
-vagrant@swift-package-cache-01:~$ echo "swift is cool" > swift.xt
-vagrant@swift-package-cache-01:~$ swift upload swifty swift.xt 
-swift.xt
+vagrant@swift-package-cache-01:~$ echo "swift is cool" > swift.txt
+vagrant@swift-package-cache-01:~$ swift upload swifty swift.txt 
+swift.txt
 vagrant@swift-package-cache-01:~$ swift list
 swifty
 vagrant@swift-package-cache-01:~$ swift list swifty
-swift.xt
+swift.txt
 ```
 
 ## Starting over
