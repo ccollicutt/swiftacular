@@ -20,7 +20,9 @@ This repository will create a virtualized OpenStack Swift cluster using Vagrant,
 5. [Starting over](#starting-over)
 6. [Development environment](#development-environment)
 7. [Modules](#modules)
-8. [Notes](#notes)
+8. [Future work](#future-work)
+9. [Issues](#issues)
+10. [Notes](#notes)
 
 ## tl;dr
 
@@ -28,7 +30,9 @@ This repository will create a virtualized OpenStack Swift cluster using Vagrant,
 $ git clone git@github.com:curtisgithub/swiftacular.git
 $ cd swiftacular
 $ git checkout rc1
-$ vagrant up # and go for coffee; bulding vms is the new compiling
+$ vagrant up 
+$ cp group_vars/all.example group_vars/all
+$ vi group_vars/all # ie. edit group_vars/all and change all the CHANGEME's and anything else you would like
 # Source aliases, etc
 $ . ansiblerc
 # Test connectivity to virtual machiens
@@ -93,8 +97,8 @@ Welcome to Ubuntu 12.04 LTS (GNU/Linux 3.2.0-23-generic x86_64)
  * Documentation:  https://help.ubuntu.com/
 Welcome to your Vagrant-built virtual machine.
 Last login: Mon Nov 25 10:57:32 2013 from 192.168.100.1
-vagrant@swift-package-cache-01:~$ . curtisrc 
-vagrant@swift-package-cache-01:~$ swift  list
+vagrant@swift-package-cache-01:~$ . testrc 
+vagrant@swift-package-cache-01:~$ swift list
 vagrant@swift-package-cache-01:~$ echo "swift is cool" > swift.txt
 vagrant@swift-package-cache-01:~$ swift upload swifty swift.txt 
 swift.txt
@@ -146,16 +150,26 @@ This playbook was developed in the following environment:
 * Ansible 1.4
 * Virtualbox 4.2.6
 * Vagrant 1.3.5
-* OpenStack Havana from the Ubuntu Cloud Archive
+* OpenStack Havana from the [Ubuntu Cloud Archive](https://wiki.ubuntu.com/ServerTeam/CloudArchive)
 * Ubuntu 12.04 for the vms
 
 ## Modules
 
 There is an swift-ansible-modules directory in the library directory that contains a couple of modules taken from the offical Ansible modules as well as the [openstack-ansible-modules](https://github.com/lorin/openstack-ansible) and for now both have been modified to allow the "insecure" option, which means self-signed certificates. I hope to get those changes into their respective repositories soon.
 
+## Future work
+
+* Make using LXC an option
+* Deploy Swift from source
+
+## Issues
+
+* Loop mounts won't survive a reboot on the storage nodes
+
 ## Notes
 
 * I know that Vagrant can automatically start Ansible playbooks on the creation of a vm, but I prefer to run the playbook manually
-* LXC is likely a better fit than Virtualbox given all the vms are the same OS
+* LXC is likely a better fit than Virtualbox given all the vms are the same OS and we don't need to boot any vms withing vms inception style
 * Starting the vms is a bit slow I believe because of the extra networks
+
 
