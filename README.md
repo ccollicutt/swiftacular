@@ -32,7 +32,7 @@ $ cd swiftacular
 $ git checkout rc1
 $ vagrant up 
 $ cp group_vars/all.example group_vars/all
-$ vi group_vars/all # ie. edit group_vars/all and change all the CHANGEME's and anything else you would like
+$ vi group_vars/all # ie. edit the CHANGEMEs in the file
 # Source aliases, etc
 $ . ansiblerc
 # Test connectivity to virtual machiens
