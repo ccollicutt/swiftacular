@@ -26,6 +26,8 @@ This repository will create a virtualized OpenStack Swift cluster using Vagrant,
 
 ## tl;dr
 
+*Note this will start seven virtual machines on your computer.*
+
 ```bash
 $ git clone git@github.com:curtisgithub/swiftacular.git
 $ cd swiftacular
