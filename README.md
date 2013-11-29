@@ -27,7 +27,7 @@ This repository will create a virtualized OpenStack Swift cluster using Vagrant,
 ```bash
 $ git clone git@github.com:curtisgithub/swiftacular.git
 $ cd swiftacular
-$ git checkout va-rc-1
+$ git checkout rc1
 $ vagrant up # and go for coffee; bulding vms is the new compiling
 # Source aliases, etc
 $ . ansiblerc
