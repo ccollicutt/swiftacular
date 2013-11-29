@@ -37,7 +37,7 @@ $ cp group_vars/all.example group_vars/all
 $ vi group_vars/all # ie. edit the CHANGEMEs in the file
 # Source aliases, etc
 $ . ansiblerc
-# Test connectivity to virtual machiens
+# Test connectivity to virtual machines
 $ ans -m ping all
 # Run the playbook to deploy Swift!
 $ pb site.yml
@@ -157,7 +157,7 @@ This playbook was developed in the following environment:
 
 ## Modules
 
-There is an swift-ansible-modules directory in the library directory that contains a couple of modules taken from the offical Ansible modules as well as the [openstack-ansible-modules](https://github.com/lorin/openstack-ansible) and for now both have been modified to allow the "insecure" option, which means self-signed certificates. I hope to get those changes into their respective repositories soon.
+There is an swift-ansible-modules directory in the library directory that contains a couple of modules taken from the official Ansible modules as well as the [openstack-ansible-modules](https://github.com/lorin/openstack-ansible) and for now both have been modified to allow the "insecure" option, which means self-signed certificates. I hope to get those changes into their respective repositories soon.
 
 ## Future work
 
@@ -171,7 +171,7 @@ There is an swift-ansible-modules directory in the library directory that contai
 ## Notes
 
 * I know that Vagrant can automatically start Ansible playbooks on the creation of a vm, but I prefer to run the playbook manually
-* LXC is likely a better fit than Virtualbox given all the vms are the same OS and we don't need to boot any vms withing vms inception style
+* LXC is likely a better fit than Virtualbox given all the vms are the same OS and we don't need to boot any vms within vms inception style
 * Starting the vms is a bit slow I believe because of the extra networks
 
 
