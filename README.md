@@ -86,7 +86,7 @@ Because this playbook configures self-signed SSL certificates and by default the
 You can install the swift client anywhere that you have access to the SSL termination point and Keystone. So you could put it on your local laptop as well, probably with:
 
 ```bash
-$ pip install swift
+$ pip install python-swiftclient
 ```
 
 However, I usually login to the package_cache server and use swift from there.
