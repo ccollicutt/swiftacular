@@ -1,0 +1,8 @@
+---
+
+- hosts: authentication
+
+  tasks:
+
+  - name: remode keystone mysql database
+    mysql_db: name=keystone state=absent

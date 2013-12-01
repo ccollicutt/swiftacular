@@ -1,0 +1,6 @@
+export OS_AUTH_URL=https://{{ keystone_server }}:35357/v2.0
+export OS_USERNAME={{ keystone_test_user }}
+export OS_PASSWORD={{ keystone_test_user_password }}
+export OS_TENANT_NAME=demo
+export OS_REGION_NAME={{ keystone_region }}
+export SWIFTCLIENT_INSECURE=true

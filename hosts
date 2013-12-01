@@ -1,25 +1,31 @@
+
+# Keystone
 [authentication]
 192.168.100.50
 
+# Loadbalancing and SSL
 [lbssl]
 192.168.100.30
 
-[lxc]
-192.168.100.40
+# A place to run swift cli tests
+[swiftclient]
+192.168.100.20
 
-[client]
-#192.168.100.10
+# Gauntlt is for running security checks
+# See: http://gauntlt.org/
+[gauntlt]
+192.168.100.20
 
+# apt-cacher-ng
 [package_cache]
 192.168.100.20
 
+# Swift proxy node
 [proxy]
 192.168.100.100
-#192.168.100.101
 
+# Swift storage node
 [storage]
 192.168.100.200
 192.168.100.201
 192.168.100.202
-192.168.100.203
-#192.168.100.204

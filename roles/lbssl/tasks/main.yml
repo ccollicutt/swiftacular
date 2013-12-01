@@ -5,14 +5,18 @@
 # 
 
 - name: install required packages for lbssl
-  apt: pkg=$item state=installed update_cache=yes cache_valid_time=3600
+  apt: pkg={{ item }} state=installed update_cache=yes cache_valid_time=3600
   with_items:
     - pound
     - openssl
 
-# XXX FIX ME! XXX
+#
+# Create an SSL certificate for pound to use
+#  
+
+# XXX FIX ME - ansible_fqdn? XXX
 - name: create self-signed SSL cert for pound
-  command: openssl req -new -nodes -x509 -subj "/C=US/ST=Oregon/L=Portland/O=IT/CN=${ansible_fqdn}" -days 3650 -keyout /etc/pound/server.key -out /etc/pound/server.crt -extensions v3_ca creates=/etc/pound/server.crt
+  command: openssl req -new -nodes -x509 -subj "/C=US/ST=Oregon/L=Portland/O=IT/CN={{ ansible_fqdn }" -days 3650 -keyout /etc/pound/server.key -out /etc/pound/server.crt -extensions v3_ca creates=/etc/pound/server.crt
   register: new_cert
   notify: restart pound
 
@@ -28,8 +32,12 @@
   shell: openssl rsa -in /etc/pound/server.key >> /etc/pound/server.pem
   when: new_cert.changed
 
-- name: set startup to true in /etc/default/pound
-  lineinfile: dest=/etc/default/pound regexp=^startup=0 line="startup=1"
+#
+# Setup pound
+# 
+
+- name: set /etc/default/pound to allow pound to start
+  template: src=default_pound.j2 dest=/etc/default/pound
 
 - name: ensure pound is running
   service: name=pound state=running

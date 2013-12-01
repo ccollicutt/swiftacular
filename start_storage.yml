@@ -1,5 +1,6 @@
 ---
 
+# XXX FIX ME - duplicate code XXX
 - name: put the *.ring.gz files on all storage servers
   copy: src=fetch/{{ item }}.ring.gz dest=/etc/swift/{{item}}.ring.gz owner=swift group=swift mode=0640
   register: new_rings
@@ -8,23 +9,17 @@
     - object
     - container
 
-# XXX Cloud use swit init all here too I think
-#- name: restart swift-storage node services
-  #service: name=swift-{{ item }} state=restarted
-#  when: new_rings.changed
-#  with_items:
-#    - object 
-#    - object-replicator
-#   - object-updater 
-#    - object
-#    - container 
-#    - container-replicator 
-#    - container-updater
-#    - container-auditor
-#    - account
-#    - account-replicator
-#    - account-reaper
-#    - account-auditor
+- name: make sure default configuration files are *not* there
+  file: state=absent path=/etc/swift/{{ item }}-server.conf
+  with_items:
+    - account
+    - object
+    - container
+
+- name: restart swift-storage node services
+  command: swift-init all stop
+  when: new_rings.changed
+  ignore_errors: True
 
 - name: restart swift-storage node services
   command: swift-init all start

@@ -1,9 +1,11 @@
 ---
 
-# Example: https://github.com/lorin/openstack-ansible/blob/master/services/keystone/keystone.yaml
+#
+# Install and configure a keystone authentication server
+#
 
 - name: install required keystone packages
-  apt: pkg=$item state=installed update_cache=yes cache_valid_time=3600
+  apt: pkg={{ item }} state=installed update_cache=yes cache_valid_time=3600
   with_items:
     - keystone
     - python-keyring
@@ -18,17 +20,11 @@
   notify:
     - restart keystone
 
-# Note this would only be used in test setups
 - name: use keystone ssl_setup to create ssl configuration files and keys
-  command: creates=/etc/keystone/ssl/certs/keystone.pem keystone-manage ssl_setup --keystone-user keystone --keystone-group keystone
+  command: keystone-manage ssl_setup --keystone-user keystone --keystone-group keystone
+           creates=/etc/keystone/ssl/certs/keystone.pem 
   notify:
     - restart keystone
-
-#XXX Should still be localhost no? XXX
-- name: change mysql's bind-address
-  lineinfile: dest=/etc/mysql/my.cnf regexp=^bind-address line='bind-address = 0.0.0.0'
-  notify:
-    - restart mysql
 
 - name: create keystone database
   mysql_db: name=keystone state=present
@@ -37,13 +33,8 @@
 - name: create keystone mysql user
   mysql_user: name=keystone password={{ keystone_mysql_password }} priv=keystone.*:ALL state=present
 
-#- name: run keystone db_sync
-#  command: keystone-manage db_sync
-#  when: keystone.changed
-
-# NOTE: Doesn't work with Essex
-- name: keystone_manage db_sync
-  keystone_manage: action=db_sync
+- name: run keystone db_sync
+  command: keystone-manage db_sync
   when: keystone.changed
 
 - name: restart keystone  
@@ -51,29 +42,28 @@
   when: keystone.changed
 
 - name: wait for keystone to come back up
-  wait_for: host="192.168.100.50" port=35357
+  wait_for: host="{{ keystone_server }}" port=35357
   when: keystone.changed
 
 #
 # Keystone endpoints
 # 
 
-# XXX FIX HARDCODED IPs XXX
-# XXX FIX region? XXX
-- name: Create keystone identity point
-  keystone_service: name=keystone type=identity description="Keystone Identity Service" publicurl="https://192.168.100.50:5000/v2.0" internalurl="https://192.168.100.50:5000/v2.0" adminurl="https://192.168.100.50:35357/v2.0" region=RegionOne token={{ keystone_admin_token }} endpoint="https://127.0.0.1:35357/v2.0"
+- name: create keystone identity point
+  keystone_service: insecure=yes name=keystone type=identity description="Keystone Identity Service" publicurl="https://{{ keystone_server }}:5000/v2.0" internalurl="https://{{ keystone_server }}:5000/v2.0" adminurl="https://{{ keystone_server }}:35357/v2.0" region={{ keystone_region }} token={{ keystone_admin_token }} endpoint="https://127.0.0.1:35357/v2.0"
 
-- name: Create EC2 compatability keystone service
-  keystone_service: name=ec2 type=ec2 description="EC2 Compatability Layer" publicurl=https://192.168.100.50:8773/services/Cloud internalurl=http://192.168.100.50:8773/services/Cloud adminurl=http://192.168.100.50:8773/services/Admin region=RegionOne token={{ keystone_admin_token }} endpoint="https://127.0.0.1:35357/v2.0"
+- name: create EC2 compatability keystone service
+  keystone_service: insecure=yes name=ec2 type=ec2 description="EC2 Compatability Layer" publicurl=https://{{ keystone_server }}:8773/services/Cloud internalurl=http://{{ keystone_server }}:8773/services/Cloud adminurl=http://{{ keystone_server }}:8773/services/Admin region={{ keystone_region }} token={{ keystone_admin_token }} endpoint="https://127.0.0.1:35357/v2.0"
 
-- name: Create object storage keystone service
-  keystone_service: name=swift type=object-store description="Object Storage Service" publicurl='https://192.168.100.30/v1/AUTH_\$(tenant_id)s' internalurl='https://192.168.100.30/v1/AUTH_\$(tenant_id)s' adminurl='https://192.168.100.30/v1' region=RegionOne token={{ keystone_admin_token }} endpoint="https://127.0.0.1:35357/v2.0"
+- name: create object storage keystone service
+  keystone_service: insecure=yes name=swift type=object-store description="Object Storage Service" publicurl='https://{{ swift_proxy_ssl_proxy_server }}/v1/AUTH_\$(tenant_id)s' internalurl='https://{{ swift_proxy_ssl_proxy_server }}/v1/AUTH_\$(tenant_id)s' adminurl='https://{{ swift_proxy_ssl_proxy_server }}/v1' region={{ keystone_region }} token={{ keystone_admin_token }} endpoint="https://127.0.0.1:35357/v2.0"
 
-# keystone_service: name=swift type=object-store description="Object Storage Service" publicurl='https://192.168.100.30/v1/AUTH_\$(tenant_id)s' internalurl='https://192.168.100.30/v1/AUTH_\$(tenant_id)s' adminurl='https://192.168.100.30/v1' region=RegionOne token={{ keystone_admin_token }} endpoint="https://127.0.0.1:35357/v2.0"
+# keystone_service: insecure=yes name=swift type=object-store description="Object Storage Service" publicurl='https://{{ swift_proxy_ssl_proxy_server }}/v1/AUTH_\$(tenant_id)s' internalurl='https://{{ swift_proxy_ssl_proxy_server }}/v1/AUTH_\$(tenant_id)s' adminurl='https://{{ swift_proxy_ssl_proxy_server }}/v1' region={{ keystone_region }} token={{ keystone_admin_token }} endpoint="https://127.0.0.1:35357/v2.0"
 
 #
 # Create keystone tenants
 # 
+
 - name: create service keystone tenant
   keystone_user: token={{ keystone_admin_token }} tenant=service tenant_description="Service Tenant" endpoint="https://127.0.0.1:35357/v2.0"
 
@@ -96,8 +86,8 @@
 - name: create ec2 service keystone user
   keystone_user: token={{ keystone_admin_token }} user=ec2 tenant=service password={{ keystone_generic_service_password }} endpoint="https://127.0.0.1:35357/v2.0"
 
-- name: create default keystone user
-  keystone_user: token={{ keystone_admin_token }} user=curtis tenant=demo password=passw0rd endpoint="https://127.0.0.1:35357/v2.0"
+- name: create test keystone user
+  keystone_user: token={{ keystone_admin_token }} user={{ keystone_test_user }} tenant=demo password={{ keystone_test_user_password }} endpoint="https://127.0.0.1:35357/v2.0"
 
 # 
 # Keystone create and apply roles
@@ -113,13 +103,12 @@
   keystone_user: token={{ keystone_admin_token }} role={{ keystone_admin_role }} user=ec2 tenant=service endpoint="https://127.0.0.1:35357/v2.0"
 
 - name: create a swiftoperator role and add the demo user to it
-  keystone_user: token={{ keystone_admin_token }} role=swiftoperator user=curtis tenant=demo endpoint="https://127.0.0.1:35357/v2.0"
+  keystone_user: token={{ keystone_admin_token }} role=swiftoperator user={{ keystone_test_user }} tenant=demo endpoint="https://127.0.0.1:35357/v2.0"
 
 #
-# Run some tests
-# XXX Move to tests? XXX
+# Run a basic test to see if keystone is running
+# 
 
 - name: test keystone with user-list
-  #shell: export SERVICE_TOKEN={{ keystone_admin_token }}; export SERVICE_ENDPOINT=http://192.168.100.50:35357/v2.0; keystone user-list
-  shell: keystone --insecure --token {{ keystone_admin_token }} --endpoint https://192.168.100.50:35357/v2.0 user-list
+  shell: keystone --insecure --token {{ keystone_admin_token }} --endpoint https://{{ keystone_server }}:35357/v2.0 user-list
   when: keystone.changed

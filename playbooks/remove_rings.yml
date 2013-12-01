@@ -4,24 +4,9 @@
 
   tasks:
 
- # - name: stop swift-storage node services
- #   service: name=swift-{{ item }} state=stopped
- #   with_items:
- #   - object 
- #   - object-replicator
- #   - object-updater 
- #   - object
- #   - container 
- #   - container-replicator 
- #   - container-updater
- #   - container-auditor
- #   - account
- #   - account-replicator
- #   - account-reaper
- #   - account-auditor
-
   - name: stop all swift-storage node services
     command: swift-init all stop
+    ignore_errors: True
 
   - name: cleanup image mounts
     shell: umount /srv/node/{{ disk_prefix }}{{ item }}; losetup -d /dev/loop{{ item }}; rm -f /var/tmp/{{ disk_prefix }}{{ item }}.img

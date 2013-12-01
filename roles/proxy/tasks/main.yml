@@ -4,10 +4,13 @@
 # Install swift proxy
 # 
 
+# NOTE: Am installing swift-object on the proxy server in order to run object-expirere from the proxy server
+#       which may not be the best place to run it from.
 - name: install required packages for swift proxy
-  apt: pkg=$item state=installed update_cache=yes cache_valid_time=3600
+  apt: pkg={{ item }} state=installed update_cache=yes cache_valid_time=3600
   with_items:
     - swift-proxy 
+    - swift-object
     - memcached 
     - python-keystoneclient 
     - python-swiftclient 
@@ -16,30 +19,31 @@
     - python-xattr 
     - python-memcache
 
-- name: create an adminrc file to easily source for testing authentiction
-  template: src=adminrc.j2 dest=/root/adminrc
-
-- name: create a swiftrc file to easily source for testing authentiction
-  template: src=swiftrc.j2 dest=/root/swiftrc
-
-- name: tell memcached to listen on ip
-  lineinfile: dest=/etc/memcached.conf regexp="^-l" line='-l {{ inventory_hostname }}'
+- name: tell memcached what IP to listen on
+  lineinfile: dest=/etc/memcached.conf regexp="^-l" line='-l {{ ansible_eth3.ipv4.address }}'
   notify: restart memcached
 
 - name: make sure memcached is running
   service: name=memcached state=running
 
-# swift-proxy logs say mode should be 0700
 - name: ensure permissions on /var/cache/swift
   file: path=/var/cache/swift state=directory group=swift owner=swift mode=0700
 
+# Note: Can't start the proxy yet
 - name: copy over proxy-server.conf
   template: src=proxy-server.conf.j2 dest=/etc/swift/proxy-server.conf owner=swift group=swift mode=0640
-#  notify: restart proxy-server
 
-# XXX Should be in start_proxy.yml? XXX
+- name: copy over object-expirer.conf
+  template: src=object-expirer.conf.j2 dest=/etc/swift/object-expirer.conf owner=swift group=swift mode=0640
+
+#
+# Build rings
+# 
+
 - name: run swift-ring-builder for accounts, containers, and objects
-  command: chdir=/etc/swift creates=/etc/swift/{{ item }}.ring.gz swift-ring-builder {{ item }}.builder create {{ partition_power }} {{ replicas }} {{ min_part_hours }}  
+  command: swift-ring-builder {{ item }}.builder create {{ partition_power }} {{ replicas }} {{ min_part_hours }}  
+           chdir=/etc/swift 
+           creates=/etc/swift/{{ item }}.ring.gz 
   with_items:
     - account
     - container

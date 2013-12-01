@@ -1,18 +1,15 @@
 #
-# Just make it easier to call ansible and ansible-playbook using ssh
+# Just make it easier to call ansible and ansible-playbook using ssh.
+# Might be possible to do this in the ansible.cfg file, not sure.
 #
 
-alias ans='ansible -u vagrant -c ssh --private-key=~/.vagrant.d/insecure_private_key -s'
-alias pb='ansible-playbook -u vagrant -c ssh --private-key=~/.vagrant.d/insecure_private_key -s'
+ANSIBLE_OPTIONS="-u vagrant -c ssh --private-key=~/.vagrant.d/insecure_private_key -s"
+
+alias ans='ansible $ANSIBLE_OPTIONS'
+alias pb='ansible-playbook $ANSIBLE_OPTIONS'
 
 #
 # Setup the inventory for ansible
 #
 
 export ANSIBLE_HOSTS=`pwd`/hosts
-
-#
-# Setup local library as well as offical ansible modules
-#
-
-export ANSIBLE_LIBRARY=`pwd`/library:/usr/share/ansible

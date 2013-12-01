@@ -1,11 +1,12 @@
 ---
 
 #
-# Test connectivity
-#
+# Stop portmapper
+# 
 
-- name: Test internet connectivity for each host
-  command: ping -c 1 -w 1 google.com
+
+- name: ensure portmap is not running
+  service: name=portmap state=stopped enabled=no
 
 #
 # NTP
@@ -14,7 +15,7 @@
 - name: install ntp package
   apt: pkg=ntp state=installed
 
-- name: set timezone to {{timezone_area}}/{timezone_city}
+- name: set timezone to timezone_area/timezone_city
   template: src=timezone.j2 dest=/etc/timezone owner=root group=root mode=0644
   register: timezone
 
@@ -22,16 +23,12 @@
   shell: ln -sf /usr/share/zoneinfo/{{timezone_area}}/{{timezone_city}} /etc/localtime
   when: timezone.changed
 
-#- name: reconfigure tzdata
-#  command: dpkg-reconfigure --frontend noninteractive tzdata
-#  when: timezone.changed
-
 - name: stop ntpd to run ntpdate
   service: name=ntp state=stopped
   when: timezone.changed
 
 - name: set time with ntpdate
-  command: "ntpdate -s ntp.ubuntu.com"
+  command: "ntpdate -s {{ time_server }}"
   when: timezone.changed
 
 - name: start ntpd
@@ -44,17 +41,18 @@
 
 - name: setup apt-cacher-ng proxy
   template: src=01proxy.j2 dest=/etc/apt/apt.conf.d/01proxy
+  register: new_apt_cacher
 
-# XXX should be using apt_key here I think instead of ubuntu-cloud-keyring XXX
 - name: install required packages to add havana repository
-  apt: name=$item state=installed update_cache=yes #cache_valid_time=3600
+  apt: name={{ item }} state=installed update_cache=yes #cache_valid_time=3600
   with_items:
     - ubuntu-cloud-keyring
     - python-pycurl
+  when: new_apt_cacher.changed
 
-# XXX Not working; using ubuntu-cloud-keyring package instead
-#- name: install havana apt key
-#  apt_key: url=http://ubuntu-cloud.archive.canonical.com/ubuntu/dists/precise-updates/havana/Release.gpg 
+#
+# Havana repository
+# 
 
 - name: install havana apt repository
   apt_repository: repo='deb http://ubuntu-cloud.archive.canonical.com/ubuntu precise-updates/havana main' state=present

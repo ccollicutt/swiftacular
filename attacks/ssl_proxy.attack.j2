@@ -1,0 +1,28 @@
+@slow
+
+Feature: nmap attacks swift installation
+  Background:
+    Given "nmap" is installed
+    And the following profile:
+      | name           | value        |
+      | hostname       | {{ swift_proxy_ssl_proxy_server }}  |
+
+  Scenario: Verify the SSL termination server is open on expected set of ports using the nmap fast flag
+    When I launch an "nmap" attack with:
+      """
+      nmap -F <hostname>
+      """
+    Then the output should match:
+      """
+      22/tcp\s+open
+      """
+
+    Then the output should match:
+      """
+      443/tcp\s+open
+      """
+
+    Then the output should not contain:
+      """
+      80/tcp
+      """

@@ -1,10 +1,7 @@
 ---
 
-# hmmm on http://docs.openstack.org/havana/install-guide/install/apt/content/general-installation-steps-swift.html 
-# installs: swift openssh-server rsync memcached python-netifaces  python-xattr python-memcache
-# think memcached would startup then...but is not needed on storage nodes afaik...
 - name: install required packages for swift_common
-  apt: pkg=$item state=installed update_cache=yes #cache_valid_time=3600
+  apt: pkg={{ item }} state=installed update_cache=yes #cache_valid_time=3600
   with_items:
     - swift
     - python-swiftclient
@@ -16,11 +13,4 @@
 
 - name: copy over swift.conf file
   template: src=swift.conf.j2 dest=/etc/swift/swift.conf owner=swift group=swift mode=0600
-
-# XXX FIX ME XXX
-- name: copy over curtisrc file
-  copy: src=curtisrc dest=/home/vagrant/curtisrc
-
-- name: copy over adminrc file
-  template: src=adminrc.j2 dest=/home/vagrant/adminrc
 
