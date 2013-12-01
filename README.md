@@ -173,9 +173,3 @@ There is an swift-ansible-modules directory in the library directory that contai
 * I know that Vagrant can automatically start Ansible playbooks on the creation of a vm, but I prefer to run the playbook manually
 * LXC is likely a better fit than Virtualbox given all the vms are the same OS and we don't need to boot any vms within vms inception style
 * Starting the vms is a bit slow I believe because of the extra networks
-
-<<<<<<< HEAD
-Currently I am working on the "va" branch, where VA stands for Vagrant and Ansible, trying to get to a release.
-=======
-
->>>>>>> rc1
