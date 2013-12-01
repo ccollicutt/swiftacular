@@ -1,4 +1,5 @@
 # TODO
+* add an rsync test
 * add an upstart job to remount disk images
 * Is swiftoperator the right role for users?
 * setup tags?
