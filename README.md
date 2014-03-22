@@ -32,6 +32,9 @@ This repository will create a virtualized OpenStack Swift cluster using Vagrant,
 $ git clone git@github.com:curtisgithub/swiftacular.git
 $ cd swiftacular
 $ git checkout rc1
+$ mkdir library
+# Checkout some modules to help with managing openstack 
+$ git clone https://github.com/openstack-ansible/openstack-ansible-modules library/openstack
 $ vagrant up 
 $ cp group_vars/all.example group_vars/all
 $ vi group_vars/all # ie. edit the CHANGEMEs in the file
