@@ -31,13 +31,12 @@ This repository will create a virtualized OpenStack Swift cluster using Vagrant,
 ```bash
 $ git clone git@github.com:curtisgithub/swiftacular.git
 $ cd swiftacular
-$ git checkout rc1
 $ mkdir library
 # Checkout some modules to help with managing openstack 
 $ git clone https://github.com/openstack-ansible/openstack-ansible-modules library/openstack
 $ vagrant up 
 $ cp group_vars/all.example group_vars/all
-$ vi group_vars/all # ie. edit the CHANGEMEs in the file
+$ vi group_vars/all # ie. edit the CHANGEMEs in the file, if desired
 # Source aliases, etc
 $ . ansiblerc
 # Test connectivity to virtual machines
@@ -72,7 +71,7 @@ Seven Vagrant-based virtual machines are used for this playbook:
 
 ## Networking setup
 
-Each vm will have four networks (techinically five including the Vagrant network). In a real production system every server would not need to be attached to every network, and in fact you would want to avoid that. In this case, they are all attached to every network.
+Each vm will have four networks (technically five including the Vagrant network). In a real production system every server would not need to be attached to every network, and in fact you would want to avoid that. In this case, they are all attached to every network.
 
 * __eth0__ - Used by Vagrant
 * __eth1__ - 192.168.100.0/24 - The "public" network that users would connect to
