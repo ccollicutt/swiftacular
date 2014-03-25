@@ -165,6 +165,7 @@ There is an swift-ansible-modules directory in the library directory that contai
 
 * Make using LXC an option
 * Deploy Swift from source
+* More than one region. Regions are setup, only one is created right now.
 
 ## Issues
 
