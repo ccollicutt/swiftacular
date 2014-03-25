@@ -11,7 +11,3 @@
 - hosts: gauntlt
   tasks:
   - include: gauntlt.yml
-
-#- hosts: proxy
-#  tasks:
-#  - include: swift-ring-builder.yml

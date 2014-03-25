@@ -6,3 +6,4 @@ group_vars/all
 tmp
 fetch
 library/test-modules
+library/openstack

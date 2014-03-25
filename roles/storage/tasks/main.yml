@@ -133,7 +133,7 @@
     - object
 
 #
-# Create rings - NOTE: Is being delegated to the swfit proxy(s)
+# Create rings - NOTE: Is being delegated to the swift proxy(s)
 #
 
 - name: build account ring

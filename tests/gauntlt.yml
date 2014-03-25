@@ -4,11 +4,21 @@
 # Run security tests using gauntlt
 #
 
+# nokogiri requires 1.9.2+, darn
+- name: install ruby 1.9.3
+  apt: name=ruby1.9.3 state=installed
+
+- name: setup alternative ruby1.9.3 as ruby
+  file: src=/usr/bin/ruby1.9.3 dest=/etc/alternatives/ruby state=link
+
+- name: setup alternative gem1.9.3 as gem
+  file: src=/usr/bin/gem1.9.3 dest=/etc/alternatives/gem state=link
+
 - name: ensure packages gauntlt requires are installed
   apt: name={{ item }} state=installed
   with_items:
     - nmap
-    - rubygems
+    #- rubygems
     - libxml2
     - libxslt1-dev
     - libxml2-dev
