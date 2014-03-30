@@ -112,6 +112,21 @@ vagrant@swift-package-cache-01:~$ swift list swifty
 swift.txt
 ```
 
+## Testing with serverspec
+
+Install gems.
+
+```bash
+curtis$ sudo bundle install
+Password:
+Fetching gem metadata from https://rubygems.org/..
+Resolving dependencies...
+Installing ansible_spec (0.0.1.1)
+Using bundler (1.5.3)
+Your bundle is complete!
+Use `bundle show [gemname]` to see where a bundled gem is installed.
+```
+
 ## Starting over
 
 If you want to redo the installation there are a few ways. 
