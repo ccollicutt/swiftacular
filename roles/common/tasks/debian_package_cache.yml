@@ -6,7 +6,5 @@
 
 - name: install required packages to add havana repository
   apt: name={{ item }} state=installed update_cache=yes #cache_valid_time=3600
-  with_items:
-    - ubuntu-cloud-keyring
-    - python-pycurl
+  with_items: "{{ ubuntu_packages }}"
   when: new_apt_cacher.changed

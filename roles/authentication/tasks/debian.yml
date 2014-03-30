@@ -1,0 +1,8 @@
+---
+
+- name: install required keystone packages
+  apt: pkg={{ item }} state=installed update_cache=yes cache_valid_time=3600
+  with_items: ubuntu_packages
+
+- name: remove default keystone sqlite database file
+  file: path=/var/lib/keystone/keystone.db state=absent

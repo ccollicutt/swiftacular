@@ -30,9 +30,9 @@
 #  roles:
 #    - swiftclient
 
-#- hosts: authentication
-#  roles:
-#   - authentication
+- hosts: authentication
+  roles:
+   - authentication
 
 #- hosts: 
 #  - proxy

@@ -1,0 +1,11 @@
+---
+
+redhat_packages:
+  - openstack-keystone
+  - mysql-server
+
+ubuntu_packages:
+  - keystone
+  - python-keyring
+  - mysql-server
+  - python-mysqldb

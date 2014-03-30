@@ -1,7 +1,19 @@
 ---
 
-- name: restart mysql
-  service: name=mysql state=restarted
+#
+# Install and configure a keystone authentication server
+#
 
-- name: restart keystone
-  service: name=keystone state=restarted
+#
+# Debian
+#
+
+- include: debian.yml
+  when: ansible_os_family == 'Debian'
+
+#
+# Redhat
+#
+
+- include: redhat.yml
+  when: ansible_os_family == 'RedHat'

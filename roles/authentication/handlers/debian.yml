@@ -1,0 +1,7 @@
+---
+
+- name: restart mysql
+  service: name=mysql state=restarted
+
+- name: restart keystone
+  service: name=keystone state=restarted

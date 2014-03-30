@@ -1,0 +1,16 @@
+---
+
+- name: ensure ntp is installed
+  yum: name=ntp state=installed
+
+- name: set timezone in /etc/sysconfig/clock
+  lineinfile: dest=/etc/sysconfig/clock regexp="^ZONE" line="ZONE={{timezone_area}}/{{timezone_city}}"
+  register: timezone
+
+# XXX Could be in common... ###
+- name: setup timezone link
+  shell: ln -sf /usr/share/zoneinfo/{{timezone_area}}/{{timezone_city}} /etc/localtime
+  when: timezone.changed
+
+- name: ensure ntpd is running
+  service: name=ntpd state=running

@@ -1,0 +1,8 @@
+---
+
+- name: install required keystone packages
+  yum: pkg={{ item }} state=installed
+  with_items: redhat_packages
+
+- name: ensure mysql-server is running
+  service: name=mysqld enabled=yes state=running

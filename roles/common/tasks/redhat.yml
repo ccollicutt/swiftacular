@@ -4,6 +4,8 @@
 
 - include: redhat_package_cache.yml
 
+- include: redhat_ntp.yml
+
 - include: redhat_openstack_repository.yml
 
 - name: stop iptables
