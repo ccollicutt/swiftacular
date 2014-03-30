@@ -1,0 +1,26 @@
+#
+# NTP
+#
+
+- name: install ntp package
+  apt: pkg=ntp state=installed
+
+- name: set timezone to timezone_area/timezone_city
+  template: src=timezone.j2 dest=/etc/timezone owner=root group=root mode=0644
+  register: timezone
+
+- name: setup timezone link
+  shell: ln -sf /usr/share/zoneinfo/{{timezone_area}}/{{timezone_city}} /etc/localtime
+  when: timezone.changed
+
+- name: stop ntpd to run ntpdate
+  service: name=ntp state=stopped
+  when: timezone.changed
+
+- name: set time with ntpdate
+  command: "ntpdate -s {{ time_server }}"
+  when: timezone.changed
+
+- name: start ntpd
+  service: name=ntp state=running enabled=yes
+  when: timezone.changed

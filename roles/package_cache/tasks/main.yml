@@ -1,19 +1,15 @@
 ---
 
 #
-# Setup a package caching server using apt-cacher-ng
+# Debian
 #
 
-- name: install required package_cache packages
-  apt: pkg={{ item }} state=installed update_cache=yes cache_valid_time=3600
-  with_items:
-    - apt-cacher-ng
+- include: debian.yml
+  when: ansible_os_family == 'Debian'
 
-# Fully quoted lineinefile due to yaml bug: http://www.ansibleworks.com/docs/modules.html#lineinfile
-- name: set bind address in apt-cacher-ng configuration file 
-  lineinfile: "dest=/etc/apt-cacher-ng/acng.conf regexp='^# BindAddress' insertafter=yes line='BindAddress: 0.0.0.0' state=present"
-  notify:
-    - restart apt-cacher-ng
+#
+# Redhat
+#
 
-- name: ensure apt-cacher-ng is running
-  service: name=apt-cacher-ng state=running
+- include: redhat.yml
+  when: ansible_os_family == 'RedHat'

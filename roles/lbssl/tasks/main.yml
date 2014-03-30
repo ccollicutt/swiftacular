@@ -1,48 +1,15 @@
 ---
 
-# 
-# Install and configure pound to be ssl termination for swift proxy
-# 
+#
+# Debian
+#
 
-- name: install required packages for lbssl
-  apt: pkg={{ item }} state=installed update_cache=yes cache_valid_time=3600
-  with_items:
-    - pound
-    - openssl
+- include: debian.yml
+  when: ansible_os_family == 'Debian'
 
 #
-# Create an SSL certificate for pound to use
-#  
-
-# XXX FIX ME - ansible_fqdn? XXX
-- name: create self-signed SSL cert for pound
-  command: openssl req -new -nodes -x509 -subj "/C=US/ST=Oregon/L=Portland/O=IT/CN={{ ansible_fqdn }" -days 3650 -keyout /etc/pound/server.key -out /etc/pound/server.crt -extensions v3_ca creates=/etc/pound/server.crt
-  register: new_cert
-  notify: restart pound
-
-- name: verify cert file
-  command: openssl x509 -in /etc/pound/server.crt -text
-  when: new_cert.changed
-
-- name: create a pem file
-  command: openssl x509 -in /etc/pound/server.crt -out /etc/pound/server.pem 
-  when: new_cert.changed
-
-- name: add server.key to server.pem file
-  shell: openssl rsa -in /etc/pound/server.key >> /etc/pound/server.pem
-  when: new_cert.changed
-
+# Redhat
 #
-# Setup pound
-# 
 
-- name: set /etc/default/pound to allow pound to start
-  template: src=default_pound.j2 dest=/etc/default/pound
-
-- name: ensure pound is running
-  service: name=pound state=running
-
-- name: copy over pound.cfg
-  template: src=pound.cfg.j2 dest=/etc/pound/pound.cfg owner=root group=root mode=0644
-  notify: restart pound
-
+- include: redhat.yml
+  when: ansible_os_family == 'RedHat'

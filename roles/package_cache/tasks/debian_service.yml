@@ -1,0 +1,4 @@
+---
+
+- name: ensure apt-cacher-ng is running
+  service: name=apt-cacher-ng state=running

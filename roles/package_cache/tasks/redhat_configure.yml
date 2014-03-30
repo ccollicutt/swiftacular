@@ -1,0 +1,6 @@
+---
+
+- name: set a cache_dir in squid.conf
+  lineinfile: dest=/etc/squid/squid.conf line="cache_dir ufs /var/spool/squid 7000 16 256" insertafter="^#cache_dir"
+  notify:
+  - restart squid

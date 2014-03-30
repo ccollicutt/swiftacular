@@ -1,0 +1,7 @@
+---
+
+# Fully quoted lineinefile due to yaml bug: http://www.ansibleworks.com/docs/modules.html#lineinfile
+- name: set bind address in apt-cacher-ng configuration file 
+  lineinfile: "dest=/etc/apt-cacher-ng/acng.conf regexp='^# BindAddress' insertafter=yes line='BindAddress: 0.0.0.0' state=present"
+  notify:
+    - restart apt-cacher-ng

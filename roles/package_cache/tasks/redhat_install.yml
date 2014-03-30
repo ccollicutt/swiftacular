@@ -1,0 +1,4 @@
+---
+
+- name: install squid to cache rpm packages
+  yum: pkg=squid state=installed

@@ -14,30 +14,30 @@
   roles:
   - common
 
-- hosts:
-  - lbssl
-  roles:
-  - lbssl
+#- hosts:
+#  - lbssl
+#  roles:
+#  - lbssl
 
-- hosts:
-  - proxy
-  - storage
-  - package_cache
-  roles:
-    - swift_common
+#- hosts:
+#  - proxy
+#  - storage
+#  - package_cache
+#  roles:
+#    - swift_common
 
-- hosts: swiftclient
-  roles:
-    - swiftclient
+#- hosts: swiftclient
+#  roles:
+#    - swiftclient
 
-- hosts: authentication
-  roles:
-   - authentication
+#- hosts: authentication
+#  roles:
+#   - authentication
 
-- hosts: 
-  - proxy
-  roles:
-  - proxy
+#- hosts: 
+#  - proxy
+#  roles:
+#  - proxy
 
 #
 # I would have expected serial to work here, and
@@ -45,26 +45,26 @@
 # tried recieved "too many files open" errors.
 #
 
-- hosts: storage
+#- hosts: storage
   #serial: 1
-  roles:
-  - storage
+#  roles:
+#  - storage
 
 #
 # These are not so much roles as starting services
 # though also includes distributing the ring files.
 # 
 
-- hosts: proxy
-  tasks:
-  - include: start_proxy.yml
+#- hosts: proxy
+#  tasks:
+#  - include: start_proxy.yml
 
-- hosts: storage
-  tasks:
-  - include: start_storage.yml
+#- hosts: storage
+#  tasks:
+#  - include: start_storage.yml
 
 #
 # Probably best to run these on their own?
 #
 
-- include: tests/tests.yml
+#- include: tests/tests.yml
