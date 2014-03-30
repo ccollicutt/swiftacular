@@ -2,8 +2,8 @@
 daemon      1
 ######################################################################
 ## global options:
-User            "www-data"
-Group           "www-data"
+User            "pound"
+Group           "pound"
 #RootJail   "/chroot/pound"
 ## Logging: (goes to syslog by default)
 ##  0   no logging
@@ -22,7 +22,7 @@ ConnTO      10
 ## use hardware-accelleration card supported by openssl(1):
 #SSLEngine   "aesni"
 # poundctl control socket
-Control "/var/run/pound/poundctl.socket"
+Control "/var/lib/pound/pound.cfg"
 ######################################################################
 ## listen, redirect and ... to:
 ## redirect all swift requests on port 443 to local swift proxy

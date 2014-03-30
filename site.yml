@@ -14,10 +14,10 @@
   roles:
   - common
 
-#- hosts:
-#  - lbssl
-#  roles:
-#  - lbssl
+- hosts:
+  - lbssl
+  roles:
+  - lbssl
 
 #- hosts:
 #  - proxy
@@ -42,7 +42,7 @@
 #
 # I would have expected serial to work here, and
 # to be the right way to do it but at the time I
-# tried recieved "too many files open" errors.
+# tried received "too many files open" errors.
 #
 
 #- hosts: storage

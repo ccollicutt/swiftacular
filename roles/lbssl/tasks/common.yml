@@ -1,0 +1,5 @@
+---
+
+- include: common_pound_ssl.yml
+- include: common_pound_service.yml
+

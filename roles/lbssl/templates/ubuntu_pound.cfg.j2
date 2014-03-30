@@ -1,0 +1,50 @@
+## see pound(8) for details
+daemon      1
+######################################################################
+## global options:
+User            "pound"
+Group           "pound"
+#RootJail   "/chroot/pound"
+## Logging: (goes to syslog by default)
+##  0   no logging
+##  1   normal
+##  2   extended
+##  3   Apache-style (common log format)
+LogLevel    0
+## turn on dynamic scaling (off by default)
+# Dyn Scale 1
+## check backend every X secs:
+Alive       30
+## client timeout
+#Client     10
+## allow 10 second proxy connect time
+ConnTO      10
+## use hardware-accelleration card supported by openssl(1):
+#SSLEngine   "aesni"
+# poundctl control socket
+Control "/var/run/pound/poundctl.socket"
+######################################################################
+## listen, redirect and ... to:
+## redirect all swift requests on port 443 to local swift proxy
+ListenHTTPS
+    Address 0.0.0.0
+    Port    443
+    Cert    "/etc/pound/server.pem"
+    ## Certs to accept from clients
+    ##  CAlist      "CA_file"
+    ## Certs to use for client verification
+    ##  VerifyList  "Verify_file"
+    ## Request client cert - don't verify
+    ##  Ciphers     "AES256-SHA"
+    ## allow PUT and DELETE also (by default only GET, POST and HEAD)?:
+    NoHTTPS11   0
+    ## allow PUT and DELETE also (by default only GET, POST and HEAD)?:
+    xHTTP       1
+    Service
+        BackEnd
+            ## XXX FIX ME - should be a variable XXX
+            Address 10.0.10.100
+            Port    8080
+        End
+    End
+End

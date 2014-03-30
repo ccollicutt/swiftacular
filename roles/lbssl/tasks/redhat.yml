@@ -2,3 +2,23 @@
 
 # redhat
 
+
+# For some reason the pound package is capitalized
+- name: ensure required packages are installed
+  yum: name=Pound state=installed
+  with_items: redhat_packages
+
+- name: ensure there is a /etc/pound directory
+  file: dest=/etc/pound state=directory owner=pound group=pound mode=0750
+
+- name: remove default /etc/pound.cfg file
+  file: path=/etc/pound.cfg state=absent
+
+- name: copy over pound.cfg
+  template: src=redhat_pound.cfg.j2 dest=/etc/pound/pound.cfg owner=root group=root mode=0644
+  notify: restart pound
+
+# XXX not common... XXX
+- name: link /etc/pound/pound.cfg to /etc/pound.cfg
+  file: src=/etc/pound/pound.cfg dest=/etc/pound.cfg state=link
+  when: ansible_os_family == 'RedHat'

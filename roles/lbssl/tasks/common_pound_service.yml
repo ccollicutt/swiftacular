@@ -1,0 +1,4 @@
+---
+
+- name: ensure pound is running
+  service: name=pound state=running
