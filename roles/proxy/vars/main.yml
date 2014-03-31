@@ -1,0 +1,16 @@
+---
+
+ubuntu_packages:
+    - swift-proxy 
+    - swift-object
+    - memcached 
+    - python-keystoneclient 
+    - python-swiftclient 
+    - swift-plugin-s3
+    - python-netifaces 
+    - python-xattr 
+    - python-memcache
+
+redhat_packages:
+   - openstack-swift-proxy
+   - memcached

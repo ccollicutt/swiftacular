@@ -1,0 +1,27 @@
+---
+
+- name: make sure memcached is running
+  service: name=memcached state=running
+
+- name: ensure permissions on /var/cache/swift
+  file: path=/var/cache/swift state=directory group=swift owner=swift mode=0700
+
+# Note: Can't start the proxy yet
+- name: copy over proxy-server.conf
+  template: src=proxy-server.conf.j2 dest=/etc/swift/proxy-server.conf owner=swift group=swift mode=0640
+
+- name: copy over object-expirer.conf
+  template: src=object-expirer.conf.j2 dest=/etc/swift/object-expirer.conf owner=swift group=swift mode=0640
+
+#
+# Build rings
+# 
+
+- name: run swift-ring-builder for accounts, containers, and objects
+  command: swift-ring-builder {{ item }}.builder create {{ partition_power }} {{ replicas }} {{ min_part_hours }}  
+           chdir=/etc/swift 
+           creates=/etc/swift/{{ item }}.ring.gz 
+  with_items:
+    - account
+    - container
+    - object

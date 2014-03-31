@@ -1,6 +1,41 @@
 ---
 
 #
+# SSL Testing
+# 
+
+# If cert is ok, returns "ok", otherwise is not ok, ok?
+#
+# client$ echo QUIT | openssl s_client -showcerts -connect google.com:443 -showcerts -debug 2>&1 | grep "Verify return code"
+#    Verify return code: 0 (ok)
+# client$ echo QUIT | openssl s_client -showcerts -connect 192.168.100.50:35357 -showcerts -debug 2>&1 | grep "Verify return code"
+#    Verify return code: 21 (unable to verify the first certificate)
+
+- name: verify ssl cert 
+  command: echo QUIT | openssl s_client -showcerts -connect 192.168.100.50:35357 2>&1 | grep "Verify return code"
+  register: openssl_s_client
+
+- name: test for openssl client failed
+  debug: msg="ssl client failed"
+  when: openssl_s_client.stdout.find("ok") == -1
+
+#
+# [root@swift-keystone-01 ~]# curl --cacert /etc/keystone/ssl/certs/ca.pem https://192.168.100.50:35357
+# curl: (51) SSL: certificate subject name 'localhost' does not match target host name '192.168.100.50'
+#
+
+
+#
+# 
+#
+
+- name: check if adminrc exists
+  stat: path=/home/vagrant/adminrc
+
+- name: run keystone user-list using adminrc file
+  shell: chdir=/home/vagrant executable="/bin/bash" source ./adminrc; keystone --insecure user-list
+
+#
 # Run some tests using swift client
 # 
 

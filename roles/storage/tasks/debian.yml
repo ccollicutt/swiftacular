@@ -1,0 +1,15 @@
+---
+
+#
+# Install swift storage
+# 
+
+- name: install required packages for swift storage
+  apt: pkg={{ item }} state=installed update_cache=yes cache_valid_time=3600
+  with_items: ubuntu_packages
+
+- name: edit /etc/sysconfig/rsync
+  lineinfile: dest=/etc/default/rsync regexp=^RSYNC_ENABLE line="RSYNC_ENABLE=true"
+
+- name: edit /etc/sysconfig/rsync
+  lineinfile: dest=/etc/default/rsync regexp=^RSYNC_OPTS line="RSYNC_OPTS='--address {{ ansible_eth3.ipv4.address }}'"

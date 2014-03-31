@@ -1,16 +1,18 @@
 ---
 
-- name: install required packages for swift_common
-  apt: pkg={{ item }} state=installed update_cache=yes #cache_valid_time=3600
-  with_items:
-    - swift
-    - python-swiftclient
-    - openssh-server 
-    - rsync 
+#
+# Debian
+#
 
-- name: ensure /etc/swift exists
-  file: path=/etc/swift owner=swift group=swift mode=0750 state=directory
+- include: debian.yml
+  when: ansible_os_family == 'Debian'
 
-- name: copy over swift.conf file
-  template: src=swift.conf.j2 dest=/etc/swift/swift.conf owner=swift group=swift mode=0600
+#
+# Redhat
+#
 
+- include: redhat.yml
+  when: ansible_os_family == 'RedHat'
+
+
+- include: common.yml

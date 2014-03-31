@@ -25,6 +25,11 @@
 
 - name: start swift-proxy on proxy nodes
   service: name=swift-proxy state=running
+  when: ansible_os_family == 'Debian'
+
+- name: start swift-proxy on proxy nodes
+  service: name=openstack-swift-proxy state=running
+  when: ansible_os_family == 'RedHat'
 
 - name: start object-expirer on proxy nodes
   command: swift-init object-expirer start

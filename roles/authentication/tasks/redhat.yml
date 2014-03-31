@@ -6,3 +6,17 @@
 
 - name: ensure mysql-server is running
   service: name=mysqld enabled=yes state=running
+
+#- name: configure keystone error log in /etc/keystone/logging.conf
+#  lineinfile: dest=/etc/keystone/logging.conf regexp="^args=('error.log'" line="args=('/var/log/keystone/error.log',)"
+
+#- name: configure keystone error log in /etc/keystone/logging.conf
+#  lineinfile: dest=/etc/keystone/logging.conf regexp="^args=('access.log'" line="args=('/var/log/keystone/access.log',)"
+
+- name: copy over /etc/keystone/logging.conf
+  copy: src=redhat_logging.conf dest=/etc/keystone/logging.conf owner=keystone group=keystone mode=0640
+  notify: restart keystone
+
+- name: ensure keystone can write to /var/log/keystone
+  file: path=/var/log/keystone recurse=yes owner=keystone group=keystone
+  notify: restart keystone  

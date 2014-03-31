@@ -1,0 +1,7 @@
+---
+
+- name: ensure /etc/swift exists
+  file: path=/etc/swift owner=swift group=swift mode=0750 state=directory
+
+- name: copy over swift.conf file
+  template: src=swift.conf.j2 dest=/etc/swift/swift.conf owner=swift group=swift mode=0600

@@ -1,0 +1,15 @@
+---
+
+ubuntu_packages:
+    - swift-account 
+    - swift-container 
+    - swift-object 
+    - xfsprogs 
+    - parted
+
+redhat_packages:
+    - openstack-swift-account 
+    - openstack-swift-container 
+    - openstack-swift-object 
+    - xfsprogs 
+    - parted

@@ -1,15 +1,7 @@
 ---
 
-#
-# Debian
-#
+- name: install required proxy packages
+  apt: name={{ item }} state=installed update_cache=yes cache_valid_time=3600
+  with_items: ubuntu_packages
 
-- include: debian.yml
-  when: ansible_os_family == 'Debian'
-
-#
-# Redhat
-#
-
-- include: redhat.yml
-  when: ansible_os_family == 'RedHat'
+- include: debian_memcached_config.yml

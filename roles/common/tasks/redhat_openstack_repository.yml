@@ -2,8 +2,9 @@
 
 - name: install RDO openstack repository
   command: yum install -y http://rdo.fedorapeople.org/rdo-release.rpm creates=/etc/yum.repos.d/rdo-release.repo
+  #command: yum insatll -y http://repos.fedorapeople.org/repos/openstack/openstack-havana/rdo-release-havana-7.noarch.rpm
   notify:
-    - yum makecache
+      - yum makecache
     
 - name: install EPEL repository
   command: yum install -y http://fedora.mirror.nexicom.net/epel/6/i386/epel-release-6-8.noarch.rpm creates=/etc/yum.repos.d/epel.repo

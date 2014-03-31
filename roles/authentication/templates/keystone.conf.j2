@@ -24,6 +24,10 @@ ca_certs = /etc/keystone/ssl/certs/ca.pem
 ca_key = /etc/keystone/ssl/certs/cakey.pem
 # client cert, default is false
 #cert_required = False
+cert_subject = /C=US/ST=Unset/L=Unset/O=Unset/CN={{ keystone_server }}
+
+[token]
+provider = keystone.token.providers.uuid.Provider
 
 [sql]
 connection = mysql://keystone:{{ keystone_mysql_password }}@127.0.0.1/keystone

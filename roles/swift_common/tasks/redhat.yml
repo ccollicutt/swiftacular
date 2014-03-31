@@ -1,0 +1,5 @@
+---
+
+- name: install required packages for swift_common
+  yum: pkg={{ item }} state=installed 
+  with_items: redhat_packages

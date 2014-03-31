@@ -1,0 +1,12 @@
+---
+
+#
+# Install swift storage
+# 
+
+- name: install required packages for swift storage
+  yum: pkg={{ item }} state=installed 
+  with_items: redhat_packages
+
+- name: copy rsync init script to /etc/init.d/rsync
+  copy: src=redhat_rsync.init dest=/etc/init.d/rsync owner=root group=root mode=0755

@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+[ -f /usr/bin/rsync ] || exit 0
+
+case "$1" in
+start)
+action "Starting rsyncd: " /usr/bin/rsync --daemon
+;;
+stop)
+action "Stopping rsyncd: " killall rsync
+;;
+*)
+echo "Usage: rsyncd {start|stop}"
+exit 1
+esac
+exit 0

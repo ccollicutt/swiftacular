@@ -3,6 +3,9 @@
 - name: configure proxy cache server for yum
   lineinfile: dest=/etc/yum.conf line="proxy=http://{{ package_cache_server }}:3128" insertafter="^[main]"
 
+- name: remove fastestmirror plugin
+  file: path=/etc/yum/pluginconf.d/fastestmirror.conf state=absent
+
 - name: copy over new CentOS-Base.repo file
   copy: src=CentOS-Base.repo dest=/etc/yum.repos.d/CentOS-Base.repo
   notify:

@@ -1,0 +1,6 @@
+---
+
+- name: tell memcached what IP to listen on
+  lineinfile: dest=/etc/sysconfig/memcached regexp="^OPTIONS" line='OPTIONS="-l {{ ansible_eth3.ipv4.address }}"'
+  notify: 
+  - restart memcached 

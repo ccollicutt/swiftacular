@@ -5,7 +5,7 @@
 
 # XXX FIX ME - ansible_fqdn? XXX
 - name: create self-signed SSL cert for pound
-  command: openssl req -new -nodes -x509 -subj "/C=US/ST=Oregon/L=Portland/O=IT/CN={{ ansible_fqdn }}" -days 3650 -keyout /etc/pound/server.key -out /etc/pound/server.crt -extensions v3_ca creates=/etc/pound/server.crt
+  command: openssl req -new -nodes -x509 -subj "/C=US/ST=Oregon/L=Portland/O=IT/CN={{ ansible_eth1.ipv4.address }}" -days 3650 -keyout /etc/pound/server.key -out /etc/pound/server.crt -extensions v3_ca creates=/etc/pound/server.crt
   register: new_cert
   notify: restart pound
 
