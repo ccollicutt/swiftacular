@@ -1,0 +1,39 @@
+
+#
+# Create rings - NOTE: Is being delegated to the swift proxy(s)
+#
+
+#
+# Check to see if the ring file already exists.
+# I suppose this will only register container.ring.gz...
+#
+# This is necessary in case the cluster is halted.
+#
+- name: check if rings already exist
+  file: path=/etc/swift/{{ item }}.ring.gz
+  with_items:
+    - account
+    - object
+    - container
+  register: rings_exist
+
+- name: build account ring
+  command: swift-ring-builder account.builder add r{{ region }}z{{ zone }}-{{ ansible_eth3.ipv4.address }}:6002R{{ ansible_eth4.ipv4.address }}:6002/{{ disk_prefix }}{{ item }} 100
+           chdir=/etc/swift
+  delegate_to: "{{ swift_proxy_server }}"
+  with_sequence: count={{ disks }}
+  when: losetup.rc > 0 and not rings_exist
+
+- name: build container ring
+  command: swift-ring-builder container.builder add r{{ region }}z{{ zone }}-{{ ansible_eth3.ipv4.address }}:6001R{{ ansible_eth4.ipv4.address }}:6001/{{ disk_prefix }}{{ item }} 100
+           chdir=/etc/swift
+  delegate_to: "{{ swift_proxy_server }}"
+  with_sequence: count={{ disks }}
+  when: losetup.rc > 0 and not rings_exist
+
+- name: build object ring
+  command: swift-ring-builder object.builder add r{{ region }}z{{ zone }}-{{ ansible_eth3.ipv4.address }}:6000R{{ ansible_eth4.ipv4.address }}:6000/{{ disk_prefix }}{{ item }} 100
+           chdir=/etc/swift
+  delegate_to: "{{ swift_proxy_server }}"
+  with_sequence: count={{ disks }}
+  when: losetup.rc > 0 and not rings_exist

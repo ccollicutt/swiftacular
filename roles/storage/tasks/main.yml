@@ -14,5 +14,5 @@
 - include: redhat.yml
   when: ansible_os_family == 'RedHat'
 
-
 - include: common.yml
+- include: common_build_rings.yml

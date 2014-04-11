@@ -11,7 +11,7 @@
 
 - name: use keystone ssl_setup to create ssl configuration files and keys
   command: keystone-manage ssl_setup --keystone-user keystone --keystone-group keystone
-           creates=/etc/keystone/ssl/certs/keystone.pem 
+           creates=/etc/keystone/ssl/certs/keystone.pem
   notify:
     - restart keystone
 
@@ -27,13 +27,22 @@
   when: keystone.changed
 
 # XXX FIX ME XXX
-- name: restart debian keystone  
+- name: restart debian keystone
   service: name=keystone state=restarted
-  when: keystone.changed and ansible_os_family == 'Debian'
-
-- name: restart redhat keystone  
+  when: ansible_os_family == 'Debian'
+  
+- name: restart redhat keystone
   service: name=openstack-keystone state=restarted
   when: keystone.changed and ansible_os_family == 'RedHat'
+
+# This is for when a cluster is vagrant halted/started
+- name: ensure keystone debian keystone is running
+  service: name=keystone state=running
+  when: ansible_os_family == 'Debian'
+
+- name: ensure redhat keystone is running
+  service: name=openstack-keystone state=running
+  when: ansible_os_family == 'RedHat'
 
 - name: wait for keystone to come back up
   wait_for: host="{{ keystone_server }}" port=35357
@@ -41,7 +50,7 @@
 
 #
 # Keystone endpoints
-# 
+#
 
 - name: create keystone identity point
   keystone_service: insecure=yes name=keystone type=identity description="Keystone Identity Service" publicurl="https://{{ keystone_server }}:5000/v2.0" internalurl="https://{{ keystone_server }}:5000/v2.0" adminurl="https://{{ keystone_server }}:35357/v2.0" region={{ keystone_region }} token={{ keystone_admin_token }} endpoint="https://127.0.0.1:35357/v2.0"
@@ -56,7 +65,7 @@
 
 #
 # Create keystone tenants
-# 
+#
 
 - name: create service keystone tenant
   keystone_user: token={{ keystone_admin_token }} tenant=service tenant_description="Service Tenant" endpoint="https://127.0.0.1:35357/v2.0"
@@ -83,7 +92,7 @@
 - name: create test keystone user
   keystone_user: token={{ keystone_admin_token }} user={{ keystone_test_user }} tenant=demo password={{ keystone_test_user_password }} endpoint="https://127.0.0.1:35357/v2.0"
 
-# 
+#
 # Keystone create and apply roles
 #
 
@@ -101,7 +110,7 @@
 
 #
 # Run a basic test to see if keystone is running
-# 
+#
 
 - name: test keystone with user-list
   shell: keystone --insecure --token {{ keystone_admin_token }} --endpoint https://{{ keystone_server }}:35357/v2.0 user-list

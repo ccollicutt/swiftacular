@@ -36,7 +36,7 @@ admin_password = {{ keystone_generic_service_password }}
 #delay_auth_decision = 10
 # is set to tru in official havana documentation
 delay_auth_decision = true
-
+insecure = true
 
 [filter:cache]
 use = egg:swift#memcache

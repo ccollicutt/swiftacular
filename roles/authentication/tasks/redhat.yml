@@ -17,6 +17,18 @@
   copy: src=redhat_logging.conf dest=/etc/keystone/logging.conf owner=keystone group=keystone mode=0640
   notify: restart keystone
 
+- name: create empty /var/log/keystone/error.log and access.log
+  command: touch /var/log/keystone/{{ item }}.log
+  with_items:
+    - error
+    - access
+
+- name: ensure error.log and access.log are writable by keystone
+  file: path=/var/log/keystone/{{ item }}.log state=file owner=keystone group=keystone
+  with_items:
+    - error
+    - access
+
 - name: ensure keystone can write to /var/log/keystone
   file: path=/var/log/keystone recurse=yes owner=keystone group=keystone
-  notify: restart keystone  
+  notify: restart keystone

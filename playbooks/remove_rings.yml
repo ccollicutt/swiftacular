@@ -17,7 +17,7 @@
   tasks:
 
   - name: stop swift-proxy on proxy nodes
-    service: name=swift-proxy state=stopped
+    service: name=openstack-swift-proxy state=stopped
 
   - name: remove builder files
     command: rm -f /etc/swift/{{item}}.builder
