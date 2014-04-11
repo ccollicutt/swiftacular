@@ -15,6 +15,7 @@ pipeline = catch_errors cache proxy-server
 [app:proxy-server]
 use = egg:swift#proxy
 # See proxy-server.conf-sample for options
+memcache_servers = {{ ansible_eth3.ipv4.address }}:11211
 
 [filter:cache]
 use = egg:swift#memcache

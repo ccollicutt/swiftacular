@@ -18,7 +18,5 @@
   template: src=redhat_pound.cfg.j2 dest=/etc/pound/pound.cfg owner=root group=root mode=0644
   notify: restart pound
 
-# XXX not common... XXX
 - name: link /etc/pound/pound.cfg to /etc/pound.cfg
   file: src=/etc/pound/pound.cfg dest=/etc/pound.cfg state=link
-  when: ansible_os_family == 'RedHat'

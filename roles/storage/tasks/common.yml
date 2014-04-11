@@ -14,19 +14,19 @@
 
 #
 # Remove disks
-# 
+#
 
-- name: umount swift disks 
+- name: umount swift disks
   mount: name=/srv/node/{{ disk_prefix }}{{ item }} state=unmounted src=/dev/loop{{ item }} fstype=xfs
   with_sequence: count={{ disks }}
   when: "losetup.rc > 0"
 
 - name: remove /srv/node/* disk device directories
-  file: state=absent path=/srv/node/{{ disk_prefix }}{{ item }} 
+  file: state=absent path=/srv/node/{{ disk_prefix }}{{ item }}
   with_sequence: count={{ disks }}
   when: "losetup.rc > 0"
 
-#- name: remove loop devices 
+#- name: remove loop devices
 #  command: losetup -d /dev/loop{{ item }}
 #  with_sequence: count={{ disks }}
 #  when: "losetup.rc > 0"
@@ -38,7 +38,7 @@
 
 #
 # Create disks
-# 
+#
 
 - name: create sparse images
   command: truncate --size {{ loop_disk_size }}G /var/tmp/{{ disk_prefix }}{{ item }}.img
@@ -64,7 +64,7 @@
 
 # NOTE: Would likely not want the nobootwait in production, but in virtualbox the loop devices won't be setup yet so it won't be able to reboot without that setting, assuming the mount points are setup in /etc/fstab
 # NOTE: later on removed nobootwait b/c didn't work on redhat
-- name: mount swift disks 
+- name: mount swift disks
   mount: name=/srv/node/{{ disk_prefix }}{{ item }} state=mounted src=/dev/loop{{ item }} opts="noatime,nodiratime,nobarrier" fstype=xfs
   with_sequence: count={{ disks }}
   when: "losetup.rc > 0"
@@ -80,7 +80,7 @@
 
 #
 # Configure rsync
-# 
+#
 
 - name: copy over rsyncd.conf to swift storage
   template: src=rsyncd.conf.j2 dest=/etc/rsyncd.conf
@@ -90,7 +90,7 @@
 
 #
 # Configure swift storage processes
-# 
+#
 
 - name: ensure *-server directories exist in /etc/swift
   file: path=/etc/swift/{{ item }}-server state=directory owner=swift group=swift mode=0755
@@ -112,28 +112,3 @@
     - account
     - container
     - object
-
-#
-# Create rings - NOTE: Is being delegated to the swift proxy(s)
-#
-
-- name: build account ring
-  command: swift-ring-builder account.builder add r{{ region }}z{{ zone }}-{{ ansible_eth3.ipv4.address }}:6002R{{ ansible_eth4.ipv4.address }}:6002/{{ disk_prefix }}{{ item }} 100 
-           chdir=/etc/swift 
-  delegate_to: "{{ swift_proxy_server }}"
-  with_sequence: count={{ disks }}
-  when: "losetup.rc > 0"
-
-- name: build container ring
-  command: swift-ring-builder container.builder add r{{ region }}z{{ zone }}-{{ ansible_eth3.ipv4.address }}:6001R{{ ansible_eth4.ipv4.address }}:6001/{{ disk_prefix }}{{ item }} 100
-           chdir=/etc/swift 
-  delegate_to: "{{ swift_proxy_server }}"
-  with_sequence: count={{ disks }}
-  when: "losetup.rc > 0"
-
-- name: build object ring
-  command: swift-ring-builder object.builder add r{{ region }}z{{ zone }}-{{ ansible_eth3.ipv4.address }}:6000R{{ ansible_eth4.ipv4.address }}:6000/{{ disk_prefix }}{{ item }} 100
-           chdir=/etc/swift 
-  delegate_to: "{{ swift_proxy_server }}"
-  with_sequence: count={{ disks }}
-  when: "losetup.rc > 0"

@@ -18,6 +18,11 @@
 
   - name: stop swift-proxy on proxy nodes
     service: name=openstack-swift-proxy state=stopped
+    when: ansible_os_family == 'RedHat'
+
+  - name: stop swift-proxy on proxy nodes
+    service: name=swift-proxy state=stopped
+    when: ansible_os_family == 'Debian'
 
   - name: remove builder files
     command: rm -f /etc/swift/{{item}}.builder
@@ -26,7 +31,7 @@
     - container
     - object
 
-- hosts: 
+- hosts:
   - storage
   - proxy
 
