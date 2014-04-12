@@ -18,7 +18,7 @@
   notify: restart keystone
 
 - name: create empty /var/log/keystone/error.log and access.log
-  command: touch /var/log/keystone/{{ item }}.log
+  command: touch /var/log/keystone/{{ item }}.log creates=/var/log/keystone/{{ item }}.log
   with_items:
     - error
     - access
