@@ -9,7 +9,7 @@
 
 # OpenStack Swift Havana and Ansible
 
-This repository will create a virtualized OpenStack Swift cluster using Vagrant, VirtualBox, Ansible, and the OpenStack Havana release for Ubuntu 12.04.
+This repository will create a virtualized OpenStack Swift cluster using Vagrant, VirtualBox, Ansible, and the OpenStack Havana release for Ubuntu 12.04 or CentOS 6.
 
 #### Table of Contents
 
@@ -35,14 +35,7 @@ $ mkdir library
 # Checkout some modules to help with managing openstack 
 $ git clone https://github.com/openstack-ansible/openstack-ansible-modules library/openstack
 $ vagrant up 
-$ cp group_vars/all.example group_vars/all
-$ vi group_vars/all # ie. edit the CHANGEMEs in the file, if desired
-# Source aliases, etc
-$ . ansiblerc
-# Test connectivity to virtual machines
-$ ans -m ping all
-# Run the playbook to deploy Swift!
-$ pb site.yml
+$ ansible-playbook site.yml
 ```
 
 ## Features
@@ -53,6 +46,7 @@ $ pb site.yml
 * Sparse files to back Swift disks
 * Tests for uploading files into Swift
 * Use of [gauntlt](http://gauntlt.org/) attacks to verify installation
+* Supports both Ubuntu 12.04 and CentOS 6
 
 ## Requirements
 
@@ -128,22 +122,22 @@ There is a script to destroy and rebuild everything but the package cache:
 
 ```bash
 $ ./bin/redo
-$ ans -m ping all # just to check if networking is up
+$ ansible -m ping all # just to check if networking is up
 $ pb site.yml
 ```
 
 To remove and redo only the rings and fake/sparse disks without destroying any virtual machines:
 
 ```bash
-$ pb playbooks/remove_rings.yml
-$ pb site.yml
+$ ansible-playbook playbooks/remove_rings.yml
+$ ansible-playbook site.yml
 ```
 
 To remove the keystone database and redo the endpoints, users, regions, etc:
 
 ```bash
-$ pb ./playbook/remove_keystone.yml
-$ pb site.yml
+$ ansible-playbook ./playbook/remove_keystone.yml
+$ ansible-playbook site.yml
 ```
 
 ## Development environment
@@ -169,7 +163,26 @@ There is an swift-ansible-modules directory in the library directory that contai
 
 ## Issues
 
-* Loop mounts won't survive a reboot on the storage nodes
+* #12 - If you receive an error like the below then just run the site.yml again and it should sort itself out. I believe it's some sort of race condition.
+
+```bash
+TASK: [storage | build object ring] ******************************************* 
+changed: [192.168.100.202] => (item=1)
+changed: [192.168.100.200] => (item=1)
+changed: [192.168.100.201] => (item=1)
+changed: [192.168.100.202] => (item=2)
+failed: [192.168.100.201] => (item=2) => {"changed": true, "cmd": ["swift-ring-builder", "object.builder", "add", "r1z2-10.0.20.201:6000R10.0.30.201:6000/td2", "100"], "delta": "0:00:00.134528", "end": "2014-04-11 13:51:45.604004", "item": "2", "rc": 1, "start": "2014-04-11 13:51:45.469476"}
+stderr: Traceback (most recent call last):
+  File "/usr/bin/swift-ring-builder", line 776, in <module>
+    builder = RingBuilder.load(argv[1])
+  File "/usr/lib/python2.7/dist-packages/swift/common/ring/builder.py", line 1002, in load
+    builder = pickle.load(open(builder_file, 'rb'))
+EOFError
+```
+
+
+* #15 - Loop mounts won't survive a reboot on the storage nodes
+* #1 - Guantlt checks are not working
 
 ## Notes
 
