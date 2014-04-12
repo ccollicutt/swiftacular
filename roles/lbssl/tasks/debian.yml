@@ -6,9 +6,7 @@
 
 - name: install required packages for lbssl
   apt: pkg={{ item }} state=installed update_cache=yes cache_valid_time=3600
-  with_items:
-    - pound
-    - openssl
+  with_items: ubuntu_packages
 
 - name: set /etc/default/pound to allow pound to start
   template: src=default_pound.j2 dest=/etc/default/pound
