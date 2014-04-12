@@ -51,6 +51,8 @@ $ ansible-playbook site.yml
 ## Requirements
 
 * Vagrant and Virtualbox
+ * For Ubuntu I am using the official Vagrant Precise64 image
+ * For CentOS 6 I am using the [Vagrant box](http://puppet-vagrant-boxes.puppetlabs.com/centos-65-x64-virtualbox-nocm.box) provided by Puppet Labs
 * Enough resources on your computer to run seven vms
 
 ## Virtual machines created
@@ -179,7 +181,6 @@ stderr: Traceback (most recent call last):
     builder = pickle.load(open(builder_file, 'rb'))
 EOFError
 ```
-
 
 * #15 - Loop mounts won't survive a reboot on the storage nodes
 * #1 - Guantlt checks are not working
