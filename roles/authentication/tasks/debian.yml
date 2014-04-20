@@ -4,5 +4,11 @@
   apt: pkg={{ item }} state=installed update_cache=yes cache_valid_time=3600
   with_items: ubuntu_packages
 
+- name: create empty /var/log/keystone/keystone.log 
+  command: touch /var/log/keystone/keystone.log creates=/var/log/keystone/keystone.log
+
+- name: ensure /var/log/keystone/keystone.log has the correct privileges
+  file: path=/var/log/keystone/keystone.log owner=keystone group=keystone
+
 - name: remove default keystone sqlite database file
   file: path=/var/lib/keystone/keystone.db state=absent

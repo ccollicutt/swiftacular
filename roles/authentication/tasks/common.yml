@@ -9,8 +9,23 @@
   notify:
     - restart keystone
 
+#
+# On Trusty installing the keystone package automatically generates /etc/keystone/ssl populates it
+# with various keys that I don't want. Below we see if the key file we want exists, and if not we
+# assume that /etc/keystone/ssl was created by the package installation, so remove it.
+#
+
+- name: check if there is a /etc/keystone/ssl/certs/keystone.pem file
+  command: ls /etc/keystone/ssl/certs/keystone.pem
+  register: keystone_pem_missing
+  ignore_errors: true
+
+- name: remove /etc/keystone/ssl if there is not a keystone.pem file
+  file: path=/etc/keystone/ssl state=absent
+  when: keystone_pem_missing
+
 - name: use keystone ssl_setup to create ssl configuration files and keys
-  command: keystone-manage ssl_setup --keystone-user keystone --keystone-group keystone
+  shell: rm -rf /etc/keystone/ssl; keystone-manage ssl_setup --keystone-user keystone --keystone-group keystone
            creates=/etc/keystone/ssl/certs/keystone.pem
   notify:
     - restart keystone
@@ -46,7 +61,7 @@
 
 - name: wait for keystone to come back up
   wait_for: host="{{ keystone_server }}" port=35357
-  when: keystone.changed
+  #when: keystone.changed
 
 #
 # Keystone endpoints
@@ -108,10 +123,5 @@
 - name: create a swiftoperator role and add the demo user to it
   keystone_user: token={{ keystone_admin_token }} role=swiftoperator user={{ keystone_test_user }} tenant=demo endpoint="https://127.0.0.1:35357/v2.0"
 
-#
-# Run a basic test to see if keystone is running
-#
 
-- name: test keystone with user-list
-  shell: keystone --insecure --token {{ keystone_admin_token }} --endpoint https://{{ keystone_server }}:35357/v2.0 user-list
-  when: keystone.changed
+
