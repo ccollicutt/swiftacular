@@ -9,7 +9,7 @@
 
 # OpenStack Swift Havana and Ansible
 
-This repository will create a virtualized OpenStack Swift cluster using Vagrant, VirtualBox, Ansible, and the OpenStack Havana release for Ubuntu 12.04 or CentOS 6.
+This repository will create a virtualized OpenStack Swift cluster using Vagrant, VirtualBox, Ansible.
 
 #### Table of Contents
 
@@ -38,6 +38,14 @@ $ vagrant up
 $ ansible-playbook site.yml
 ```
 
+## Supported Operating Systems and OpenStack Releases
+
+* CentOS 6.5 with OpenStack Havana packages
+* Ubuntu 12.04 with OpenStack Havana packages
+* Ubuntu 14.04 with OpenStack Icehouse packages
+
+The Vagrantfile has the above boxes in place with Ubuntu 12.04 being the default uncommented box. To use one of the other operating systems as the basis for Swiftacular, simply uncomment the OS you would like to use in the Vagrant file, and make sure the other boxes are commented out.
+
 ## Features
 
 * Run OpenStack Swift in vms on your local computer, but with multiple servers
@@ -46,7 +54,7 @@ $ ansible-playbook site.yml
 * Sparse files to back Swift disks
 * Tests for uploading files into Swift
 * Use of [gauntlt](http://gauntlt.org/) attacks to verify installation
-* Supports both Ubuntu 12.04 and CentOS 6
+* Supports both Ubuntu Precise 12.04, Trusty 14.04 and CentOS 6.5
 
 ## Requirements
 
@@ -117,7 +125,8 @@ To restart completely:
 ```bash
 $ vagrant destroy -f
 $ vagrant up
-$ pb site.yml
+# wait...
+$ ansible-playbook site.yml
 ```
 
 There is a script to destroy and rebuild everything but the package cache:
@@ -125,7 +134,7 @@ There is a script to destroy and rebuild everything but the package cache:
 ```bash
 $ ./bin/redo
 $ ansible -m ping all # just to check if networking is up
-$ pb site.yml
+$ ansible-playbook site.yml
 ```
 
 To remove and redo only the rings and fake/sparse disks without destroying any virtual machines:
@@ -150,8 +159,6 @@ This playbook was developed in the following environment:
 * Ansible 1.4
 * Virtualbox 4.2.6
 * Vagrant 1.3.5
-* OpenStack Havana from the [Ubuntu Cloud Archive](https://wiki.ubuntu.com/ServerTeam/CloudArchive)
-* Ubuntu 12.04 for the vms
 
 ## Modules
 
