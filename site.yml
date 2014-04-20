@@ -47,8 +47,9 @@
 # tried received "too many files open" errors.
 #
 
-- hosts: 
+- hosts:
   - storage
+  serial: 1
   roles:
   - storage
 
