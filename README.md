@@ -166,31 +166,12 @@ There is an swift-ansible-modules directory in the library directory that contai
 
 ## Future work
 
-* Make using LXC an option
-* Deploy Swift from source
-* More than one region. Regions are setup, only one is created right now.
+See the issues in the tracking system on Github for Swiftacular with the enhancement label.
+
 
 ## Issues
 
-* #12 - If you receive an error like the below then just run the site.yml again and it should sort itself out. I believe it's some sort of race condition.
-
-```bash
-TASK: [storage | build object ring] ******************************************* 
-changed: [192.168.100.202] => (item=1)
-changed: [192.168.100.200] => (item=1)
-changed: [192.168.100.201] => (item=1)
-changed: [192.168.100.202] => (item=2)
-failed: [192.168.100.201] => (item=2) => {"changed": true, "cmd": ["swift-ring-builder", "object.builder", "add", "r1z2-10.0.20.201:6000R10.0.30.201:6000/td2", "100"], "delta": "0:00:00.134528", "end": "2014-04-11 13:51:45.604004", "item": "2", "rc": 1, "start": "2014-04-11 13:51:45.469476"}
-stderr: Traceback (most recent call last):
-  File "/usr/bin/swift-ring-builder", line 776, in <module>
-    builder = RingBuilder.load(argv[1])
-  File "/usr/lib/python2.7/dist-packages/swift/common/ring/builder.py", line 1002, in load
-    builder = pickle.load(open(builder_file, 'rb'))
-EOFError
-```
-
-* #15 - Loop mounts won't survive a reboot on the storage nodes
-* #1 - Guantlt checks are not working
+See the issues in the tracking tracking system on Github for Swiftacular.
 
 ## Notes
 
