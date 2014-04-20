@@ -1,8 +1,9 @@
 ---
 
-- name: install havana apt repository
+- name: install precise openstack havana apt repository
   apt_repository: repo='deb http://ubuntu-cloud.archive.canonical.com/ubuntu precise-updates/havana main' state=present
   register: new_repo
+  when: ansible_distribution_release == "precise"
 
 - name: update apt 
   command: apt-get update
