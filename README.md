@@ -7,7 +7,7 @@
         \/                             \/     \/                \/       
 ```
 
-# OpenStack Swift Havana and Ansible
+# OpenStack Swift and Ansible
 
 This repository will create a virtualized OpenStack Swift cluster using Vagrant, VirtualBox, Ansible.
 
