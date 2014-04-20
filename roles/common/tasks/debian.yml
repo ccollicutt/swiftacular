@@ -6,6 +6,7 @@
 
 - name: ensure portmap is not running
   service: name=portmap state=stopped enabled=no
+  ignore_errors: true
 
 #
 # NTP
