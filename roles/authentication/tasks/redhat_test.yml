@@ -1,0 +1,7 @@
+#
+# Run a basic test to see if keystone is running
+#
+
+- name: test keystone with user-list
+  shell: keystone --insecure --token {{ keystone_admin_token }} --endpoint https://{{ keystone_server }}:35357/v2.0 user-list
+  when: keystone.changed 

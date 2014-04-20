@@ -1,0 +1,16 @@
+#
+# Run a basic test to see if keystone is running
+#
+
+- name: test keystone on precise with user-list
+  shell: keystone --insecure --token {{ keystone_admin_token }} --endpoint https://{{ keystone_server }}:35357/v2.0 user-list
+  when: keystone.changed and ansible_distribution_release == "precise"
+
+
+#
+# keystone on trusty has commands changed to have "os" before option
+#
+
+- name: test keystone on trusty with user-list
+  shell: keystone --insecure --os-token {{ keystone_admin_token }} --os-endpoint https://{{ keystone_server }}:35357/v2.0 user-list
+  when: keystone.changed and ansible_distribution_release == "trusty"
