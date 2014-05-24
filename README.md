@@ -34,7 +34,8 @@ $ cd swiftacular
 $ mkdir library
 # Checkout some modules to help with managing openstack 
 $ git clone https://github.com/openstack-ansible/openstack-ansible-modules library/openstack
-$ vagrant up 
+$ vagrant up
+$ cp group_vars/all.example group_vars/all # and edit if desired
 $ ansible-playbook site.yml
 ```
 
