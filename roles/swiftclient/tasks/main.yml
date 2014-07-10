@@ -1,7 +1,7 @@
 ---
 
 - name: copy over testrc file
-  template: src=testrc.j2 dest=/home/vagrant/testrc
+  template: src=testrc.j2 dest=/home/{{ ansible_env.SUDO_USER }}/testrc
 
 - name: copy over adminrc file
-  template: src=adminrc.j2 dest=/home/vagrant/adminrc
+  template: src=adminrc.j2 dest=/home/{{ ansible_env.SUDO_USER }}/adminrc

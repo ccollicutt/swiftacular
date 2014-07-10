@@ -74,9 +74,7 @@
   keystone_service: insecure=yes name=ec2 type=ec2 description="EC2 Compatability Layer" publicurl=https://{{ keystone_server }}:8773/services/Cloud internalurl=http://{{ keystone_server }}:8773/services/Cloud adminurl=http://{{ keystone_server }}:8773/services/Admin region={{ keystone_region }} token={{ keystone_admin_token }} endpoint="https://127.0.0.1:35357/v2.0"
 
 - name: create object storage keystone service
-  keystone_service: insecure=yes name=swift type=object-store description="Object Storage Service" publicurl='https://{{ swift_proxy_ssl_proxy_server }}/v1/AUTH_\$(tenant_id)s' internalurl='https://{{ swift_proxy_ssl_proxy_server }}/v1/AUTH_\$(tenant_id)s' adminurl='https://{{ swift_proxy_ssl_proxy_server }}/v1' region={{ keystone_region }} token={{ keystone_admin_token }} endpoint="https://127.0.0.1:35357/v2.0"
-
-# keystone_service: insecure=yes name=swift type=object-store description="Object Storage Service" publicurl='https://{{ swift_proxy_ssl_proxy_server }}/v1/AUTH_\$(tenant_id)s' internalurl='https://{{ swift_proxy_ssl_proxy_server }}/v1/AUTH_\$(tenant_id)s' adminurl='https://{{ swift_proxy_ssl_proxy_server }}/v1' region={{ keystone_region }} token={{ keystone_admin_token }} endpoint="https://127.0.0.1:35357/v2.0"
+  keystone_service: insecure=yes name=swift type=object-store description="Object Storage Service" publicurl='https://{{ swift_proxy_ssl_proxy_server }}/v1/AUTH_$(tenant_id)s' internalurl='https://{{ swift_proxy_ssl_proxy_server }}/v1/AUTH_$(tenant_id)s' adminurl='https://{{ swift_proxy_ssl_proxy_server }}/v1' region={{ keystone_region }} token={{ keystone_admin_token }} endpoint="https://127.0.0.1:35357/v2.0"
 
 #
 # Create keystone tenants

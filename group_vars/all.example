@@ -1,13 +1,13 @@
 ---
 
 #
-# Server IPs
+# Server IPs - probably don't change this :)
 #
 
-keystone_server: 192.168.100.50
-swift_proxy_server: 192.168.100.100
-swift_proxy_ssl_proxy_server: 192.168.100.30
-package_cache_server: 192.168.100.20
+keystone_server: "{{ hostvars[groups['authentication'][0]]['ansible_eth0']['ipv4']['address'] }}"
+swift_proxy_server: "{{ hostvars[groups['proxy'][0]]['ansible_eth0']['ipv4']['address'] }}"
+swift_proxy_ssl_proxy_server: "{{ hostvars[groups['lbssl'][0]]['ansible_eth0']['ipv4']['address'] }}"
+package_cache_server: "{{ hostvars[groups['package_cache'][0]]['ansible_eth0']['ipv4']['address'] }}" 
 
 #
 # Timezone and NTP
