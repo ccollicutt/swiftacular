@@ -1,7 +1,7 @@
 
 # Keystone
 [authentication]
-192.168.100.50
+swift-keystone ansible_ssh_host=192.168.100.50
 
 # Loadbalancing and SSL
 [lbssl]
