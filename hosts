@@ -5,27 +5,27 @@
 
 # Loadbalancing and SSL
 [lbssl]
-192.168.100.30
+swift-lbssl ansible_ssh_host=192.168.100.30
 
 # A place to run swift cli tests
 [swiftclient]
-192.168.100.20
+swift-package-cache ansible_ssh_host=192.168.100.20
 
 # Gauntlt is for running security checks
 # See: http://gauntlt.org/
 [gauntlt]
-192.168.100.20
+swift-package-cache ansible_ssh_host=192.168.100.20
 
 # apt-cacher-ng
 [package_cache]
-192.168.100.20
+swift-package-cache ansible_ssh_host=192.168.100.20
 
 # Swift proxy node
 [proxy]
-192.168.100.100
+swift-proxy ansible_ssh_host=192.168.100.100
 
 # Swift storage node
 [storage]
-192.168.100.200
-192.168.100.201
-192.168.100.202
+swift-storage-01 ansible_ssh_host=192.168.100.200
+swift-storage-02 ansible_ssh_host=192.168.100.201
+swift-storage-03 ansible_ssh_host=192.168.100.202
