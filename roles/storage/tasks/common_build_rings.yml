@@ -14,6 +14,7 @@
   command: ls /etc/swift/account.ring.gz
   register: rings_exist
   ignore_errors: true
+  changed_when: rings_exist.rc > 0
 
 - debug: msg="{{ rings_exist.rc }}"
 

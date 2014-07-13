@@ -23,7 +23,7 @@
 
 - name: remove /etc/keystone/ssl if there is not a keystone.pem file
   file: path=/etc/keystone/ssl state=absent
-  when: keystone_pem_missing > 0
+  when: keystone_pem_missing.rc > 0
   changed_when: keystone_pem_missing.rc > 0
 
 - name: use keystone ssl_setup to create ssl configuration files and keys
@@ -47,7 +47,7 @@
 # XXX FIX ME XXX
 - name: restart debian keystone
   service: name=keystone state=restarted
-  when: ansible_os_family == 'Debian'
+  when: keystone.changed and ansible_os_family == 'Debian' 
   
 - name: restart redhat keystone
   service: name=openstack-keystone state=restarted
@@ -64,7 +64,6 @@
 
 - name: wait for keystone to come back up
   wait_for: host="{{ keystone_server }}" port=35357
-  #when: keystone.changed
 
 #
 # Keystone endpoints

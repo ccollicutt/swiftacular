@@ -9,6 +9,7 @@
   shell: mount | grep "loop1 "
   register: losetup
   ignore_errors: True
+  changed_when: losetup.rc > 0
   tags:
     - remount_loop_devices
 
