@@ -45,6 +45,8 @@ $ ansible-playbook site.yml
 * Ubuntu 12.04 with OpenStack Havana packages
 * Ubuntu 14.04 with OpenStack Icehouse packages
 
+Ubuntu 14.04 is probably the most tested version right now, then Ubuntu 12.04, followed up by Redhat/CentOS 6.5+.
+
 The Vagrantfile has the above boxes in place with Ubuntu 12.04 being the default uncommented box. To use one of the other operating systems as the basis for Swiftacular, simply uncomment the OS you would like to use in the Vagrant file, and make sure the other boxes are commented out.
 
 ## Features
