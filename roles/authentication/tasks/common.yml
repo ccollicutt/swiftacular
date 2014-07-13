@@ -19,14 +19,17 @@
   command: ls /etc/keystone/ssl/certs/keystone.pem
   register: keystone_pem_missing
   ignore_errors: true
+  changed_when: keystone_pem_missing.rc > 0
 
 - name: remove /etc/keystone/ssl if there is not a keystone.pem file
   file: path=/etc/keystone/ssl state=absent
-  when: keystone_pem_missing
+  when: keystone_pem_missing > 0
+  changed_when: keystone_pem_missing.rc > 0
 
 - name: use keystone ssl_setup to create ssl configuration files and keys
   shell: rm -rf /etc/keystone/ssl; keystone-manage ssl_setup --keystone-user keystone --keystone-group keystone
            creates=/etc/keystone/ssl/certs/keystone.pem
+  when: keystone_pem_missing.rc > 0
   notify:
     - restart keystone
 

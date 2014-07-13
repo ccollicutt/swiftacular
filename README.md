@@ -55,12 +55,12 @@ The Vagrantfile has the above boxes in place with Ubuntu 12.04 being the default
 * Sparse files to back Swift disks
 * Tests for uploading files into Swift
 * Use of [gauntlt](http://gauntlt.org/) attacks to verify installation
-* Supports both Ubuntu Precise 12.04, Trusty 14.04 and CentOS 6.5
+* Supports Ubuntu Precise 12.04, Trusty 14.04 and CentOS 6.5
 
 ## Requirements
 
 * Vagrant and Virtualbox
- * For Ubuntu I am using the official Vagrant Precise64 image
+ * For Ubuntu I am using the official Vagrant Precise64 images
  * For CentOS 6 I am using the [Vagrant box](http://puppet-vagrant-boxes.puppetlabs.com/centos-65-x64-virtualbox-nocm.box) provided by Puppet Labs
 * Enough resources on your computer to run seven vms
 
@@ -100,12 +100,6 @@ However, I usually login to the package_cache server and use swift from there.
 
 ```bash
 $ vagrant ssh swift-package-cache-01
-working on swift-package-cache-01 with ip of 192.168.100.20
-Welcome to Ubuntu 12.04 LTS (GNU/Linux 3.2.0-23-generic x86_64)
-
- * Documentation:  https://help.ubuntu.com/
-Welcome to your Vagrant-built virtual machine.
-Last login: Mon Nov 25 10:57:32 2013 from 192.168.100.1
 vagrant@swift-package-cache-01:~$ . testrc 
 vagrant@swift-package-cache-01:~$ swift list
 vagrant@swift-package-cache-01:~$ echo "swift is cool" > swift.txt
@@ -167,12 +161,11 @@ There is an swift-ansible-modules directory in the library directory that contai
 
 ## Future work
 
-See the issues in the tracking system on Github for Swiftacular with the enhancement label.
-
+See the [issues](https://github.com/curtisgithub/swiftacular/issues) in the tracking system on Github for Swiftacular with the enhancement label.
 
 ## Issues
 
-See the issues in the tracking tracking system on Github for Swiftacular.
+See the [issues](https://github.com/curtisgithub/swiftacular/issues) in the tracking tracking system on Github for Swiftacular.
 
 ## Notes
 

@@ -43,7 +43,7 @@ ListenHTTPS
     Service
         BackEnd
             ## XXX FIX ME - should be a variable XXX
-            Address {{ swift_proxy_server }}
+            Address {{ hostvars[groups['proxy'][0]]['ansible_eth2']['ipv4']['address'] }}
             Port    8080
         End
     End
