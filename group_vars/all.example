@@ -4,14 +4,14 @@
 # Server IPs - probably don't change this :)
 #
 
-keystone_server: "{{ hostvars[groups['authentication'][0]]['ansible_eth0']['ipv4']['address'] }}"
-swift_proxy_server: "{{ hostvars[groups['proxy'][0]]['ansible_eth0']['ipv4']['address'] }}"
-swift_proxy_ssl_proxy_server: "{{ hostvars[groups['lbssl'][0]]['ansible_eth0']['ipv4']['address'] }}"
-package_cache_server: "{{ hostvars[groups['package_cache'][0]]['ansible_eth0']['ipv4']['address'] }}" 
+keystone_server: "{{ hostvars[groups['authentication'][0]]['ansible_eth1']['ipv4']['address'] }}"
+swift_proxy_server: "{{ hostvars[groups['proxy'][0]]['ansible_eth1']['ipv4']['address'] }}"
+swift_proxy_ssl_proxy_server: "{{ hostvars[groups['lbssl'][0]]['ansible_eth1']['ipv4']['address'] }}"
+package_cache_server: "{{ hostvars[groups['package_cache'][0]]['ansible_eth1']['ipv4']['address'] }}"
 
 #
 # Timezone and NTP
-# 
+#
 
 timezone_area: America
 timezone_city: Edmonton
@@ -19,7 +19,7 @@ time_server: ntp.ubuntu.com
 
 #
 # Disks and replica settings
-# 
+#
 
 disk_prefix: td
 partition_power: 12
@@ -37,13 +37,13 @@ swift_hash_path_prefix: CHANGEME
 
 #
 # Keystone region
-# 
+#
 
 keystone_region: Edmonton
 
 #
 # Keystone roles, tokens and passwords
-# 
+#
 
 keystone_mysql_password: CHANGEME
 keystone_admin_token: CHANGEME
