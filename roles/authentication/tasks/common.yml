@@ -26,41 +26,58 @@
   when: keystone_pem_missing.rc > 0
   changed_when: keystone_pem_missing.rc > 0
 
-- name: use keystone ssl_setup to create ssl configuration files and keys
-  shell: rm -rf /etc/keystone/ssl; keystone-manage ssl_setup --keystone-user keystone --keystone-group keystone
-           creates=/etc/keystone/ssl/certs/keystone.pem
-  when: keystone_pem_missing.rc > 0
+#- name: use keystone ssl_setup to create ssl configuration files and keys
+#  shell: rm -rf /etc/keystone/ssl; keystone-manage ssl_setup --keystone-user keystone --keystone-group keystone
+#           creates=/etc/keystone/ssl/certs/keystone.pem
+#  when: keystone_pem_missing.rc > 0
+#  notify:
+#    - restart keystone
+
+# https://docs.openstack.org/keystone/pike/install/keystone-install-rdo.html#install-and-configure-components
+- name: credential_setup for keystone
+  shell: keystone-manage credential_setup --keystone-user keystone --keystone-group keystone
   notify:
     - restart keystone
 
+#- name: create keystone database
+#  mysql_db: name=keystone state=present
+#  register: keystone
 - name: create keystone database
-  mysql_db: name=keystone state=present
+  command: echo "create database keystone" | mysql -u root
   register: keystone
 
+#- name: create keystone mysql user
+#  mysql_user: name=keystone password={{ keystone_mysql_password }} priv=keystone.*:ALL state=present
+
 - name: create keystone mysql user
-  mysql_user: name=keystone password={{ keystone_mysql_password }} priv=keystone.*:ALL state=present
+  command: mysql -u root -e "CREATE USER 'keystone'@'localhost' IDENTIFIED BY '{{ keystone_mysql_password }}'; GRANT ALL ON *.* TO 'keystone'@'localhost'; FLUSH PRIVILEGES"
+  ignore_errors: true
+
+- name: install keystone packages
+  command: yum install -y openstack-keystone httpd python3-mod_wsgi
 
 - name: run keystone db_sync
   command: keystone-manage db_sync
   when: keystone.changed
+  ignore_errors: true
 
 # XXX FIX ME XXX
 - name: restart debian keystone
   service: name=keystone state=restarted
   when: keystone.changed and ansible_os_family == 'Debian' 
   
-- name: restart redhat keystone
-  service: name=openstack-keystone state=restarted
-  when: keystone.changed and ansible_os_family == 'RedHat'
+#- name: restart redhat keystone
+#  service: name=openstack-keystone state=restarted
+#  when: keystone.changed and ansible_os_family == 'RedHat'
 
 # This is for when a cluster is vagrant halted/started
 - name: ensure keystone debian keystone is running
   service: name=keystone state=running
   when: ansible_os_family == 'Debian'
 
-- name: ensure redhat keystone is running
-  service: name=openstack-keystone state=running
-  when: ansible_os_family == 'RedHat'
+#- name: ensure redhat keystone is running
+#  service: name=openstack-keystone state=running
+#  when: ansible_os_family == 'RedHat'
 
 - name: wait for keystone to come back up
   wait_for: host="{{ keystone_server }}" port=35357

@@ -9,4 +9,4 @@ ubuntu_packages:
 redhat_packages:
   - openstack-swift
   - rsync
-  - python-swiftclient
+  - python3-swiftclient

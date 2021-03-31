@@ -1,18 +1,27 @@
 ---
 
-- name: ensure yum-plugin-priorities is installed
-  yum: name=yum-plugin-priorities state=installed
+#- name: ensure yum-plugin-priorities is installed
+#  command: yum install -y yum-plugin-priorities
 
-- name: install RDO openstack repository
-  command: yum install -y http://rdo.fedorapeople.org/rdo-release.rpm creates=/etc/yum.repos.d/rdo-release.repo
-  #command: yum insatll -y http://repos.fedorapeople.org/repos/openstack/openstack-havana/rdo-release-havana-7.noarch.rpm
-  notify:
-      - yum makecache
+#- name: ensure libselinux-python333 is installed
+#  command: yum install -y libselinux-python3
 
-- name: install EPEL repository
-  command: yum install -y http://fedora.mirror.nexicom.net/epel/6/i386/epel-release-6-8.noarch.rpm creates=/etc/yum.repos.d/epel.repo
-  notify:
-    - yum makecache
+#- name: install RDO openstack repository
+#  command: yum install -y http://rdo.fedorapeople.org/rdo-release.rpm creates=/etc/yum.repos.d/rdo-release.repo
+#  #command: yum insatll -y http://repos.fedorapeople.org/repos/openstack/openstack-havana/rdo-release-havana-7.noarch.rpm
+#  notify:
+#      - yum makecache
 
-- name: enable RDO repository
-  lineinfile: dest=/etc/yum.repos.d/rdo-release.repo regexp=^enabled line="enabled=1"
+#- name: install EPEL repository
+#  command: yum install -y http://fedora.mirror.nexicom.net/epel/6/i386/epel-release-6-8.noarch.rpm creates=/etc/yum.repos.d/epel.repo
+#  notify:
+#    - yum makecache
+
+- name: install python2-pip
+  command: yum install -y python2-pip
+
+- name: install selinux
+  command: pip2 install selinux
+
+#- name: enable RDO repository
+#  lineinfile: dest=/etc/yum.repos.d/rdo-release.repo regexp=^enabled line="enabled=1"

@@ -1,0 +1,19 @@
+[tlv-mirror-rhel-server]
+name=RHEL server
+enabled=1
+baseurl=http://download.eng.tlv.redhat.com/released/rhel-6-7-8/rhel-8/RHEL-8/8.2.0/BaseOS/x86_64/os/
+gpgcheck=0
+
+[tlv-mirror-rhel-8-AppStream]
+name=RHEL-8-AppStream
+enabled=1
+baseurl=http://download.eng.tlv.redhat.com/released/rhel-6-7-8/rhel-8/RHEL-8/8.2.0/AppStream/x86_64/os/
+gpgcheck=0
+
+[tlv-mirror-rhel-8-CRB]
+name=RHEL-8-CRB
+enabled=1
+baseurl=http://download.eng.tlv.redhat.com/released/rhel-6-7-8/rhel-8/RHEL-8/8.2.0/CRB/x86_64/os/
+gpgcheck=0
+
+

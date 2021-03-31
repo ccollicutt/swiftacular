@@ -6,7 +6,7 @@ admin_token = {{ keystone_admin_token }}
 compute_port = 8774
 verbose = True
 debug = True
-log_config = /etc/keystone/logging.conf
+log-config-append = /etc/keystone/logging.conf
 
 # ================= Syslog Options ============================
 # Send logs to syslog (/dev/log) instead of to file specified
@@ -16,15 +16,15 @@ use_syslog = False
 # Facility to use. If unset defaults to LOG_USER.
 # syslog_log_facility = LOG_LOCAL0
 
-[ssl]
-enable = True
-certfile = /etc/keystone/ssl/certs/keystone.pem
-keyfile = /etc/keystone/ssl/private/keystonekey.pem
-ca_certs = /etc/keystone/ssl/certs/ca.pem
-ca_key = /etc/keystone/ssl/certs/cakey.pem
-# client cert, default is false
-#cert_required = False
-cert_subject = /C=US/ST=Unset/L=Unset/O=Unset/CN={{ keystone_server }}
+#[ssl]
+#enable = True
+#certfile = /etc/keystone/ssl/certs/keystone.pem
+#keyfile = /etc/keystone/ssl/private/keystonekey.pem
+#ca_certs = /etc/keystone/ssl/certs/ca.pem
+#ca_key = /etc/keystone/ssl/certs/cakey.pem
+## client cert, default is false
+##cert_required = False
+#cert_subject = /C=US/ST=Unset/L=Unset/O=Unset/CN={{ keystone_server }}
 
 [token]
 provider = keystone.token.providers.uuid.Provider

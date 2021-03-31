@@ -1,10 +1,19 @@
 ---
 
+- hosts:
+  - all
+  tasks:
+  - name: install libselinux-python
+    command: yum install -y python3-libselinux 
+#  - name: set selinux to pemissive 
+#    selinux:
+#      policy: targeted
+#      state: permissive
+
 #
-# First setup a package_cache, especially when using
+# Setup a package_cache, especially when using
 # your laptop and Vagrant
 #
-
 - hosts: package_cache
   roles:
   - package_cache
@@ -14,10 +23,19 @@
   roles:
   - common
 
-- hosts:
-  - lbssl
-  roles:
-  - lbssl
+- hosts: all
+  tasks:
+  - name: redirection ansible_ethN
+    set_fact:
+      ansible_eth1: "{{ ansible_ens2f0 }}"
+      ansible_eth2: "{{ ansible_ens2f1 }}"
+      ansible_eth3: "{{ ansible_ens3f0 }}"
+      ansible_eth4: "{{ ansible_ens3f1 }}"
+ 
+#- hosts:
+#  - lbssl
+#  roles:
+#  - lbssl
 
 - hosts:
   - proxy
@@ -71,6 +89,15 @@
 #  - include: vars/{{ansible_os_family}}.yml
   tasks:
   - include: start_storage.yml
+
+- hosts:
+  - all
+  tasks:
+  - name: restore selinux state
+    selinux:
+      policy: targeted
+      state: enforcing
+
 
 #
 # Probably best to run these on their own?

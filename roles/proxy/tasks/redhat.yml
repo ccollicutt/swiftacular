@@ -1,6 +1,6 @@
 ---
 
 - name: install required proxy packages
-  yum: name={{ item }} state=installed
+  command: yum install -y {{ item }}
   with_items: redhat_packages
 

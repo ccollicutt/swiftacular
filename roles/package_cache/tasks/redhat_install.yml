@@ -1,4 +1,11 @@
 ---
 
 - name: install squid to cache rpm packages
-  yum: pkg=squid state=installed
+  command: yum install -y squid
+
+#- name: install python2-pip
+#  command: yum install -y python2-pip
+
+#- name: install selinux
+#  command: pip2 install selinux
+
