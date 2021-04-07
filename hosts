@@ -1,40 +1,40 @@
 # Keystone
 [authentication]
-swift-keystone-01 ansible_ssh_host=ZYZ ansible_ssh_user=root
+swift-keystone-01 ansible_ssh_host=192.168.122.242 ansible_ssh_user=root
 
 # Loadbalancing and SSL
 [lbssl]
-swift-lbssl-01 ansible_ssh_host=ZYZ ansible_ssh_user=root
+swift-lbssl-01 ansible_ssh_host=192.168.122.242 ansible_ssh_user=root
 
 
 # A place to run swift cli tests
 [swiftclient]
-swift-package-cache-01 ansible_ssh_host=ZYZ ansible_ssh_user=root
+swift-package-cache-01 ansible_ssh_host=192.168.122.242 ansible_ssh_user=root
 
 # Gauntlt is for running security checks
 # See: http://gauntlt.org/
 [gauntlt]
-swift-package-cache-01 ansible_ssh_host=ZYZ ansible_ssh_user=root
+swift-package-cache-01 ansible_ssh_host=192.168.122.242 ansible_ssh_user=root
 
 # apt-cacher-ng
 [package_cache]
-swift-package-cache-01 ansible_ssh_host=ZYZ ansible_ssh_user=root
+swift-package-cache-01 ansible_ssh_host=192.168.122.242 ansible_ssh_user=root
 
 # Swift proxy node
 [proxy]
-swift-proxy-01 ansible_ssh_host=ZYZ ansible_ssh_user=root
-swift-proxy-02 ansible_ssh_host=ZYZ ansible_ssh_user=root
+swift-proxy-01 ansible_ssh_host=192.168.122.242 ansible_ssh_user=root
+swift-proxy-02 ansible_ssh_host=192.168.122.3 ansible_ssh_user=root
 
 # Swift storage node
 [storage]
-swift-storage-01 ansible_ssh_host=ZYZ ansible_ssh_user=root
-swift-storage-02 ansible_ssh_host=ZYZ ansible_ssh_user=root
-swift-storage-03 ansible_ssh_host=ZYZ ansible_ssh_user=root
-swift-storage-04 ansible_ssh_host=ZYZ ansible_ssh_user=root
-swift-storage-05 ansible_ssh_host=ZYZ ansible_ssh_user=root
-swift-storage-06 ansible_ssh_host=ZYZ ansible_ssh_user=root
-swift-storage-07 ansible_ssh_host=ZYZ ansible_ssh_user=root
-swift-storage-08 ansible_ssh_host=ZYZ ansible_ssh_user=root
+swift-storage-01 ansible_ssh_host=192.168.122.208 ansible_ssh_user=root
+swift-storage-02 ansible_ssh_host=192.168.122.30  ansible_ssh_user=root
+swift-storage-03 ansible_ssh_host=192.168.122.192 ansible_ssh_user=root
+swift-storage-04 ansible_ssh_host=192.168.122.28  ansible_ssh_user=root
+swift-storage-05 ansible_ssh_host=192.168.122.148 ansible_ssh_user=root
+swift-storage-06 ansible_ssh_host=192.168.122.15  ansible_ssh_user=root
+swift-storage-07 ansible_ssh_host=192.168.122.219 ansible_ssh_user=root
+swift-storage-08 ansible_ssh_host=192.168.122.109 ansible_ssh_user=root
 
 [mainnodes]
 swift-storage-[01:08]

@@ -9,6 +9,9 @@
    - all 
 #  gather_facts: no
   tasks:
+    - name: install python
+      command: yum install -y python3-devel python3  
+
     - name: Check that the somefile.conf exists
       stat:
         path: /root/.ssh/id_rsa
