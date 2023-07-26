@@ -14,15 +14,17 @@ Vagrant.configure("2") do |config|
     #config.vm.box_url = "https://cloud-images.ubuntu.com/vagrant/trusty/current/trusty-server-cloudimg-amd64-vagrant-disk1.box"
     #config.vm.box = "centos65"
     #config.vm.box_url = "http://puppet-vagrant-boxes.puppetlabs.com/centos-65-x64-virtualbox-nocm.box"
-    config.vm.box = "precise64"
-    config.vm.box_url = "http://files.vagrantup.com/precise64.box"
+    # config.vm.box = "precise64"
+    # config.vm.box_url = "http://files.vagrantup.com/precise64.box"
+    config.vm.box = "centos/7"
+    config.vm.box_url = "https://app.vagrantup.com/centos/boxes/7/versions/2004.01/providers/virtualbox.box"
 
     nodes.each do |prefix, (count, ip_start)|
         count.times do |i|
             hostname = "%s-%02d" % [prefix, (i+1)]
 
             config.vm.provider :virtualbox do |v|
-                v.customize ["modifyvm", :id, "--memory", 1024]
+                v.customize ["modifyvm", :id, "--memory", 512]
             end
 
             config.vm.define "#{hostname}" do |box|
