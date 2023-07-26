@@ -10,7 +10,7 @@
 #  gather_facts: no
   tasks:
     - name: install python
-      command: yum install -y python3-devel python3  
+      command: sudo yum install -y python3-devel python3  
 
     - name: Check that the somefile.conf exists
       stat:
@@ -37,7 +37,7 @@
 
     - name: install sshpass
       become: yes
-      raw: yum install -y sshpass 
+      raw: sudo yum install -y sshpass 
 
     - name: register id_rsa.pub content
       command: cat ~/.ssh/id_rsa.pub
@@ -45,6 +45,6 @@
 
     - name: add ssh key to authorized_keys 
       become: yes
-      raw: sshpass -p 100yard- ssh -o "StrictHostKeyChecking no"  "{{hostvars[item]['ansible_ssh_host']}}" "echo {{  public_rsa.stdout }} >> ./.ssh/authorized_keys"
+      raw: sudo echo {{  public_rsa.stdout }} >> ./.ssh/authorized_keys
       register: mainnodehosts
       with_items: groups['mainnodes']
