@@ -35,7 +35,7 @@ $ cd swiftacular
 $ git clone https://github.com/openstack-ansible/openstack-ansible-modules library/openstack
 $ vagrant up
 $ cp group_vars/all.example group_vars/all # and edit if desired
-$ ansible-playbook site.yml
+$ ansible-playbook deploy_swift_cluster.yml
 ```
 
 ## Supported Operating Systems and OpenStack Releases
@@ -122,7 +122,7 @@ To restart completely:
 $ vagrant destroy -f
 $ vagrant up
 # wait...
-$ ansible-playbook site.yml
+$ ansible-playbook deploy_swift_cluster.yml
 ```
 
 There is a script to destroy and rebuild everything but the package cache:
@@ -130,21 +130,21 @@ There is a script to destroy and rebuild everything but the package cache:
 ```bash
 $ ./bin/redo
 $ ansible -m ping all # just to check if networking is up
-$ ansible-playbook site.yml
+$ ansible-playbook deploy_swift_cluster.yml
 ```
 
 To remove and redo only the rings and fake/sparse disks without destroying any virtual machines:
 
 ```bash
 $ ansible-playbook playbooks/remove_rings.yml
-$ ansible-playbook site.yml
+$ ansible-playbook deploy_swift_cluster.yml
 ```
 
 To remove the keystone database and redo the endpoints, users, regions, etc:
 
 ```bash
 $ ansible-playbook ./playbook/remove_keystone.yml
-$ ansible-playbook site.yml
+$ ansible-playbook deploy_swift_cluster.yml
 ```
 
 ## Development environment

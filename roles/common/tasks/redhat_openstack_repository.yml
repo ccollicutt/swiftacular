@@ -17,11 +17,11 @@
 #  notify:
 #    - yum makecache
 
-- name: install python2-pip
-  command: yum install -y python2-pip
+#- name: install python2-pip
+#  command: yum install -y python2-pip
 
 - name: install selinux
-  command: pip2 install selinux
+  command: pip3 install selinux
 
 #- name: enable RDO repository
 #  lineinfile: dest=/etc/yum.repos.d/rdo-release.repo regexp=^enabled line="enabled=1"

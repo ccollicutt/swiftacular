@@ -15,5 +15,5 @@ curtis$ wget http://developer.nrel.gov/downloads/vagrant-boxes/CentOS-6.5-x86_64
 * Limit to one group:
 
 ```bash
-curtis$ pb -l package_cache site.yml 
+curtis$ pb -l package_cache deploy_swift_cluster.yml 
 ```

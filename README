@@ -13,11 +13,10 @@ run scripts/setup.sh to inject ssh key to one machine. Then just clone it 7 time
 
 
 
-
 # Then run 
-export ANSIBLE_LIBRARY=/srv/modules/custom_modules:/srv/modules/vendor_modules
-virtualenv -p python2.7 venv2
-. venv2/bin/activate
-pip install ansible==1.9.6
+export ANSIBLE_LIBRARY=/srv/modules/custom_modules:/srv/modules/vendor_modules:/opt/swiftacular/library
+virtualenv -p python3 venv
+. venv/bin/activate
+pip install ansible==8.2.0
 ansible-playbook -i hosts prepare_cluster_nodes.yaml
 ansible-playbook -i hosts deploy_swift_cluster.yml --extra-vars "rhos_release=16.1"

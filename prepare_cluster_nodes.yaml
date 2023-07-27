@@ -45,6 +45,6 @@
 
     - name: add ssh key to authorized_keys 
       become: yes
-      raw: sshpass -p 100yard- ssh -o "StrictHostKeyChecking no"  "{{hostvars[item]['ansible_ssh_host']}}" "echo {{  public_rsa.stdout }} >> ./.ssh/authorized_keys"
+      raw: echo {{  public_rsa.stdout }} >> ./.ssh/authorized_keys
       register: mainnodehosts
       with_items: groups['mainnodes']
