@@ -3,8 +3,12 @@
 - hosts:
   - all
   tasks:
+  - name: sudo yum update && upgrade
+    shell: |
+      sudo yum update -y
+      sudo yum upgrade -y
   - name: install libselinux-python
-    command: yum install -y python3-libselinux 
+    command: sudo yum install -y python3-libselinux
 #  - name: set selinux to pemissive 
 #    selinux:
 #      policy: targeted
