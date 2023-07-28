@@ -8,5 +8,6 @@ ubuntu_packages:
 
 redhat_packages:
   - openstack-swift
+  #- https://distrib-coffee.ipsl.jussieu.fr/pub/linux/altlinux/p10/branch/noarch/RPMS.classic/openstack-swift-2.25.0-alt1.noarch.rpm
   - rsync
   - python3-swiftclient

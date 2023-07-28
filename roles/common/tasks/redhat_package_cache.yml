@@ -4,11 +4,11 @@
 #  lineinfile: dest=/etc/yum.conf line="proxy=http://{{ package_cache_server }}:3128" insertafter="^[main]"
 
 # XXX Better way to remove this plugin? XXX
-- name: remove fastestmirror plugin
-  file: path=/etc/yum/pluginconf.d/fastestmirror.conf state=absent
+#- name: remove fastestmirror plugin
+#  file: path=/etc/yum/pluginconf.d/fastestmirror.conf state=absent
 
-- name: remove old repofiles
-  command: rm -f /etc/yam.repo.d/rhos-release*
+#- name: remove old repofiles
+#  command: rm -f /etc/yam.repo.d/rhos-release*
 
 #- name: copy over new rhel-server.repo file
 #  copy: src=rhel-server.repo dest=/etc/yum.repos.d/rhel-server.repo
@@ -16,21 +16,29 @@
 #    - yum makecache
 #  when: ansible_os_family == 'RedHat' 
 
-- name: Install rhos-release
-  command: yum install -y "http://rhos-release.virt.bos.redhat.com/repos/rhos-release/rhos-release-latest.noarch.rpm"
-#    validate_certs: no
-#    disable_gpg_check: yes
-  when: ansible_os_family == 'RedHat'
+#- name: Install rhos-release
+#  command: yum install -y "http://rhos-release.virt.bos.redhat.com/repos/rhos-release/rhos-release-latest.noarch.rpm"
+##    validate_certs: no
+##    disable_gpg_check: yes
+#  when: ansible_os_family == 'RedHat'
 
 
-- name: Execute rhos-release to install rhos repos
+#- name: Execute rhos-release to install rhos repos
+#  shell: |
+#     /usr/bin/rhos-release -x
+#     /usr/bin/rhos-release {{ rhos_release }}
+#  when: ansible_os_family == 'RedHat'
+
+- name: Install Openstack packages
   shell: |
-     /usr/bin/rhos-release -x
-     /usr/bin/rhos-release {{ rhos_release }}
-  when: ansible_os_family == 'RedHat'
-
-- name: copy over new CentOS-Base.repo file
-  copy: src=CentOS-Base.repo dest=/etc/yum.repos.d/CentOS-Base.repo
-  notify:
-    - yum makecache
+    yum install -y centos-release-openstack-victoria openstack-selinux;
+    yum config-manager --set-enabled powertools;
+    yum upgrade -y;
+    pip3 install openstackclient
   when: ansible_distribution == 'CentOS'
+
+#- name: copy over new CentOS-Base.repo file
+#  copy: src=CentOS-Base.repo dest=/etc/yum.repos.d/CentOS-Base.repo
+#  notify:
+#    - yum makecache
+#  when: ansible_distribution == 'CentOS'

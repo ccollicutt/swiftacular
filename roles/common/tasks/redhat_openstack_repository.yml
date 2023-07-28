@@ -17,8 +17,8 @@
 #  notify:
 #    - yum makecache
 
-#- name: install python2-pip
-#  command: yum install -y python2-pip
+- name: install python3-pip
+  command: yum install -y python3-pip
 
 - name: install selinux
   command: pip3 install selinux
