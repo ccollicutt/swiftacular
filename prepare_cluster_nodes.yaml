@@ -31,6 +31,10 @@
 - hosts:
    - all 
   tasks:
+    - name: Display all variables/facts known for a host
+      debug:
+        var: hostvars[inventory_hostname]
+
     - name: install sshpass
       become: yes
       raw: yum install -y sshpass 

@@ -18,8 +18,8 @@
 #- name: ensure ntpd is running
 #  service: name=ntpd state=running
 
-- name: enable cronyd on rhel8
-  service: name=chronyd state=started
+# - name: enable cronyd on rhel8
+#   service: name=chronyd state=running  # fails if service already running, which is dumb
 
 - name: install python3-pip
   command: yum install -y python3-pip
@@ -30,7 +30,7 @@
 - name: disable selinux
   command: setenforce 0
 
-- debug: 
+- debug:
     var: ansible_facts.interfaces
 
 - name: the network or subnet address from which the clients are allowed to connect.
