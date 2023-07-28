@@ -10,27 +10,17 @@
 - name: remove old repofiles
   command: rm -f /etc/yam.repo.d/rhos-release*
 
-#- name: copy over new rhel-server.repo file
-#  copy: src=rhel-server.repo dest=/etc/yum.repos.d/rhel-server.repo
-#  notify:
-#    - yum makecache
-#  when: ansible_os_family == 'RedHat' 
-
-- name: Install rhos-release
-  command: yum install -y "http://rhos-release.virt.bos.redhat.com/repos/rhos-release/rhos-release-latest.noarch.rpm"
-#    validate_certs: no
-#    disable_gpg_check: yes
-  when: ansible_os_family == 'RedHat'
-
-
-- name: Execute rhos-release to install rhos repos
+- name: Install Openstack packages
   shell: |
-     /usr/bin/rhos-release -x
-     /usr/bin/rhos-release {{ rhos_release }}
-  when: ansible_os_family == 'RedHat'
-
-- name: copy over new CentOS-Base.repo file
-  copy: src=CentOS-Base.repo dest=/etc/yum.repos.d/CentOS-Base.repo
-  notify:
-    - yum makecache
+    sudo yum install -y centos-release-openstack-victoria openstack-selinux;
+    sudo yum config-manager --set-enabled powertools;
+    sudo yum upgrade;
+    pip3 install openstackclient
   when: ansible_distribution == 'CentOS'
+
+# This breaks yum, we don't want to do this.
+# - name: copy over new CentOS-Base.repo file
+#   copy: src=CentOS-Base.repo dest=/etc/yum.repos.d/CentOS-Base.repo
+#   notify:
+#     - yum makecache
+#   when: ansible_distribution == 'CentOS'

@@ -1,7 +1,7 @@
 ---
 
 - name: ensure ntp is installed
-  command: yum install -y chrony 
+  command: sudo yum install -y chrony 
 
 - name: set timezone
   command: timedatectl set-timezone UTC
@@ -18,14 +18,14 @@
 #- name: ensure ntpd is running
 #  service: name=ntpd state=running
 
-- name: enable cronyd on rhel8
-  service: name=chronyd state=running
+# - name: enable cronyd on rhel8
+#   service: name=chronyd state=running  # fails if service already running, which is dumb
 
-- name: install python2-pip
-  command: yum install -y python2-pip
+- name: install python3-pip
+  command: sudo yum install -y python3-pip
 
 - name: install selinux
-  command: pip2 install selinux
+  command: pip3 install selinux
 
 - name: disable selinux
   command: setenforce 0
