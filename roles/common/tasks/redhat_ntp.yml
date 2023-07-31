@@ -1,7 +1,7 @@
 ---
 
 - name: ensure ntp is installed
-  command: sudo yum install -y chrony 
+  command: yum install -y chrony 
 
 - name: set timezone
   command: timedatectl set-timezone UTC
@@ -22,7 +22,7 @@
 #   service: name=chronyd state=running  # fails if service already running, which is dumb
 
 - name: install python3-pip
-  command: sudo yum install -y python3-pip
+  command: yum install -y python3-pip
 
 - name: install selinux
   command: pip3 install selinux
@@ -30,8 +30,11 @@
 - name: disable selinux
   command: setenforce 0
 
+- debug:
+    var: ansible_facts.interfaces
+
 - name: the network or subnet address from which the clients are allowed to connect.
-  lineinfile: dest=/etc/chrony.conf line="allow {{ ansible_ens2f0.ipv4.network }}"
+  lineinfile: dest=/etc/chrony.conf line="allow {{ ansible_enp0s8.ipv4.network }}"
 
 #- name: restart cronyd on rhel8
 #  service: name=chronyd state=restarted

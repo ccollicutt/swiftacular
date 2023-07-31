@@ -2,4 +2,4 @@
 
 - name: install required packages for swift_common
   command: yum install -y {{ item }}
-  with_items: redhat_packages
+  with_items: "{{ redhat_packages }}"

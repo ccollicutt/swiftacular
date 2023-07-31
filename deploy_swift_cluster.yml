@@ -4,11 +4,11 @@
   - all
   tasks:
   - name: sudo yum update && upgrade
-    shell: |
-      sudo yum update -y
-      sudo yum upgrade -y
+    shell: | 
+      yum update -y 
+      yum upgrade -y
   - name: install libselinux-python
-    command: sudo yum install -y python3-libselinux
+    command: yum install -y python3-libselinux 
 #  - name: set selinux to pemissive 
 #    selinux:
 #      policy: targeted
@@ -31,10 +31,10 @@
   tasks:
   - name: redirection ansible_ethN
     set_fact:
-      ansible_eth1: "{{ ansible_ens2f0 }}"
-      ansible_eth2: "{{ ansible_ens2f1 }}"
-      ansible_eth3: "{{ ansible_ens3f0 }}"
-      ansible_eth4: "{{ ansible_ens3f1 }}"
+      ansible_eth1: "{{ ansible_enp0s8 }}"
+      ansible_eth2: "{{ ansible_enp0s9 }}"
+      ansible_eth3: "{{ ansible_enp0s10 }}"
+      ansible_eth4: "{{ ansible_enp0s16 }}"
  
 #- hosts:
 #  - lbssl

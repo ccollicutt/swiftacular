@@ -8,6 +8,6 @@
 
 - include: redhat_openstack_repository.yml
 
-- name: stop iptables
-  service: name=iptables state=stopped
+  #- name: stop iptables
+  #service: name=iptables state=stopped
   

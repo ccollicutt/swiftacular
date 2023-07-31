@@ -1,44 +1,41 @@
 # Keystone
 [authentication]
-swift-keystone-01 ansible_ssh_host=192.168.100.50 ansible_ssh_user=vagrant ansible_ssh_private_key_file=/Users/yashar/git/rezilion/swiftacular/.vagrant/machines/swift-keystone-01/virtualbox/private_key
+swift-keystone-01 ansible_ssh_host=192.168.100.50 ansible_ssh_private_key_file=/opt/swiftacular/.vagrant/machines/swift-keystone-01/virtualbox/private_key
 
 # Loadbalancing and SSL
 [lbssl]
-swift-lbssl-01 ansible_ssh_host=192.168.100.30 ansible_ssh_user=vagrant ansible_ssh_private_key_file=/Users/yashar/git/rezilion/swiftacular/.vagrant/machines/swift-lbssl-01/virtualbox/private_key
-
+swift-lbssl-01 ansible_ssh_host=192.168.100.30 ansible_ssh_private_key_file=/opt/swiftacular/.vagrant/machines/swift-lbssl-01/virtualbox/private_key
 
 # A place to run swift cli tests
 [swiftclient]
-swift-package-cache-01 ansible_ssh_host=192.168.100.20 ansible_ssh_user=vagrant ansible_ssh_private_key_file=/Users/yashar/git/rezilion/swiftacular/.vagrant/machines/swift-package-cache-01/virtualbox/private_key
+swift-package-cache-01 ansible_ssh_host=192.168.100.20 ansible_ssh_private_key_file=/opt/swiftacular/.vagrant/machines/swift-package-cache-01/virtualbox/private_key
 
 # Gauntlt is for running security checks
 # See: http://gauntlt.org/
 [gauntlt]
-swift-package-cache-01 ansible_ssh_host=192.168.100.20 ansible_ssh_user=vagrant ansible_ssh_private_key_file=/Users/yashar/git/rezilion/swiftacular/.vagrant/machines/swift-package-cache-01/virtualbox/private_key
+swift-package-cache-01 ansible_ssh_host=192.168.100.20 ansible_ssh_private_key_file=/opt/swiftacular/.vagrant/machines/swift-package-cache-01/virtualbox/private_key
 
 # apt-cacher-ng
 [package_cache]
-swift-package-cache-01 ansible_ssh_host=192.168.100.20 ansible_ssh_user=vagrant ansible_ssh_private_key_file=/Users/yashar/git/rezilion/swiftacular/.vagrant/machines/swift-package-cache-01/virtualbox/private_key
+swift-package-cache-01 ansible_ssh_host=192.168.100.20 ansible_ssh_private_key_file=/opt/swiftacular/.vagrant/machines/swift-package-cache-01/virtualbox/private_key
 
 # Swift proxy node
 [proxy]
-swift-proxy-01 ansible_ssh_host=192.168.100.100 ansible_ssh_user=vagrant ansible_ssh_private_key_file=/Users/yashar/git/rezilion/swiftacular/.vagrant/machines/swift-proxy-01/virtualbox/private_key
-# swift-proxy-02 ansible_ssh_host=192.168.122.3 ansible_ssh_user=vagrant
+swift-proxy-01 ansible_ssh_host=192.168.100.100 ansible_ssh_private_key_file=/opt/swiftacular/.vagrant/machines/swift-proxy-01/virtualbox/private_key
+#swift-proxy-02 ansible_ssh_host=192.168.122.3 ansible_ssh_user=root
 
 # Swift storage node
 [storage]
-swift-storage-01 ansible_ssh_host=192.168.100.200 ansible_ssh_user=vagrant ansible_ssh_private_key_file=/Users/yashar/git/rezilion/swiftacular/.vagrant/machines/swift-storage-01/virtualbox/private_key
-swift-storage-02 ansible_ssh_host=192.168.100.201  ansible_ssh_user=vagrant ansible_ssh_private_key_file=/Users/yashar/git/rezilion/swiftacular/.vagrant/machines/swift-storage-02/virtualbox/private_key
-swift-storage-03 ansible_ssh_host=192.168.100.202 ansible_ssh_user=vagrant ansible_ssh_private_key_file=/Users/yashar/git/rezilion/swiftacular/.vagrant/machines/swift-storage-03/virtualbox/private_key
-# swift-storage-04 ansible_ssh_host=192.168.122.28  ansible_ssh_user=vagrant
-# swift-storage-05 ansible_ssh_host=192.168.122.148 ansible_ssh_user=vagrant
-# swift-storage-06 ansible_ssh_host=192.168.122.15  ansible_ssh_user=vagrant
-# swift-storage-07 ansible_ssh_host=192.168.122.219 ansible_ssh_user=vagrant
-# swift-storage-08 ansible_ssh_host=192.168.122.109 ansible_ssh_user=vagrant
+swift-storage-01 ansible_ssh_host=192.168.100.200 ansible_ssh_private_key_file=/opt/swiftacular/.vagrant/machines/swift-storage-01/virtualbox/private_key
+swift-storage-02 ansible_ssh_host=192.168.100.200 ansible_ssh_private_key_file=/opt/swiftacular/.vagrant/machines/swift-storage-02/virtualbox/private_key
+swift-storage-03 ansible_ssh_host=192.168.100.200 ansible_ssh_private_key_file=/opt/swiftacular/.vagrant/machines/swift-storage-03/virtualbox/private_key
+#swift-storage-04 ansible_ssh_host=192.168.122.28  ansible_ssh_user=root
+#swift-storage-05 ansible_ssh_host=192.168.122.148 ansible_ssh_user=root
+#swift-storage-06 ansible_ssh_host=192.168.122.15  ansible_ssh_user=root
+#swift-storage-07 ansible_ssh_host=192.168.122.219 ansible_ssh_user=root
+#swift-storage-08 ansible_ssh_host=192.168.122.109 ansible_ssh_user=root
 
 [mainnodes]
 swift-storage-[01:03]
 swift-proxy-[01:01]
-# swift-storage-[01:08]
-# swift-proxy-[01:02]
 
