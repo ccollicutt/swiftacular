@@ -1,27 +1,40 @@
 ---
 
 - name: install required keystone packages
-  command: yum install -y {{ item }}
-  with_items: redhat_packages
+  shell: |
+    dnf update -y
+    dnf config-manager --enable crb
+    dnf install -y centos-release-openstack-zed
+    setenforce 0
+    dnf update -y
+    dnf install -y openstack-swift rsync
+    pip install python-swiftclient
 
 - name: install packages for ansible mysqldb module
   command: yum install -y {{ item }}
   with_items:
+    - mysql-server
     - mysql-devel
     - gcc
     - python3-devel
-    - python3-mysql
 
 - name: install pip packages for ansible mysqldb module
   pip:
     name: "{{ item }}"
-    executable: pip3
+    executable: pip
   with_items:
+    - mysql
     - PyMySQL
     - PyMySQLdb
 
+- name: start mysql
+  command: systemctl enable --now mysqld
+
 - name: ensure mysql-server is running
-  service: name=mysqld enabled=yes state=running
+  service: name=mysqld enabled=yes state=started
+
+- name: create keystone directory  # Test
+  command: mkdir /etc/keystone
 
 - name: copy over /etc/keystone/logging.conf
   copy: src=redhat_logging.conf dest=/etc/keystone/logging.conf owner=keystone group=keystone mode=0640
