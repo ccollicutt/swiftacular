@@ -2,7 +2,7 @@ uid = swift
 gid = swift
 log file = /var/log/rsyncd.log
 pid file = /var/run/rsyncd.pid
-address = {{ ansible_eth3.ipv4.address }}
+address = {{ ansible_enp0s10.ipv4.address }}
 
 [account]
 max connections = 2
