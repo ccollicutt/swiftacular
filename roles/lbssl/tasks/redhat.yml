@@ -6,7 +6,7 @@
 # For some reason the pound package is capitalized
 - name: ensure required packages are installed
   command: sudo yum install -y {{ item }}
-  with_items: redhat_packages
+  with_items: "{{ redhat_packages }}"
 
 - name: ensure there is a /etc/pound directory
   file: dest=/etc/pound state=directory owner=pound group=pound mode=0750
