@@ -2,5 +2,5 @@
 
 - name: install required proxy packages
   command: yum install -y {{ item }}
-  with_items: redhat_packages
+  with_items: "{{ redhat_packages }}"
 
