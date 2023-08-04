@@ -1,6 +1,12 @@
 ---
 
 - name: install required proxy packages
-  command: yum install -y {{ item }}
-  with_items: redhat_packages
+  shell: |
+    dnf update -y
+    dnf config-manager --enable crb
+    dnf install -y centos-release-openstack-zed
+    setenforce 0
+    dnf update -y
+    dnf install -y openstack-swift rsync
+    pip install python-swiftclient
 

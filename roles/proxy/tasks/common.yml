@@ -1,7 +1,13 @@
 ---
 
+- name: install memcached
+  command: yum install -y libevent libevent-devel memcached
+
+- name: start memcached
+  command: systemctl enable --now memcached
+
 - name: make sure memcached is running
-  service: name=memcached state=running
+  service: name=memcached state=started
 
 - name: ensure permissions on /var/cache/swift
   file: path=/var/cache/swift state=directory group=swift owner=swift mode=0700

@@ -34,7 +34,7 @@
   service: name=mysqld enabled=yes state=started
 
 - name: create keystone directory  # Test
-  command: mkdir /etc/keystone
+  command: mkdir -p /etc/keystone
 
 - name: copy over /etc/keystone/logging.conf
   copy: src=redhat_logging.conf dest=/etc/keystone/logging.conf owner=keystone group=keystone mode=0640
