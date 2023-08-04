@@ -1,4 +1,6 @@
 ---
+- name: start memcached
+  command: systemctl enable --now memcached
 
 - name: make sure memcached is running
   service: name=memcached state=started
