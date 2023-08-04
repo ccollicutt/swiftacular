@@ -72,12 +72,12 @@
 
 # This is for when a cluster is vagrant halted/started
 - name: ensure keystone debian keystone is running
-  service: name=keystone state=running
+  service: name=keystone state=started
   when: ansible_os_family == 'Debian'
 
-#- name: ensure redhat keystone is running
-#  service: name=openstack-keystone state=running
-#  when: ansible_os_family == 'RedHat'
+- name: ensure redhat keystone is running
+  service: name=openstack-keystone state=started
+  when: ansible_os_family == 'RedHat'
 
 - name: wait for keystone to come back up
   wait_for: host="{{ keystone_server }}" port=35357
