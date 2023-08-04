@@ -9,3 +9,13 @@ ubuntu_packages:
   - python-keyring
   - mysql-server
   - python-mysqldb
+
+admin_env:
+  OS_USERNAME: admin
+  OS_PASSWORD: "{{ keystone_admin_token }}"
+  OS_PROJECT_NAME: admin
+  OS_USER_DOMAIN_NAME: Default
+  OS_PROJECT_DOMAIN_NAME: Default
+  OS_AUTH_URL: http://{{ keystone_server }}:5000/v3
+  OS_IDENTITY_API_VERSION: 3
+

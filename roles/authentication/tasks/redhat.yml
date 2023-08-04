@@ -33,11 +33,11 @@
 - name: ensure mysql-server is running
   service: name=mysqld enabled=yes state=started
 
-- name: create keystone directory  # Test
-  command: mkdir -p /etc/keystone
+- name: create keystone directories  # Test
+  command: mkdir -p /etc/keystone /var/log/keystone
 
 - name: copy over /etc/keystone/logging.conf
-  copy: src=redhat_logging.conf dest=/etc/keystone/logging.conf owner=keystone group=keystone mode=0640
+  copy: src=redhat_logging.conf dest=/etc/keystone/logging.conf mode=0640 #owner=keystone group=keystone
   notify: restart keystone
 
 - name: create empty /var/log/keystone/error.log and access.log
@@ -47,11 +47,11 @@
     - access
 
 - name: ensure error.log and access.log are writable by keystone
-  file: path=/var/log/keystone/{{ item }}.log state=file owner=keystone group=keystone
+  file: path=/var/log/keystone/{{ item }}.log state=file #owner=keystone group=keystone
   with_items:
     - error
     - access
 
 - name: ensure keystone can write to /var/log/keystone
-  file: path=/var/log/keystone recurse=yes owner=keystone group=keystone
+  file: path=/var/log/keystone recurse=yes #owner=keystone group=keystone
   notify: restart keystone

@@ -1,8 +1,4 @@
 ---
-
-- name: install memcached
-  command: yum install -y libevent libevent-devel memcached
-
 - name: start memcached
   command: systemctl enable --now memcached
 

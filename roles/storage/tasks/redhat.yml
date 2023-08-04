@@ -5,12 +5,8 @@
 # 
 
 - name: install required packages for swift storage
-  # command: yum install -y {{ item }} 
-  # with_items: redhat_packages
-  command: yum install -y openstack-swift-account openstack-swift-container openstack-swift-object xfsprogs parted
-
-- name: create init.d directory
-  command: mkdir -p /etc/init.d
+  command: yum install -y {{ item }} 
+  with_items: "{{ redhat_packages }}"
 
 - name: copy rsync init script to /etc/init.d/rsync
-  copy: src=redhat_rsync.init dest=/etc/init.d/rsync owner=root group=root mode=0755
+  copy: src=redhat_rsync.init dest=/etc/rc.d/init.d/rsync owner=root group=root mode=0755

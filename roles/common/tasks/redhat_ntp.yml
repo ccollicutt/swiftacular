@@ -16,10 +16,10 @@
 #  when: timezone.changed
 
 #- name: ensure ntpd is running
-#  service: name=ntpd state=running
+#  service: name=ntpd state=started
 
-# - name: enable cronyd on rhel8
-#   service: name=chronyd state=running  # fails if service already running, which is dumb
+- name: enable cronyd on rhel8
+  service: name=chronyd state=started  # fails if service already running, which is dumb
 
 - name: install python3-pip
   command: yum install -y python3-pip
