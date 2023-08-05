@@ -76,9 +76,9 @@
 #  service: name=keystone state=running
 #  when: ansible_os_family == 'Debian'
 
-- name: ensure redhat keystone is running
-  service: name=openstack-keystone state=started
-  when: ansible_os_family == 'RedHat'
+# - name: ensure redhat keystone is running
+#   service: name=openstack-keystone state=started
+#   when: ansible_os_family == 'RedHat'
 
 - name: Initialize Fernet key repositories
   shell: |

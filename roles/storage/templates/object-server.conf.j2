@@ -1,6 +1,7 @@
 [DEFAULT]
 devices = /srv/node
 bind_ip = {{ ansible_enp0s10.ipv4.address }}
+bind_port = 8080
 workers = 2
 
 [pipeline:main]
@@ -16,3 +17,7 @@ use = egg:swift#object
 [object-auditor]
 
 [object-expirer]
+
+[object-reconstructor]
+
+[object-relinker]

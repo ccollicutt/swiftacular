@@ -5,7 +5,7 @@
 # 
 
 - name: install required packages for swift storage
-  command: yum install -y {{ item }} 
+  command: dnf --enablerepo=centos-openstack-zed -y install {{ item }} 
   with_items: "{{ redhat_packages }}"
 
 - name: copy rsync init script to /etc/init.d/rsync

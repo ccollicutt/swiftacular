@@ -31,7 +31,7 @@
 
 - name: Install Openstack packages
   shell: |
-    sudo yum install -y centos-release-openstack-victoria openstack-selinux;
+    sudo yum install -y centos-release-openstack-zed openstack-selinux;
     sudo yum config-manager --set-enabled powertools;
     sudo yum upgrade;
     pip3 install openstackclient
