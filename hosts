@@ -27,8 +27,8 @@ swift-proxy-01 ansible_ssh_host=192.168.100.100 ansible_ssh_private_key_file=/op
 # Swift storage node
 [storage]
 swift-storage-01 ansible_ssh_host=192.168.100.200 ansible_ssh_private_key_file=/opt/swiftacular/.vagrant/machines/swift-storage-01/virtualbox/private_key
-swift-storage-02 ansible_ssh_host=192.168.100.200 ansible_ssh_private_key_file=/opt/swiftacular/.vagrant/machines/swift-storage-02/virtualbox/private_key
-swift-storage-03 ansible_ssh_host=192.168.100.200 ansible_ssh_private_key_file=/opt/swiftacular/.vagrant/machines/swift-storage-03/virtualbox/private_key
+swift-storage-02 ansible_ssh_host=192.168.100.201 ansible_ssh_private_key_file=/opt/swiftacular/.vagrant/machines/swift-storage-02/virtualbox/private_key
+swift-storage-03 ansible_ssh_host=192.168.100.202 ansible_ssh_private_key_file=/opt/swiftacular/.vagrant/machines/swift-storage-03/virtualbox/private_key
 #swift-storage-04 ansible_ssh_host=192.168.122.28  ansible_ssh_user=root
 #swift-storage-05 ansible_ssh_host=192.168.122.148 ansible_ssh_user=root
 #swift-storage-06 ansible_ssh_host=192.168.122.15  ansible_ssh_user=root

@@ -72,15 +72,39 @@
 #  tags:
 #    - remount_loop_devices
 
-- name: format nvme disks
-  shell: mkfs.xfs -f /dev/nvme{{ item|int - 1 }}n1;
+- name: create \"disks\" - maybe this need to change
+  command: truncate -s 1GB /srv/node/disk-{{ disk_prefix }}{{ item|int - 1 }} 
   with_sequence: count={{ disks }}
-  ignore_errors: True
 
-- name: mount swift disks
-  mount: name=/srv/node/{{ disk_prefix }}{{ item|int - 1 }} state=mounted src=/dev/nvme{{ item|int - 1 }}n1 opts="noatime,nodiratime" fstype=xfs
+- name: format disks
+  shell: mkfs.xfs -f /srv/node/disk-{{ disk_prefix }}{{ item|int - 1 }};
   with_sequence: count={{ disks }}
-  ignore_errors: True
+
+#- name: format nvme disks
+#  shell: mkfs.xfs -f /dev/nvme{{ item|int - 1 }}n1;
+#  with_sequence: count={{ disks }}
+#  ignore_errors: True
+#
+
+- name: Add mount to /etc/fstab
+  lineinfile:
+    path: '/etc/fstab'
+    line: "/srv/node/disk-{{ disk_prefix }}{{ item|int - 1 }} /srv/node/{{ disk_prefix }}{{ item|int - 1 }} xfs loop,noatime 0 0"
+  with_sequence: count={{ disks }}
+
+
+#- name: mount swift disks
+#  mount: name=/srv/node/{{ disk_prefix }}{{ item|int - 1 }} state=mounted src=/srv/node/disk-{{ disk_prefix }}{{ item|int - 1 }}  opts="loop,noatime 0 0" fstype=xfs
+#  with_sequence: count={{ disks }}
+#
+
+- name: get the mount
+  command: mount -a
+
+#- name: mount swift disks
+#  mount: name=/srv/node/{{ disk_prefix }}{{ item|int - 1 }} state=mounted src=/dev/nvme{{ item|int - 1 }}n1 opts="noatime,nodiratime" fstype=xfs
+#  with_sequence: count={{ disks }}
+#  ignore_errors: True
 
 - name: set permissions on /srv/node/* after being mounted
   file: state=directory path=/srv/node/{{ disk_prefix }}{{ item }} owner=swift group=swift mode=0770
@@ -99,7 +123,7 @@
 
 - name: make sure rsync is running
   command: rsync --daemon
-  ignore_errors: True 
+#  ignore_errors: True 
 
 #
 # Configure swift storage processes
