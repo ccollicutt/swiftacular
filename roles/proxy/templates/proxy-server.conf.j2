@@ -22,10 +22,11 @@ use = egg:swift#keystoneauth
 operator_roles = Member, admin, swiftoperator
 
 [filter:authtoken]
-paste.filter_factory = keystoneclient.middleware.auth_token:filter_factory
+#paste.filter_factory = keystoneclient.middleware.auth_token:filter_factory
 signing_dir = /var/cache/swift
 auth_host = {{ keystone_server }}
-auth_port = 35357
+auth_port = 5000
+#35357
 #auth_protocol = http
 auth_protocol = https
 # is not in official havana example
@@ -37,6 +38,19 @@ admin_password = {{ keystone_generic_service_password }}
 # is set to tru in official havana documentation
 delay_auth_decision = true
 insecure = true
+
+paste.filter_factory = keystonemiddleware.auth_token:filter_factory
+www_authenticate_uri = http://192.168.100.50:5000/
+auth_url = http://192.168.100.50:5000/
+auth_plugin = password
+#project_domain_id = default
+#user_domain_id = default
+#project_name = service
+#username = swift
+#password = password
+#cache = swift.cache
+#include_service_catalog = False
+
 
 [filter:cache]
 use = egg:swift#memcache

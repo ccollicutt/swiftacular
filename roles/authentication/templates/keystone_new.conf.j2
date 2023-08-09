@@ -667,7 +667,7 @@ log-config-append = /etc/keystone/logging.conf
 
 
 [database]
-connection = mysql://keystone:{{ keystone_mysql_password }}@127.0.0.1/keystone
+connection = mysql+pymysql://keystone:{{ keystone_mysql_password }}@127.0.0.1/keystone
 
 #
 # From oslo.db
