@@ -49,6 +49,15 @@
   roles:
     - swift_common
 
+- hosts: all
+  tasks:
+  - name: redirection ansible_ethN twice
+    set_fact:
+      ansible_eth1: "{{ ansible_enp0s8 }}"
+      ansible_eth2: "{{ ansible_enp0s9 }}"
+      ansible_eth3: "{{ ansible_enp0s10 }}"
+      ansible_eth4: "{{ ansible_enp0s16 }}"
+ 
 - hosts: 
     - swiftclient
   roles:
@@ -69,7 +78,15 @@
 # to be the right way to do it but at the time I
 # tried received "too many files open" errors.
 #
-
+- hosts: all
+  tasks:
+  - name: redirection ansible_ethN again
+    set_fact:
+      ansible_eth1: "{{ ansible_enp0s8 }}"
+      ansible_eth2: "{{ ansible_enp0s9 }}"
+      ansible_eth3: "{{ ansible_enp0s10 }}"
+      ansible_eth4: "{{ ansible_enp0s16 }}"
+ 
 - hosts:
   - storage
   serial: 1
