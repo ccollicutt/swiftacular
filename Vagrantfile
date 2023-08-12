@@ -4,7 +4,7 @@
 nodes = {
     'swift-package-cache' => [1, 20],
     'swift-keystone' => [1, 50],
-    'swift-lbssl' => [1, 30],
+    # 'swift-lbssl' => [1, 30],
     'swift-proxy'   => [1, 100],
     'swift-storage' => [3, 200],
 }

@@ -3,8 +3,9 @@
 #cert_file = /etc/swift/cert.crt
 #key_file = /etc/swift/cert.key
 # This is 8888 in official havana doc
-bind_ip = {{ ansible_enp0s9.ipv4.address }}
+# bind_ip = {{ ansible_enp0s9.ipv4.address }}
 bind_port = 8080
+bind_host = 0.0.0.0  # Public
 # is not in official havana example
 #workers = 32
 user = swift

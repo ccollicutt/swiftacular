@@ -37,10 +37,10 @@
       ansible_eth3: "{{ ansible_enp0s10 }}"
       ansible_eth4: "{{ ansible_enp0s16 }}"
  
-#- hosts:
-#  - lbssl
-#  roles:
-#  - lbssl
+# - hosts:
+#   - lbssl
+#   roles:
+#   - lbssl
 
 - hosts:
   - proxy
