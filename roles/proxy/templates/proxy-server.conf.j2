@@ -28,8 +28,8 @@ signing_dir = /var/cache/swift
 auth_host = {{ keystone_server }}
 auth_port = 5000
 #35357
-#auth_protocol = http
-auth_protocol = https
+auth_protocol = http
+#auth_protocol = https
 # is not in official havana example
 #auth_uri = http://{{ keystone_server }}:5000
 admin_tenant_name = service
@@ -41,15 +41,15 @@ delay_auth_decision = true
 insecure = true
 
 paste.filter_factory = keystonemiddleware.auth_token:filter_factory
-www_authenticate_uri = http://192.168.100.50:5000/
-auth_url = http://192.168.100.50:5000/
+www_authenticate_uri = http://{{ keystone_server }}:5000/
+auth_url = http://{{ keystone_server }}:5000/
 auth_plugin = password
-#project_domain_id = default
-#user_domain_id = default
-#project_name = service
-#username = swift
-#password = password
-#cache = swift.cache
+project_domain_id = default
+user_domain_id = default
+project_name = service
+username = swift
+password = password
+cache = swift.cache
 #include_service_catalog = False
 
 

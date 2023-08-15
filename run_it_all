@@ -1,0 +1,6 @@
+echo start
+vagrant up
+ANSIBLE_CONFIG=ansible.cfg ANSIBLE_LIBRARY=library ansible-playbook -i hosts prepare_cluster_nodes.yaml
+ANSIBLE_CONFIG=ansible.cfg ANSIBLE_LIBRARY=library ansible-playbook -i hosts deploy_swift_cluster.yml
+echo done
+
