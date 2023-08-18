@@ -667,7 +667,7 @@ log-config-append = /etc/keystone/logging.conf
 
 
 [database]
-connection = mysql://keystone:{{ keystone_mysql_password }}@127.0.0.1/keystone
+connection = mysql+pymysql://keystone:{{ keystone_mysql_password }}@127.0.0.1/keystone
 
 #
 # From oslo.db
@@ -797,7 +797,7 @@ connection = mysql://keystone:{{ keystone_mysql_password }}@127.0.0.1/keystone
 # Entry point for the endpoint filter driver in the `keystone.endpoint_filter`
 # namespace. Only a `sql` option is provided by keystone, so there is no reason
 # to set this unless you are providing a custom entry point. (string value)
-#driver = sql
+driver = sql
 
 # This controls keystone's behavior if the configured endpoint filters do not
 # result in any endpoints for a user + project pair (and therefore a

@@ -106,6 +106,21 @@
 - name: wait for keystone to come back up
   wait_for: host="{{ keystone_server }}" port=5000
 
+- name: let httpd work with mysql
+  command: setsebool -P httpd_can_network_connect_db on
+
+- name: set up endpoints
+  shell: |
+    /usr/local/bin/openstack endpoint create --region {{ keystone_region }} keystone public http://{{ keystone_server }}:5000/v3
+    /usr/local/bin/openstack endpoint create --region {{ keystone_region }} keystone internal http://{{ keystone_server }}:5000/v3
+    /usr/local/bin/openstack endpoint create --region {{ keystone_region }} keystone admin http://{{ keystone_server }}:5000/v3
+    /usr/local/bin/openstack service create --name swift --description "Object Store Service" object-store
+    /usr/local/bin/openstack endpoint create --region {{ keystone_region }} object-store public 'http://{{ swift_proxy_server }}:8080/v1/AUTH_$(tenant_id)s'
+    /usr/local/bin/openstack endpoint create --region {{ keystone_region }} object-store internal 'http://{{ swift_proxy_server }}:8080/v1/AUTH_$(tenant_id)s'
+    /usr/local/bin/openstack endpoint create --region {{ keystone_region }} object-store admin http://{{ swift_proxy_server }}:8080/v1
+  environment: "{{ admin_env }}"
+  ignore_errors: true
+
 - name: Set up basic projects
   shell: |
     /usr/local/bin/openstack project create --description "Service Tenant" service

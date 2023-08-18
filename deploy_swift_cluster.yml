@@ -19,6 +19,12 @@
 # Setup a package_cache, especially when using
 # your laptop and Vagrant
 #
+
+- hosts: all
+  tasks:
+    - name: let us port bind
+      command: setsebool -P swift_can_network 1
+
 - hosts: package_cache
   roles:
   - package_cache
@@ -37,10 +43,10 @@
       ansible_eth3: "{{ ansible_enp0s10 }}"
       ansible_eth4: "{{ ansible_enp0s16 }}"
  
-#- hosts:
-#  - lbssl
-#  roles:
-#  - lbssl
+# - hosts:
+#   - lbssl
+#   roles:
+#   - lbssl
 
 - hosts:
   - proxy

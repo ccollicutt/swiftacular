@@ -35,7 +35,8 @@ if conn == None:
 #
 # Create all the groups in the inventory
 #
-groups = ['authentication', 'lbssl', 'swiftclient', 'package_cache', 'proxy', 'storage']
+# groups = ['authentication', 'lbssl', 'swiftclient', 'package_cache', 'proxy', 'storage']
+groups = ['authentication', 'swiftclient', 'package_cache', 'proxy', 'storage']
 inventory = {}
 inventory['_meta'] = {}
 for group in groups:
@@ -81,8 +82,8 @@ for vm in conn.listAllDomains():
 		elif 'proxy' in vm.name():
 			inventory['proxy']['hosts'].append(vm.name())
 			addMeta(vm.name(), inventory, 'proxy')
-		elif 'lbssl' in vm.name():
-			inventory['lbssl']['hosts'].append(vm.name())
-			addMeta(vm.name(), inventory, 'lbssl')
+		# elif 'lbssl' in vm.name():
+		# 	inventory['lbssl']['hosts'].append(vm.name())
+		# 	addMeta(vm.name(), inventory, 'lbssl')
 
 print json.dumps(inventory, indent=4)

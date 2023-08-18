@@ -107,7 +107,7 @@
 #  ignore_errors: True
 
 - name: set permissions on /srv/node/* after being mounted
-  file: state=directory path=/srv/node/{{ disk_prefix }}{{ item }} owner=swift group=swift mode=0770
+  file: state=directory path=/srv/node/{{ disk_prefix }}{{ item|int - 1 }} owner=swift group=swift mode=0770
   with_sequence: count={{ disks }}
 
 #
