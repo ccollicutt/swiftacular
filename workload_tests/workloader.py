@@ -1,28 +1,8 @@
+from .object_metadata import ObjectMetadata
 import swiftclient
 import random
 import uuid
 
-PROXY_BASE_URL = 'http://192.168.100.50:5000'
-AUTH_URL = f"{PROXY_BASE_URL}/v3"
-AUTH_VERSION = '3'
-USER = "achilles"
-KEY = "CHANGEME"
-PROJECT = 'demo'
-DEFAULT_VALUE = 'Default'
-OS_OPTIONS = {
-    'user_domain_name': DEFAULT_VALUE,
-    'project_domain_name': DEFAULT_VALUE,
-    'project_name': PROJECT
-}
-
-MEAN_SIZE = 1 * 1024 # 1 KB
-MAX_SIZE = 10 * 1024 # 10 KB
-MIN_SIZE = 512 # 512 Bytes
-STDEV_SIZE = 1 * 1024 # 1 KB
-
-RETENTION_TIME = 60 * 60 # 1 hour
-
-OBJECT_COUNT = 150
 
 def retry(tries, delay=0):
     def _retry(function):
@@ -43,7 +23,8 @@ def retry(tries, delay=0):
 class Workloader:
     def __init__(self, object_count=OBJECT_COUNT, mean_size=MEAN_SIZE, 
                  max_size=MAX_SIZE, min_size=MIN_SIZE, stdev_size=STDEV_SIZE,
-                 retention_time=RETENTION_TIME, connection=None):
+                 retention_time=RETENTION_TIME, upload_interval=0, total_uploads=0,
+                 batch_size=0, connection=None):
         self._object_count = object_count
         self._mean_size = mean_size
         self._max_size = max_size
@@ -65,14 +46,20 @@ class Workloader:
             )
 
     def create_workload(self, container_name):
+        created_objects = []
         for _ in range(self._object_count):
             object_name = str(uuid.uuid4())
             object_size = self._generate_object_size()
             object_content = "A" * object_size
             print(f"Uploading object of size: {object_size}")
             self._upload_object(container_name, object_name, object_content)
+            object_metadata = ObjectMetadata(name=object_name,
+                                             content_length=object_size,
+                                             content_hash=hash(object_content))
+            created_objects.append(object_metadata)
 
         print(f"Uploaded {self._object_count} objects to container '{container_name}'")
+        return created_objects
 
     @retry(tries=3)
     def _upload_object(self, container_name, object_name, object_content):
@@ -84,7 +71,7 @@ class Workloader:
         bound_size = min(self._max_size, max(self._min_size, random_size))
         return bound_size
 
-container = "testcontainer"
-workloader = Workloader()
-print(f"Creating workload on container {container}")
-workloader.create_workload(container)
+# container = "testcontainer"
+# workloader = Workloader()
+# print(f"Creating workload on container {container}")
+# workloader.create_workload(container)
