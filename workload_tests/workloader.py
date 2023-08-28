@@ -36,8 +36,7 @@ class Workloader:
 
     def create_workload(self, container_name):
         created_objects = []
-        batches = int(self._total_uploads / self._batch_size)
-        for batch in range(batches):
+        for batch in range(self._total_uploads):
             print(f"Starting upload of batch {batch + 1}")
             for _ in range(self._batch_size):
                 object_metadata = self._upload_object(container_name)
