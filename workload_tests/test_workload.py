@@ -37,7 +37,7 @@ def connection():
 
 
 @pytest.fixture
-def container():
+def container(connection):
     random_name = str(uuid.uuid4())
     connection.put_container(random_name)
     yield random_name
