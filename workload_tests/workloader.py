@@ -39,7 +39,7 @@ class Workloader:
         for batch in range(self._total_uploads):
             print(f"Starting upload of batch {batch + 1}")
             for _ in range(self._batch_size):
-                object_metadata = self._upload_object(container_name)
+                object_metadata = self._create_and_upload_object(container_name)
                 created_objects.append(object_metadata)
             print(f"Uploaded {self._batch_size} objects, sleeping for {self._upload_interval}s")
             time.sleep(self._upload_interval)
@@ -47,7 +47,7 @@ class Workloader:
         print(f"Uploaded {len(created_objects)} objects to container '{container_name}'")
         return created_objects
 
-    def _upload_object(self, container_name):
+    def _create_and_upload_object(self, container_name):
         object_name = str(uuid.uuid4())
         object_size = self._generate_object_size()
         object_content = "A" * object_size
