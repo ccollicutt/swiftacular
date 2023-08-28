@@ -6,7 +6,7 @@ class Verifier:
         self._container = container
   
     def verify(self, objects_metadata):
-        print(f"Verifying {objects_metadata} objects...")
+        print(f"Verifying {len(objects_metadata)} objects...")
         for obj in objects_metadata:
            assert self._verify_object(obj), f"Failed to verify object {obj}"
         print(f"Verified successfully!")
