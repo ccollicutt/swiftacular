@@ -1,8 +1,8 @@
 import uuid
 import pytest
 import swiftclient
-from .verifier import Verifier
-from .workloader import Workloader
+from verifier import Verifier
+from workloader import Workloader
 
 MEAN_SIZE = 1 * 1024 # 1 KB
 MAX_SIZE = 10 * 1024 # 10 KB

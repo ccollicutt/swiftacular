@@ -1,4 +1,4 @@
-from .object_metadata import ObjectMetadata
+from object_metadata import ObjectMetadata
 
 class Verifier:
    def __init__(self, connection=None) -> None:
