@@ -1,0 +1,48 @@
+
+# Apply patch to sharder.py to ensure sharding is always set to true.
+# Then run workloader and verification.
+
+- name: Sharder patch
+  hosts: storage
+  become: yes
+  tasks:
+    - name: Copy the sharder patch file to the target host
+      copy:
+        src: sharder.patch  # Local path to your patch file
+        dest: /tmp/sharder.patch  # Destination path on the remote host
+
+    - name: Install patch package
+      command: dnf install -y patch
+
+    - name: Print the command output
+      debug:
+        var: command_output.stdout_lines
+
+    - name: Apply sharder patch
+      shell: patch -p0 < /tmp/sharder.patch  # Shell because '<' doesn't work otherwise
+      args:
+        chdir: /usr/lib/python3.9/site-packages/swift/container
+
+- name: Workload tests
+  hosts: package_cache
+  # become: yes
+  tasks:
+    - name: Copy tests directory to package_cache host
+      copy:
+        src: workload_tests
+        dest: /home/vagrant/
+
+    - name: Ensure pytest is installed
+      command: pip install pytest
+
+    - name: Run workload tests
+      command: /usr/bin/python -m pytest test_workload.py::test_tiny_workload -svx
+      # ignore_errors: yes
+      args:
+        chdir: /home/vagrant/workload_tests
+      register: pytest_result
+
+    - name: Validate Pytest Success
+      fail:
+        msg: "Pytest failed: {{ pytest_result.stdout }}"
+      when: pytest_result.rc != 0

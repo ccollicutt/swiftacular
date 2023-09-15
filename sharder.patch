@@ -1,0 +1,11 @@
+--- sharder.py	2023-09-01 13:03:42
++++ sharder.py.patch	2023-09-15 17:23:07
+@@ -63,7 +63,7 @@
+     # fallback to checking if it has any shard ranges
+     if broker.has_other_shard_ranges():
+         return True
+-    return False
++    return True
+ 
+ 
+ def make_shard_ranges(broker, shard_data, shards_account_prefix):
