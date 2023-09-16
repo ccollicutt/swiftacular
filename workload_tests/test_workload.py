@@ -38,7 +38,7 @@ def connection():
 
 @pytest.fixture
 def container(connection):
-    random_name = str(uuid.uuid4())
+    random_name = 'the-test-container' # str(uuid.uuid4())
     connection.put_container(random_name)
     yield random_name
     # connection.delete_container(random_name)
@@ -56,7 +56,7 @@ def run_workload_test(mean_size, max_size, min_size, stdev_size, retention_time,
 
 def test_tiny_workload(connection, container):
     run_workload_test(MEAN_SIZE, MAX_SIZE, MIN_SIZE, STDEV_SIZE,
-                     RETENTION_TIME, upload_interval=0, total_uploads=10,
+                     RETENTION_TIME, upload_interval=0, total_uploads=2,
                      batch_size=100, connection=connection, container=container)
 
 

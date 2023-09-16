@@ -49,7 +49,27 @@
 
 - name: Verify sharding
   hosts: storage
-  max_fail_percentage: 50  # Up to one failure on three storage nodes, since we have 2 replicas
   tasks:
-    - name: Verify container is sharded
-      command: echo "Hi"
+    - name: Wait for sharding
+      command: sleep 600
+
+    - name: Get container sharding results
+      shell: |  # Big ugly command to check whether container is sharded. 
+        for FILE in /srv/node/td*/containers/*/*/*/*.db; do swift-manage-shard-ranges $FILE info; done 2>&1 | grep '^Loaded.*the-test-container$' -A 20 | grep -m 1 "db_state" | sed -e "s/^db_state = //"
+      register: command_output
+
+    - name: Show output
+      debug: 
+        var: command_output.stdout
+
+    - name: Check the output
+      fail:
+        msg: "The container is unsharded"
+      when: command_output.stdout == "unsharded"
+
+    - name: Check if sharded  # 
+      command: sleep 0
+      retries: 1
+      delay: 0
+      until: command_output.stdout == "sharded" or command_output.stdout == ""
+      when: command_output.stdout != "sharded"
