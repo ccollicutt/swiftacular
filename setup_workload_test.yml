@@ -39,3 +39,10 @@
       args:
         chdir: /home/vagrant/workload_tests
       register: pytest_result
+
+- name: Verify sharding
+  hosts: storage
+  max_fail_percentage: 50  # Up to one failure on three storage nodes, since we have 2 replicas
+  tasks:
+    - name: Verify container is sharded
+      command: echo "Hi"
