@@ -67,7 +67,7 @@
         msg: "The container is unsharded"
       when: command_output.stdout == "unsharded"
 
-    - name: Check if sharded  # 
+    - name: Check if sharded 
       command: sleep 0
       retries: 1
       delay: 0
