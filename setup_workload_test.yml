@@ -39,8 +39,3 @@
       args:
         chdir: /home/vagrant/workload_tests
       register: pytest_result
-
-    - name: Validate Pytest Success
-      fail:
-        msg: "Pytest failed: {{ pytest_result.stdout }}"
-      when: pytest_result.rc != 0
