@@ -1,0 +1,75 @@
+
+# Apply patch to sharder.py to ensure sharding is always set to true.
+# Then run workloader and verification.
+
+- name: Sharder patch
+  hosts: storage
+  become: yes
+  tasks:
+    - name: Copy the sharder patch file to the target host
+      copy:
+        src: sharder.patch  # Local path to your patch file
+        dest: /tmp/sharder.patch  # Destination path on the remote host
+
+    - name: Install patch package
+      command: dnf install -y patch
+
+    - name: Print the command output
+      debug:
+        var: command_output.stdout_lines
+
+    - name: Apply sharder patch
+      shell: patch -p0 < /tmp/sharder.patch  # Shell because '<' doesn't work otherwise
+      args:
+        chdir: /usr/lib/python3.9/site-packages/swift/container
+    
+    - name: Stop sharders
+      command: swift-init container-sharder stop
+      ignore_errors: yes
+    
+    - name: Start sharders
+      command: sudo swift-init container-sharder start
+
+- name: Workload tests
+  hosts: package_cache
+  tasks:
+    - name: Copy tests directory to package_cache host
+      copy:
+        src: workload_tests
+        dest: /home/vagrant/
+
+    - name: Ensure pytest is installed
+      command: pip install pytest
+
+    - name: Run workload tests
+      command: /usr/bin/python -m pytest test_workload.py::test_tiny_workload -svx
+      args:
+        chdir: /home/vagrant/workload_tests
+      register: pytest_result
+
+- name: Verify sharding
+  hosts: storage
+  tasks:
+    - name: Wait for sharding
+      command: sleep 600
+
+    - name: Get container sharding results
+      shell: |  # Big ugly command to check whether container is sharded. 
+        for FILE in /srv/node/td*/containers/*/*/*/*.db; do swift-manage-shard-ranges $FILE info; done 2>&1 | grep '^Loaded.*the-test-container$' -A 20 | grep -m 1 "db_state" | sed -e "s/^db_state = //"
+      register: command_output
+
+    - name: Show output
+      debug: 
+        var: command_output.stdout
+
+    - name: Check the output
+      fail:
+        msg: "The container is unsharded"
+      when: command_output.stdout == "unsharded"
+
+    - name: Check if sharded 
+      command: sleep 0
+      retries: 1
+      delay: 0
+      until: command_output.stdout == "sharded" or command_output.stdout == ""
+      when: command_output.stdout != "sharded"
