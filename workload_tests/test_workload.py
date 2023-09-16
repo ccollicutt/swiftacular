@@ -41,7 +41,7 @@ def container(connection):
     random_name = str(uuid.uuid4())
     connection.put_container(random_name)
     yield random_name
-    connection.delete_container(random_name)
+    # connection.delete_container(random_name)
 
 
 def run_workload_test(mean_size, max_size, min_size, stdev_size, retention_time,

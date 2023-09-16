@@ -25,7 +25,6 @@
 
 - name: Workload tests
   hosts: package_cache
-  # become: yes
   tasks:
     - name: Copy tests directory to package_cache host
       copy:
@@ -37,7 +36,6 @@
 
     - name: Run workload tests
       command: /usr/bin/python -m pytest test_workload.py::test_tiny_workload -svx
-      # ignore_errors: yes
       args:
         chdir: /home/vagrant/workload_tests
       register: pytest_result

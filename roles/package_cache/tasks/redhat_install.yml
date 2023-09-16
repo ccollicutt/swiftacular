@@ -4,7 +4,7 @@
   command: yum install -y squid
 
 - name: install pytest
-  command: pip install -y pytest
+  command: pip install pytest
 
 #- name: install python2-pip
 #  command: yum install -y python2-pip
