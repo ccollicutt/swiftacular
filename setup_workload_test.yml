@@ -8,15 +8,11 @@
   tasks:
     - name: Copy the sharder patch file to the target host
       copy:
-        src: sharder.patch  # Local path to your patch file
-        dest: /tmp/sharder.patch  # Destination path on the remote host
+        src: sharder.patch
+        dest: /tmp/sharder.patch
 
     - name: Install patch package
       command: dnf install -y patch
-
-    - name: Print the command output
-      debug:
-        var: command_output.stdout_lines
 
     - name: Apply sharder patch
       shell: patch -p0 < /tmp/sharder.patch  # Shell because '<' doesn't work otherwise
@@ -41,6 +37,7 @@
     - name: Ensure pytest is installed
       command: pip install pytest
 
+    # We're currently only running the tiny test. It would be good to run everything!
     - name: Run workload tests
       command: /usr/bin/python -m pytest test_workload.py::test_tiny_workload -svx
       args:
@@ -50,9 +47,12 @@
 - name: Verify sharding
   hosts: storage
   tasks:
+
+    # It's entirely possible that for bigger tests, it would take much longer than 10 minutes for sharding to complete.
     - name: Wait for sharding
       command: sleep 600
 
+    # The container name in the command is hard-coded to match the workloader test. It would be good to make it variable!
     - name: Get container sharding results
       shell: |  # Big ugly command to check whether container is sharded. 
         for FILE in /srv/node/td*/containers/*/*/*/*.db; do swift-manage-shard-ranges $FILE info; done 2>&1 | grep '^Loaded.*the-test-container$' -A 20 | grep -m 1 "db_state" | sed -e "s/^db_state = //"
@@ -67,7 +67,7 @@
         msg: "The container is unsharded"
       when: command_output.stdout == "unsharded"
 
-    - name: Check if sharded 
+    - name: Check if sharded  # Also succeeds if output is empty result, meaning no replica on host
       command: sleep 0
       retries: 1
       delay: 0
