@@ -41,7 +41,7 @@ def container(connection):
     random_name = 'the-test-container' # str(uuid.uuid4())
     connection.put_container(random_name)
     yield random_name
-    # connection.delete_container(random_name)
+    # connection.delete_container(random_name) # For some reason, there are conflicts when trying to delete :(
 
 
 def run_workload_test(mean_size, max_size, min_size, stdev_size, retention_time,
