@@ -1,6 +1,8 @@
 [DEFAULT]
 devices = /srv/node
-bind_ip = {{ ansible_eth4.ipv4.address }}
+bind_ip = {{ ansible_enp0s16.ipv4.address }}
+bind_port = 6002
+# bind_port = 8080
 workers = 2
 
 [pipeline:main]

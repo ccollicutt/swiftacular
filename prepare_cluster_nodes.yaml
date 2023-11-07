@@ -1,0 +1,46 @@
+---
+
+#
+# First setup a package_cache, especially when using
+# your laptop and Vagrant
+#
+
+- hosts:
+   - all 
+#  gather_facts: no
+  tasks:
+    - name: install python
+      command: yum install -y python3-devel python3  
+
+    - name: Check that the somefile.conf exists
+      stat:
+        path: /root/.ssh/id_rsa
+      register: stat_result
+
+
+    - name: Generate RSA host key
+      command: "ssh-keygen -q -t rsa -f /root/.ssh/id_rsa -C \"\" -N \"\""
+      when: not stat_result.stat.exists
+
+    - name: make sure id_rsa.pub exists
+      command: cat ~/.ssh/id_rsa.pub
+
+
+
+
+- hosts:
+   - all 
+  tasks:
+    - name: install sshpass
+      become: yes
+      raw: yum install -y sshpass 
+
+    - name: register id_rsa.pub content
+      command: cat ~/.ssh/id_rsa.pub
+      register: public_rsa
+
+    - name: add ssh key to authorized_keys 
+      become: yes
+      raw: echo {{  public_rsa.stdout }} >> ./.ssh/authorized_keys
+      register: mainnodehosts
+      with_items: groups['mainnodes']

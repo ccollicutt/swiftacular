@@ -1,0 +1,134 @@
+---
+
+- hosts:
+  - all
+  gather_facts: yes
+  tasks:
+  - name: sudo yum update && upgrade
+    shell: | 
+      yum update -y 
+      yum upgrade -y
+  - name: install libselinux-python
+    command: yum install -y python3-libselinux 
+#  - name: set selinux to pemissive 
+#    selinux:
+#      policy: targeted
+#      state: permissive
+
+#
+# Setup a package_cache, especially when using
+# your laptop and Vagrant
+#
+
+- hosts: all
+  tasks:
+    - name: let us port bind
+      command: setsebool -P swift_can_network 1
+
+- hosts: package_cache
+  roles:
+  - package_cache
+
+- hosts: 
+  - all
+  roles:
+  - common
+
+- hosts: all
+  tasks:
+  - name: redirection ansible_ethN
+    set_fact:
+      ansible_eth1: "{{ ansible_enp0s8 }}"
+      ansible_eth2: "{{ ansible_enp0s9 }}"
+      ansible_eth3: "{{ ansible_enp0s10 }}"
+      ansible_eth4: "{{ ansible_enp0s16 }}"
+ 
+# - hosts:
+#   - lbssl
+#   roles:
+#   - lbssl
+
+- hosts:
+  - proxy
+  - storage
+  - package_cache
+  roles:
+    - swift_common
+
+- hosts: all
+  tasks:
+  - name: redirection ansible_ethN twice
+    set_fact:
+      ansible_eth1: "{{ ansible_enp0s8 }}"
+      ansible_eth2: "{{ ansible_enp0s9 }}"
+      ansible_eth3: "{{ ansible_enp0s10 }}"
+      ansible_eth4: "{{ ansible_enp0s16 }}"
+ 
+- hosts: 
+    - swiftclient
+  roles:
+    - swiftclient
+
+- hosts: 
+   - authentication
+  roles:
+   - authentication
+
+- hosts: 
+  - proxy
+  roles:
+  - proxy
+
+#
+# I would have expected serial to work here, and
+# to be the right way to do it but at the time I
+# tried received "too many files open" errors.
+#
+- hosts: all
+  tasks:
+  - name: redirection ansible_ethN again
+    set_fact:
+      ansible_eth1: "{{ ansible_enp0s8 }}"
+      ansible_eth2: "{{ ansible_enp0s9 }}"
+      ansible_eth3: "{{ ansible_enp0s10 }}"
+      ansible_eth4: "{{ ansible_enp0s16 }}"
+ 
+- hosts:
+  - storage
+  serial: 1
+  roles:
+  - storage
+
+#
+# These are not so much roles as starting services
+# though also includes distributing the ring files.
+# 
+
+- hosts: 
+  - proxy
+#  vars_file:
+#  - include: vars/{{ansible_os_family}}.yml
+  tasks:
+  - include: start_proxy.yml
+
+- hosts:
+  - storage
+#  vars_file:
+#  - include: vars/{{ansible_os_family}}.yml
+  tasks:
+  - include: start_storage.yml
+
+- hosts:
+  - all
+  tasks:
+  - name: restore selinux state
+    selinux:
+      policy: targeted
+      state: enforcing
+
+
+#
+# Probably best to run these on their own?
+#
+
+#- include: tests/tests.yml

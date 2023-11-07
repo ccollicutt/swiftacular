@@ -16,26 +16,44 @@
   ignore_errors: true
   changed_when: rings_exist.rc > 0
 
+- name: do facts module to get latest information
+  setup:
+
 - debug: msg="{{ rings_exist.rc }}"
 
+- name: print the string with interpreted variables
+  ansible.builtin.debug:
+    msg: swift-ring-builder account.builder add r{{ region }}z{{ zone }}-{{ ansible_enp0s10.ipv4.address }}:6002R{{ ansible_enp0s16.ipv4.address }}:6002/{{ disk_prefix }}{{ item|int - 1 }} 100 
+  delegate_to: "{{ swift_proxy_server }}"
+  vars:
+    - ansible_ssh_user: vagrant
+    - ansible_ssh_private_key_file: /opt/swiftacular/.vagrant/machines/swift-proxy-01/virtualbox/private_key   
+  with_sequence: count={{ disks }}
+
+
 - name: build account ring
-  command: swift-ring-builder account.builder add r{{ region }}z{{ zone }}-{{ ansible_eth3.ipv4.address }}:6002R{{ ansible_eth4.ipv4.address }}:6002/{{ disk_prefix }}{{ item }} 100
+  command: swift-ring-builder account.builder add r{{ region }}z{{ zone }}-{{ ansible_enp0s10.ipv4.address }}:6002R{{ ansible_enp0s16.ipv4.address }}:6002/{{ disk_prefix }}{{ item|int - 1 }} 100
            chdir=/etc/swift
   delegate_to: "{{ swift_proxy_server }}"
+  vars:
+    - ansible_ssh_user: vagrant
+    - ansible_ssh_private_key_file: /opt/swiftacular/.vagrant/machines/swift-proxy-01/virtualbox/private_key   
   with_sequence: count={{ disks }}
-  when: losetup.rc >0 and rings_exist.rc > 0
-
+  when: rings_exist.rc > 0
+#  when: losetup.rc >0 and rings_exist.rc > 0
 
 - name: build container ring
-  command: swift-ring-builder container.builder add r{{ region }}z{{ zone }}-{{ ansible_eth3.ipv4.address }}:6001R{{ ansible_eth4.ipv4.address }}:6001/{{ disk_prefix }}{{ item }} 100
+  command: swift-ring-builder container.builder add r{{ region }}z{{ zone }}-{{ ansible_enp0s10.ipv4.address }}:6001R{{ ansible_enp0s16.ipv4.address }}:6001/{{ disk_prefix }}{{ item|int - 1 }} 100
            chdir=/etc/swift
   delegate_to: "{{ swift_proxy_server }}"
   with_sequence: count={{ disks }}
-  when: losetup.rc >0 and rings_exist.rc > 0
+  when: rings_exist.rc > 0
+#  when: losetup.rc >0 and rings_exist.rc > 0
 
 - name: build object ring
-  command: swift-ring-builder object.builder add r{{ region }}z{{ zone }}-{{ ansible_eth3.ipv4.address }}:6000R{{ ansible_eth4.ipv4.address }}:6000/{{ disk_prefix }}{{ item }} 100
+  command: swift-ring-builder object.builder add r{{ region }}z{{ zone }}-{{ ansible_enp0s10.ipv4.address }}:6000R{{ ansible_enp0s16.ipv4.address }}:6000/{{ disk_prefix }}{{ item|int - 1 }} 100
            chdir=/etc/swift
   delegate_to: "{{ swift_proxy_server }}"
   with_sequence: count={{ disks }}
-  when: losetup.rc >0 and rings_exist.rc > 0
+  when: rings_exist.rc > 0
+#when: losetup.rc >0 and rings_exist.rc > 0

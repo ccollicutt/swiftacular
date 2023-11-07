@@ -5,89 +5,125 @@
 - name: make sure /var/swift/recon exists
   file: path=/var/swift/recon state=directory owner=swift group=swift mode=0750
 
-- name: check if losetup loop1 is already up
-  shell: mount | grep "loop1 "
-  register: losetup
-  ignore_errors: True
-  changed_when: losetup.rc > 0
-  tags:
-    - remount_loop_devices
+#- name: check if losetup loop1 is already up
+#  shell: mount | grep "loop1 "
+#  register: losetup
+#  ignore_errors: True
+#  changed_when: losetup.rc > 0
+#  tags:
+#    - remount_loop_devices
 
 #
 # Remove disks
 #
 
-- name: umount swift disks
-  mount: name=/srv/node/{{ disk_prefix }}{{ item }} state=unmounted src=/dev/loop{{ item }} fstype=xfs
-  with_sequence: count={{ disks }}
-  when: "losetup.rc > 0"
+#- name: umount swift disks
+#  mount: name=/srv/node/{{ disk_prefix }}{{ item }} state=unmounted src=/dev/loop{{ item }} fstype=xfs
+#  with_sequence: count={{ disks }}
+#  when: "losetup.rc > 0"
 
-- name: remove /srv/node/* disk device directories
-  file: state=absent path=/srv/node/{{ disk_prefix }}{{ item }}
-  with_sequence: count={{ disks }}
-  when: "losetup.rc > 0"
+#- name: remove /srv/node/* disk device directories
+#  file: state=absent path=/srv/node/{{ disk_prefix }}{{ item }}
+#  with_sequence: count={{ disks }}
+#  when: "losetup.rc > 0"
 
 #- name: remove loop devices
 #  command: losetup -d /dev/loop{{ item }}
 #  with_sequence: count={{ disks }}
 #  when: "losetup.rc > 0"
 
-- name: remove sparse images
-  file: state=absent path=/var/tmp/{{ disk_prefix }}{{ item }}.img
-  with_sequence: count={{ disks }}
-  when: "losetup.rc > 0"
+#- name: remove sparse images
+#  file: state=absent path=/var/tmp/{{ disk_prefix }}{{ item }}.img
+#  with_sequence: count={{ disks }}
+#  when: "losetup.rc > 0"
 
 #
 # Create disks
 #
 
-- name: create sparse images
-  command: truncate --size {{ loop_disk_size }}G /var/tmp/{{ disk_prefix }}{{ item }}.img
-  with_sequence: count={{ disks }}
-  when: "losetup.rc > 0"
+#- name: create sparse images
+#  command: truncate --size {{ loop_disk_size }}G /var/tmp/{{ disk_prefix }}{{ item }}.img
+#  with_sequence: count={{ disks }}
+#  when: "losetup.rc > 0"
 
-- name: setup loop devices
-  command: losetup /dev/loop{{ item }} /var/tmp/{{ disk_prefix }}{{ item }}.img
-  with_sequence: count={{ disks }}
-  when: "losetup.rc > 0"
-  tags:
-    - remount_loop_devices
+#- name: setup loop devices
+#  command: losetup /dev/loop{{ item }} /var/tmp/{{ disk_prefix }}{{ item }}.img
+#  with_sequence: count={{ disks }}
+#  when: "losetup.rc > 0"
+#  tags:
+#    - remount_loop_devices
 
-- name: create file system on loop devices
-  shell: mkfs.xfs -i size=1024 /dev/loop{{ item }}; mkdir /srv/node/{{ disk_prefix }}{{ item }};
-  with_sequence: count={{ disks }}
-  when: "losetup.rc > 0"
+#- name: create file system on loop devices
+#  shell: mkfs.xfs -i size=1024 /dev/loop{{ item }}; mkdir /srv/node/{{ disk_prefix }}{{ item }};
+#  with_sequence: count={{ disks }}
+#  when: "losetup.rc > 0"
 
 - name: make /srv/node disk device directories
-  file:  state=directory path=/srv/node/{{ disk_prefix }}{{ item }} owner=swift group=swift mode=0770
+  file:  state=directory path=/srv/node/{{ disk_prefix }}{{ item|int - 1 }} owner=swift group=swift mode=0770
   with_sequence: count={{ disks }}
-  when: "losetup.rc > 0"
+#  when: "losetup.rc > 0"
 
 # NOTE: Would likely not want the nobootwait in production, but in virtualbox the loop devices won't be setup yet so it won't be able to reboot without that setting, assuming the mount points are setup in /etc/fstab
 # NOTE: later on removed nobootwait b/c didn't work on redhat
-- name: mount swift disks
-  mount: name=/srv/node/{{ disk_prefix }}{{ item }} state=mounted src=/dev/loop{{ item }} opts="noatime,nodiratime,nobarrier" fstype=xfs
+#- name: mount swift disks
+#  mount: name=/srv/node/{{ disk_prefix }}{{ item }} state=mounted src=/dev/loop{{ item }} opts="noatime,nodiratime,nobarrier" fstype=xfs
+#  with_sequence: count={{ disks }}
+#  when: "losetup.rc > 0"
+#  tags:
+#    - remount_loop_devices
+
+- name: create \"disks\" - maybe this need to change
+  command: truncate -s 1GB /srv/node/disk-{{ disk_prefix }}{{ item|int - 1 }} 
   with_sequence: count={{ disks }}
-  when: "losetup.rc > 0"
-  tags:
-    - remount_loop_devices
+
+- name: format disks
+  shell: mkfs.xfs -f /srv/node/disk-{{ disk_prefix }}{{ item|int - 1 }};
+  with_sequence: count={{ disks }}
+
+#- name: format nvme disks
+#  shell: mkfs.xfs -f /dev/nvme{{ item|int - 1 }}n1;
+#  with_sequence: count={{ disks }}
+#  ignore_errors: True
+#
+
+- name: Add mount to /etc/fstab
+  lineinfile:
+    path: '/etc/fstab'
+    line: "/srv/node/disk-{{ disk_prefix }}{{ item|int - 1 }} /srv/node/{{ disk_prefix }}{{ item|int - 1 }} xfs loop,noatime 0 0"
+  with_sequence: count={{ disks }}
+
+
+#- name: mount swift disks
+#  mount: name=/srv/node/{{ disk_prefix }}{{ item|int - 1 }} state=mounted src=/srv/node/disk-{{ disk_prefix }}{{ item|int - 1 }}  opts="loop,noatime 0 0" fstype=xfs
+#  with_sequence: count={{ disks }}
+#
+
+- name: get the mount
+  command: mount -a
+
+#- name: mount swift disks
+#  mount: name=/srv/node/{{ disk_prefix }}{{ item|int - 1 }} state=mounted src=/dev/nvme{{ item|int - 1 }}n1 opts="noatime,nodiratime" fstype=xfs
+#  with_sequence: count={{ disks }}
+#  ignore_errors: True
 
 - name: set permissions on /srv/node/* after being mounted
-  file: state=directory path=/srv/node/{{ disk_prefix }}{{ item }} owner=swift group=swift mode=0770
+  file: state=directory path=/srv/node/{{ disk_prefix }}{{ item|int - 1 }} owner=swift group=swift mode=0770
   with_sequence: count={{ disks }}
-  when: "losetup.rc > 0"
-  tags:
-    - remount_loop_devices
 
 #
 # Configure rsync
 #
 
+
+- name: install rsync 
+  command: yum install -y rsync 
+
 - name: copy over rsyncd.conf to swift storage
   template: src=rsyncd.conf.j2 dest=/etc/rsyncd.conf
 
 - name: make sure rsync is running
-  service: name=rsync state=started
+  command: rsync --daemon
+#  ignore_errors: True 
 
 #
 # Configure swift storage processes

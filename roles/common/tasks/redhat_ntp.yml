@@ -1,16 +1,40 @@
 ---
 
 - name: ensure ntp is installed
-  yum: name=ntp state=installed
+  command: yum install -y chrony 
 
-- name: set timezone in /etc/sysconfig/clock
-  lineinfile: dest=/etc/sysconfig/clock regexp="^ZONE" line="ZONE={{timezone_area}}/{{timezone_city}}"
-  register: timezone
+- name: set timezone
+  command: timedatectl set-timezone UTC
 
-# XXX Could be in common... ###
-- name: setup timezone link
-  shell: ln -sf /usr/share/zoneinfo/{{timezone_area}}/{{timezone_city}} /etc/localtime
-  when: timezone.changed
+#- name: set timezone in /etc/sysconfig/clock
+#  lineinfile: dest=/etc/sysconfig/clock regexp="^ZONE" line="ZONE={{timezone_area}}/{{timezone_city}}"
+#  register: timezone
 
-- name: ensure ntpd is running
-  service: name=ntpd state=running
+## XXX Could be in common... ###
+#- name: setup timezone link
+#  shell: ln -sf /usr/share/zoneinfo/{{timezone_area}}/{{timezone_city}} /etc/localtime
+#  when: timezone.changed
+
+#- name: ensure ntpd is running
+#  service: name=ntpd state=started
+
+- name: enable cronyd on rhel8
+  service: name=chronyd state=started  # fails if service already running, which is dumb
+
+- name: install python3-pip
+  command: yum install -y python3-pip
+
+- name: install selinux
+  command: pip3 install selinux
+
+- name: disable selinux
+  command: setenforce 0
+
+- debug:
+    var: ansible_facts.interfaces
+
+- name: the network or subnet address from which the clients are allowed to connect.
+  lineinfile: dest=/etc/chrony.conf line="allow {{ ansible_enp0s8.ipv4.network }}"
+
+#- name: restart cronyd on rhel8
+#  service: name=chronyd state=restarted

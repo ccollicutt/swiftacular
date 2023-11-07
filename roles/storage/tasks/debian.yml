@@ -12,4 +12,4 @@
   lineinfile: dest=/etc/default/rsync regexp=^RSYNC_ENABLE line="RSYNC_ENABLE=true"
 
 - name: edit /etc/sysconfig/rsync
-  lineinfile: dest=/etc/default/rsync regexp=^RSYNC_OPTS line="RSYNC_OPTS='--address {{ ansible_eth3.ipv4.address }}'"
+  lineinfile: dest=/etc/default/rsync regexp=^RSYNC_OPTS line="RSYNC_OPTS='--address {{ ansible_enp0s10.ipv4.address }}'"

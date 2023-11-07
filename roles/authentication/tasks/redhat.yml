@@ -1,14 +1,43 @@
 ---
 
 - name: install required keystone packages
-  yum: pkg={{ item }} state=installed
-  with_items: redhat_packages
+  shell: |
+    dnf update -y
+    dnf config-manager --enable crb
+    dnf install -y centos-release-openstack-zed
+    setenforce 0
+    dnf update -y
+    dnf install -y openstack-swift rsync
+    pip install python-swiftclient
+
+- name: install packages for ansible mysqldb module
+  command: yum install -y {{ item }}
+  with_items:
+    - mysql-server
+    - mysql-devel
+    - gcc
+    - python3-devel
+
+- name: install pip packages for ansible mysqldb module
+  pip:
+    name: "{{ item }}"
+    executable: pip
+  with_items:
+    - mysql
+    - PyMySQL
+    - PyMySQLdb
+
+- name: start mysql
+  command: systemctl enable --now mysqld
 
 - name: ensure mysql-server is running
-  service: name=mysqld enabled=yes state=running
+  service: name=mysqld enabled=yes state=started
+
+- name: create keystone directories  # Test
+  command: mkdir -p /etc/keystone /var/log/keystone
 
 - name: copy over /etc/keystone/logging.conf
-  copy: src=redhat_logging.conf dest=/etc/keystone/logging.conf owner=keystone group=keystone mode=0640
+  copy: src=redhat_logging.conf dest=/etc/keystone/logging.conf mode=0640 #owner=keystone group=keystone
   notify: restart keystone
 
 - name: create empty /var/log/keystone/error.log and access.log
@@ -18,11 +47,11 @@
     - access
 
 - name: ensure error.log and access.log are writable by keystone
-  file: path=/var/log/keystone/{{ item }}.log state=file owner=keystone group=keystone
+  file: path=/var/log/keystone/{{ item }}.log state=file #owner=keystone group=keystone
   with_items:
     - error
     - access
 
 - name: ensure keystone can write to /var/log/keystone
-  file: path=/var/log/keystone recurse=yes owner=keystone group=keystone
+  file: path=/var/log/keystone recurse=yes #owner=keystone group=keystone
   notify: restart keystone
